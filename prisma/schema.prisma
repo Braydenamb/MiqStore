@@ -1,0 +1,472 @@
+// Prisma Schema for MiqStore - TopUp Digital Store
+// Full database design with all tables, relations, and indexes
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────
+
+enum Role {
+  USER
+  RESELLER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SUCCESS
+  FAILED
+  REFUNDED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum MembershipTier {
+  BRONZE
+  SILVER
+  GOLD
+  DIAMOND
+}
+
+enum BalanceType {
+  DEPOSIT
+  PURCHASE
+  REFUND
+  CASHBACK
+  BONUS
+  WITHDRAWAL
+}
+
+enum NotificationType {
+  TRANSACTION
+  PROMO
+  SYSTEM
+  MEMBERSHIP
+}
+
+// ─── USERS & AUTH ────────────────────────────────
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  name          String
+  phone         String?
+  password      String?
+  avatar        String?
+  role          Role            @default(USER)
+  membership    MembershipTier  @default(BRONZE)
+  rewardPoints  Int             @default(0)
+  isVerified    Boolean         @default(false)
+  isActive      Boolean         @default(true)
+  referralCode  String?         @unique
+  referredBy    String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relations
+  accounts       Account[]
+  sessions       Session[]
+  transactions   Transaction[]
+  wallet         Wallet?
+  balanceHistory BalanceHistory[]
+  reviews        Review[]
+  notifications  Notification[]
+  userPromos     UserPromo[]
+  favoriteGames  FavoriteGame[]
+  apiKeys        ApiKey[]
+
+  @@index([email])
+  @@index([role])
+  @@index([referralCode])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refreshToken      String?
+  accessToken       String?
+  expiresAt         Int?
+  tokenType         String?
+  scope             String?
+  idToken           String?
+  sessionState      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  sessionToken String   @unique
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── PRODUCTS ────────────────────────────────────
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  color       String?
+  gradient    String?
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products Product[]
+
+  @@index([slug])
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  categoryId  String
+  providerId  String?
+  name        String
+  slug        String    @unique
+  publisher   String?
+  description String?
+  image       String?
+  banner      String?
+  color       String?
+  fields      Json?     // JSON array of input field configs
+  gameType    String?   // mobile, pc, console
+  isActive    Boolean   @default(true)
+  isPopular   Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category      Category       @relation(fields: [categoryId], references: [id])
+  provider      Provider?      @relation(fields: [providerId], references: [id])
+  items         ProductItem[]
+  transactions  Transaction[]
+  reviews       Review[]
+  favoriteGames FavoriteGame[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([isActive, isPopular])
+  @@map("products")
+}
+
+model ProductItem {
+  id             String  @id @default(uuid())
+  productId      String
+  providerCode   String? // Provider's product code (e.g., DigiFlazz SKU)
+  name           String
+  description    String?
+  amount         Int     // Nominal amount (e.g., 86 diamonds)
+  price          Int     // Selling price in IDR
+  originalPrice  Int?    // Original price (for showing discount)
+  resellerPrice  Int?    // Special reseller price
+  isActive       Boolean @default(true)
+  isPopular      Boolean @default(false)
+  order          Int     @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([productId])
+  @@index([providerCode])
+  @@map("product_items")
+}
+
+// ─── PROVIDERS ───────────────────────────────────
+
+model Provider {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  apiUrl    String?
+  apiKey    String?
+  apiSecret String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+
+  @@map("providers")
+}
+
+// ─── TRANSACTIONS ────────────────────────────────
+
+model Transaction {
+  id            String            @id @default(uuid())
+  invoiceId     String            @unique
+  userId        String
+  productId     String
+  productItemId String
+  quantity      Int               @default(1)
+  price         Int               // Product price
+  fee           Int               @default(0) // Payment fee
+  discount      Int               @default(0) // Discount amount
+  total         Int               // Final amount to pay
+  status        TransactionStatus @default(PENDING)
+  gameUserId    String?           // e.g., ML User ID
+  gameZoneId    String?           // e.g., ML Zone ID
+  gameNickname  String?           // Validated nickname
+  providerRef   String?           // Provider transaction reference
+  providerData  Json?             // Raw provider response
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id])
+  productItem ProductItem @relation(fields: [productItemId], references: [id])
+  payment     Payment?
+
+  @@index([invoiceId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  transactionId   String        @unique
+  gateway         String        // midtrans, xendit, tripay
+  method          String        // qris, gopay, bca_va, etc.
+  externalId      String?       @unique // Payment gateway reference ID
+  amount          Int
+  status          PaymentStatus @default(PENDING)
+  paymentUrl      String?       // Redirect URL
+  paymentCode     String?       // VA number, QR code URL
+  paidAt          DateTime?
+  expiredAt       DateTime?
+  callbackData    Json?         // Raw webhook data
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@index([externalId])
+  @@index([status])
+  @@map("payments")
+}
+
+// ─── WALLET & BALANCE ────────────────────────────
+
+model Wallet {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
+model BalanceHistory {
+  id          String      @id @default(uuid())
+  userId      String
+  type        BalanceType
+  amount      Int
+  balanceBefore Int
+  balanceAfter  Int
+  description String?
+  referenceId String?     // Related transaction ID
+  createdAt   DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("balance_histories")
+}
+
+// ─── PROMOS ──────────────────────────────────────
+
+model PromoCode {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  name          String
+  description   String?
+  discountType  String    // percent, flat
+  discountValue Int       // e.g., 10 for 10% or 5000 for Rp5000
+  minPurchase   Int       @default(0)
+  maxDiscount   Int?      // Max discount for percentage type
+  maxUsage      Int?      // Total usage limit
+  usedCount     Int       @default(0)
+  startDate     DateTime
+  endDate       DateTime
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  userPromos UserPromo[]
+
+  @@index([code])
+  @@index([isActive, startDate, endDate])
+  @@map("promo_codes")
+}
+
+model UserPromo {
+  id          String   @id @default(uuid())
+  userId      String
+  promoCodeId String
+  usedAt      DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  promoCode PromoCode @relation(fields: [promoCodeId], references: [id])
+
+  @@unique([userId, promoCodeId])
+  @@map("user_promos")
+}
+
+// ─── REVIEWS ─────────────────────────────────────
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  rating    Int      // 1-5
+  comment   String?
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@index([userId])
+  @@map("reviews")
+}
+
+// ─── NOTIFICATIONS ───────────────────────────────
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  data      Json?            // Extra data (e.g., transaction ID)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ─── FAVORITES ───────────────────────────────────
+
+model FavoriteGame {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("favorite_games")
+}
+
+// ─── RESELLER API ────────────────────────────────
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  userId    String
+  key       String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  rateLimit Int      @default(60) // Requests per minute
+  lastUsedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  apiLogs ApiLog[]
+
+  @@index([key])
+  @@map("api_keys")
+}
+
+model ApiLog {
+  id        String   @id @default(uuid())
+  apiKeyId  String
+  endpoint  String
+  method    String
+  status    Int
+  request   Json?
+  response  Json?
+  ip        String?
+  userAgent String?
+  duration  Int?     // Response time in ms
+  createdAt DateTime @default(now())
+
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id])
+
+  @@index([apiKeyId])
+  @@index([createdAt])
+  @@map("api_logs")
+}
+
+// ─── SETTINGS ────────────────────────────────────
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  group     String?  // e.g., "payment", "general", "notification"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([group])
+  @@map("settings")
+}

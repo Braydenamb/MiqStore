@@ -1,0 +1,82 @@
+# ============================================
+# MiqStore — Docker Compose
+# App + PostgreSQL + Redis + Nginx
+# ============================================
+
+services:
+  # ── Next.js App ──
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: miqstore-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-miqstore_secret}@db:5432/miqstore?schema=public
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - miqstore-network
+
+  # ── PostgreSQL ──
+  db:
+    image: postgres:17-alpine
+    container_name: miqstore-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-miqstore_secret}
+      POSTGRES_DB: miqstore
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - miqstore-network
+
+  # ── Redis ──
+  redis:
+    image: redis:7-alpine
+    container_name: miqstore-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - miqstore-network
+
+  # ── Nginx Reverse Proxy ──
+  nginx:
+    image: nginx:alpine
+    container_name: miqstore-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - miqstore-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  miqstore-network:
+    driver: bridge
