@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // output: "standalone", // Enable when using proper npm install + Docker
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.googleusercontent.com" },
@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.jsdelivr.net" },
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
+  },
+  turbopack: {
+    root: "/home/miq",
   },
   experimental: {
     optimizePackageImports: [

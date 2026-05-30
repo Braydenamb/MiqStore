@@ -10,7 +10,7 @@ import {
   EyeOff,
   Gamepad2,
   ArrowRight,
-  Chrome,
+  Globe,
   MessageCircle,
   User,
   Phone,
@@ -77,7 +77,7 @@ export default function RegisterPage() {
           {/* OAuth */}
           <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" className="gap-2" id="register-google">
-              <Chrome className="h-4 w-4" />
+              <Globe className="h-4 w-4" />
               Google
             </Button>
             <Button variant="outline" className="gap-2" id="register-discord">

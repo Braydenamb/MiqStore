@@ -10,7 +10,7 @@ import {
   EyeOff,
   Gamepad2,
   ArrowRight,
-  Chrome,
+  Globe,
   MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,7 @@ export default function LoginPage() {
           {/* OAuth Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" className="gap-2" id="login-google">
-              <Chrome className="h-4 w-4" />
+              <Globe className="h-4 w-4" />
               Google
             </Button>
             <Button variant="outline" className="gap-2" id="login-discord">

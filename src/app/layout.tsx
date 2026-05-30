@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Navbar } from "@/components/layout/navbar";
@@ -8,17 +7,11 @@ import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
+/*
+ * Font Strategy: Using system font stack defined in globals.css.
+ * When deploying with network access, swap to next/font/google:
+ *   import { Inter, Outfit } from "next/font/google";
+ */
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
@@ -85,7 +78,7 @@ export default function RootLayout({
     <html
       lang="id"
       suppressHydrationWarning
-      className={`${inter.variable} ${outfit.variable}`}
+      className=""
     >
       <body className="min-h-screen bg-[hsl(var(--background))] font-sans antialiased">
         <ThemeProvider>

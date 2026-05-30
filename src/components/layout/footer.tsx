@@ -4,8 +4,8 @@ import {
   Mail,
   Phone,
   MapPin,
-  Youtube,
-  Instagram,
+  Video,
+  Camera,
   MessageCircle,
   Send,
 } from "lucide-react";
@@ -57,8 +57,8 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { label: "Instagram", href: "https://instagram.com", icon: Instagram },
-  { label: "YouTube", href: "https://youtube.com", icon: Youtube },
+  { label: "Instagram", href: "https://instagram.com", icon: Camera },
+  { label: "YouTube", href: "https://youtube.com", icon: Video },
   { label: "Discord", href: "https://discord.gg", icon: MessageCircle },
   { label: "Telegram", href: "https://t.me", icon: Send },
 ];
