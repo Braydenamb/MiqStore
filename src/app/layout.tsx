@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import "./globals.css";
@@ -85,8 +86,9 @@ export default function RootLayout({
           <QueryProvider>
             <div className="relative flex min-h-screen flex-col">
               <Navbar />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-mobile-nav">{children}</main>
               <Footer />
+              <BottomNavbar />
             </div>
             <Toaster
               position="top-right"

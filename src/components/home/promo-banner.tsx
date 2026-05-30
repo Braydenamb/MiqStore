@@ -32,13 +32,13 @@ export function PromoBanner() {
   return (
     <section className="relative py-8 sm:py-12" id="promo-banner">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl" ref={emblaRef}>
+        <div className="relative overflow-hidden rounded-3xl" ref={emblaRef}>
           <div className="flex">
             {PROMO_BANNERS.map((banner) => (
               <div key={banner.id} className="min-w-0 flex-[0_0_100%]">
                 <div
                   className={cn(
-                    "relative overflow-hidden rounded-2xl bg-gradient-to-r p-8 sm:p-12 md:p-16",
+                    "relative overflow-hidden rounded-3xl bg-gradient-to-r p-8 sm:p-12 md:p-16",
                     banner.gradient
                   )}
                 >
@@ -80,7 +80,7 @@ export function PromoBanner() {
           <Button
             variant="glass"
             size="icon"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full"
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-2xl"
             onClick={scrollPrev}
             aria-label="Previous slide"
           >
@@ -89,7 +89,7 @@ export function PromoBanner() {
           <Button
             variant="glass"
             size="icon"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full"
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-2xl"
             onClick={scrollNext}
             aria-label="Next slide"
           >
@@ -105,8 +105,8 @@ export function PromoBanner() {
               className={cn(
                 "h-2 rounded-full transition-all duration-300",
                 i === selectedIndex
-                  ? "w-8 bg-purple-500"
-                  : "w-2 bg-[hsl(var(--muted))]"
+                  ? "w-8 bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)]"
+                  : "w-2 bg-[hsl(var(--muted))] hover:bg-[hsl(var(--muted-foreground))]"
               )}
               onClick={() => emblaApi?.scrollTo(i)}
               aria-label={`Go to slide ${i + 1}`}

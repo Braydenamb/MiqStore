@@ -79,7 +79,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-[hsl(var(--border))] bg-[hsl(var(--background))]">
       {/* Subtle gradient top edge */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--liquid-purple)]/30 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
@@ -87,7 +87,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)]">
                 <Gamepad2 className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold gradient-text">{APP_NAME}</span>
@@ -100,15 +100,15 @@ export function Footer() {
             {/* Contact Info */}
             <div className="mt-6 space-y-2">
               <div className="flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]">
-                <Mail className="h-4 w-4 text-purple-400" />
+                <Mail className="h-4 w-4 text-[var(--liquid-purple)]" />
                 <span>support@miqstore.com</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]">
-                <Phone className="h-4 w-4 text-purple-400" />
+                <Phone className="h-4 w-4 text-[var(--liquid-purple)]" />
                 <span>+62 812-3456-7890</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]">
-                <MapPin className="h-4 w-4 text-purple-400" />
+                <MapPin className="h-4 w-4 text-[var(--liquid-purple)]" />
                 <span>Jakarta, Indonesia</span>
               </div>
             </div>
@@ -121,7 +121,7 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] transition-all hover:border-purple-500/50 hover:text-purple-400 hover:shadow-sm hover:shadow-purple-500/10"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] transition-all hover:border-[var(--liquid-purple)]/30 hover:text-[var(--liquid-purple)] hover:bg-[rgba(192,132,252,0.05)]"
                   aria-label={social.label}
                 >
                   <social.icon className="h-4 w-4" />
@@ -141,7 +141,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-purple-400"
+                      className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-[var(--liquid-purple)]"
                     >
                       {link.label}
                     </Link>
@@ -186,7 +186,7 @@ export function Footer() {
             {paymentIcons.map((payment) => (
               <div
                 key={payment}
-                className="flex h-8 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 text-xs font-medium text-[hsl(var(--muted-foreground))]"
+                className="flex h-8 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 text-xs font-medium text-[hsl(var(--muted-foreground))]"
               >
                 {payment}
               </div>

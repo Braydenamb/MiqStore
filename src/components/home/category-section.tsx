@@ -5,80 +5,80 @@ import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { CATEGORIES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import {
+  fadeUp,
+  staggerContainer,
+  staggerItem,
+  viewportConfig,
+} from "@/lib/motion";
 
 export function CategorySection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, viewportConfig);
 
   return (
     <section
       ref={ref}
-      className="py-16 sm:py-20 relative overflow-hidden"
+      className="py-16 sm:py-24 relative overflow-hidden"
       id="category-section"
     >
-      {/* Background accent */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent" />
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="orb orb-purple h-80 w-80 top-1/2 -left-40 opacity-20" />
+        <div className="orb orb-cyan h-60 w-60 top-1/4 -right-30 opacity-15" />
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          variants={fadeUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="text-center mb-12"
         >
-          <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] sm:text-3xl">
+          <h2 className="text-2xl font-extrabold text-[hsl(var(--foreground))] sm:text-3xl tracking-tight">
             Semua <span className="gradient-text">Kebutuhan Digital</span>
           </h2>
           <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))] max-w-lg mx-auto">
-            Dari top up game sampai bayar tagihan, semua bisa dilakukan di satu
-            tempat
+            Dari top up game sampai bayar tagihan, semua bisa dilakukan di satu tempat
           </p>
         </motion.div>
 
         {/* Category Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
-          {CATEGORIES.map((category, i) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-            >
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4"
+        >
+          {CATEGORIES.map((category) => (
+            <motion.div key={category.id} variants={staggerItem}>
               <Link
                 href={`/${category.slug}`}
-                className="group relative flex flex-col items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-center transition-all duration-300 hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/5 hover:-translate-y-1"
+                className="group relative flex flex-col items-center gap-3 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-center transition-all duration-500 hover:border-[rgba(255,255,255,0.1)] hover:-translate-y-1"
                 id={`category-${category.slug}`}
               >
                 {/* Icon Container */}
                 <div
                   className={cn(
-                    "flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl",
+                    "flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
                     category.gradient
                   )}
                 >
-                  <category.icon className="h-7 w-7 text-white" />
+                  <category.icon className="h-6 w-6 text-white" />
                 </div>
 
-                {/* Glow effect on hover */}
+                {/* Hover glow */}
                 <div
-                  className={cn(
-                    "absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100",
-                    "bg-gradient-to-br",
-                    category.gradient
-                  )}
-                  style={{ opacity: 0 }}
-                />
-                <div
-                  className="absolute -inset-0.5 rounded-xl opacity-0 blur-sm transition-opacity duration-300 group-hover:opacity-10 bg-gradient-to-br"
+                  className="absolute -inset-0.5 rounded-2xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-8 bg-gradient-to-br"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, var(--neon-purple), var(--neon-cyan))`,
+                    backgroundImage: `linear-gradient(135deg, var(--liquid-purple), var(--liquid-blue))`,
                   }}
                 />
 
                 {/* Text */}
                 <div className="relative">
-                  <h3 className="text-sm font-bold text-[hsl(var(--foreground))] group-hover:text-purple-400 transition-colors">
+                  <h3 className="text-sm font-bold text-[hsl(var(--foreground))] group-hover:text-[var(--liquid-purple)] transition-colors duration-300">
                     {category.name}
                   </h3>
                   <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))] line-clamp-2">
@@ -88,7 +88,7 @@ export function CategorySection() {
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

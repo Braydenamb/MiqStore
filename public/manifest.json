@@ -1,0 +1,19 @@
+{
+  "name": "MiqStore — TopUp Digital Store",
+  "short_name": "MiqStore",
+  "description": "Top up game, voucher digital, pulsa & paket data termurah dan tercepat",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#07111F",
+  "background_color": "#07111F",
+  "categories": ["games", "shopping", "entertainment"],
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

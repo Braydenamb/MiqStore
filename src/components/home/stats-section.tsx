@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { STATS } from "@/lib/constants";
 import { formatCompactNumber } from "@/lib/utils";
+import { staggerContainer, staggerItem, viewportConfig } from "@/lib/motion";
 
 function AnimatedCounter({
   target,
@@ -53,28 +54,54 @@ function AnimatedCounter({
   );
 }
 
+const statColors = [
+  "var(--liquid-purple)",
+  "var(--liquid-blue)",
+  "var(--liquid-cyan)",
+  "var(--liquid-pink)",
+];
+
 export function StatsSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, viewportConfig);
 
   return (
-    <section ref={ref} className="py-16 sm:py-20" id="stats-section">
+    <section ref={ref} className="py-16 sm:py-24" id="stats-section">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl glass p-8 sm:p-12">
-          {/* Background glow */}
-          <div className="absolute top-0 left-1/4 h-48 w-48 rounded-full bg-purple-600/10 blur-[80px]" />
-          <div className="absolute bottom-0 right-1/4 h-48 w-48 rounded-full bg-cyan-500/10 blur-[80px]" />
+        <div className="relative overflow-hidden rounded-3xl glass-card p-8 sm:p-12">
+          {/* Aurora orbs */}
+          <div className="orb orb-purple h-64 w-64 -top-20 -left-20 animate-glow-pulse" />
+          <div className="orb orb-blue h-48 w-48 -bottom-16 -right-16 animate-glow-pulse" style={{ animationDelay: "2s" }} />
 
-          <div className="relative grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {/* Noise */}
+          <div className="absolute inset-0 rounded-3xl noise-overlay pointer-events-none" />
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="relative grid grid-cols-2 gap-8 sm:grid-cols-4"
+          >
             {STATS.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="text-center"
+                variants={staggerItem}
+                className="text-center relative"
               >
-                <div className="text-3xl font-extrabold text-[hsl(var(--foreground))] sm:text-4xl lg:text-5xl gradient-text">
+                {/* Subtle glow dot */}
+                <div
+                  className="absolute top-0 left-1/2 -translate-x-1/2 h-16 w-16 rounded-full blur-2xl opacity-20"
+                  style={{ background: statColors[i] }}
+                />
+                <div
+                  className="relative text-3xl font-extrabold sm:text-4xl lg:text-5xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${statColors[i]}, ${statColors[(i + 1) % 4]})`,
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
                   <AnimatedCounter
                     target={stat.value}
                     suffix={stat.suffix}
@@ -86,7 +113,7 @@ export function StatsSection() {
                 </p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

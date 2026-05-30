@@ -11,26 +11,27 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { FAQ_ITEMS } from "@/lib/constants";
+import { fadeUp, viewportConfig } from "@/lib/motion";
 
 export function FAQSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, viewportConfig);
 
   return (
-    <section ref={ref} className="py-16 sm:py-20" id="faq-section">
+    <section ref={ref} className="py-16 sm:py-24" id="faq-section">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          variants={fadeUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="text-center mb-12"
         >
-          <Badge variant="glow" className="mb-3">
-            <HelpCircle className="mr-1 h-3 w-3" />
+          <Badge variant="glow" className="mb-3 gap-1">
+            <HelpCircle className="h-3 w-3" />
             FAQ
           </Badge>
-          <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] sm:text-3xl">
+          <h2 className="text-2xl font-extrabold text-[hsl(var(--foreground))] sm:text-3xl tracking-tight">
             Pertanyaan yang{" "}
             <span className="gradient-text">Sering Ditanyakan</span>
           </h2>
@@ -41,10 +42,10 @@ export function FAQSection() {
 
         {/* FAQ Accordion */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 sm:p-6"
+          variants={fadeUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 sm:p-6"
         >
           <Accordion type="single" collapsible className="w-full">
             {FAQ_ITEMS.map((item, i) => (

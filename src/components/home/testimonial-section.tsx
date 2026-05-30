@@ -6,32 +6,41 @@ import { Star, Quote, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TESTIMONIALS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import {
+  fadeUp,
+  staggerContainer,
+  staggerItem,
+  viewportConfig,
+} from "@/lib/motion";
 
 export function TestimonialSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, viewportConfig);
 
   return (
     <section
       ref={ref}
-      className="py-16 sm:py-20 relative overflow-hidden"
+      className="py-16 sm:py-24 relative overflow-hidden"
       id="testimonial-section"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent" />
+      {/* Subtle aurora background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="orb orb-purple h-96 w-96 -top-48 left-1/4 opacity-30" />
+        <div className="orb orb-blue h-72 w-72 -bottom-36 right-1/3 opacity-20" />
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          variants={fadeUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="text-center mb-12"
         >
-          <Badge variant="glow" className="mb-3">
+          <Badge variant="glow" className="mb-3 gap-1">
             ⭐ Testimoni
           </Badge>
-          <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] sm:text-3xl">
+          <h2 className="text-2xl font-extrabold text-[hsl(var(--foreground))] sm:text-3xl tracking-tight">
             Dipercaya{" "}
             <span className="gradient-text">Ribuan Gamer</span>
           </h2>
@@ -41,17 +50,20 @@ export function TestimonialSection() {
         </motion.div>
 
         {/* Testimonial Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TESTIMONIALS.map((testimonial, i) => (
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {TESTIMONIALS.map((testimonial) => (
             <motion.div
               key={testimonial.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group relative rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition-all duration-300 hover:border-purple-500/20 hover:shadow-lg hover:shadow-purple-500/5"
+              variants={staggerItem}
+              className="group relative rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition-all duration-500 hover:border-[rgba(255,255,255,0.08)] hover:bg-[rgba(255,255,255,0.03)]"
             >
               {/* Quote Icon */}
-              <Quote className="absolute right-4 top-4 h-8 w-8 text-purple-500/10 group-hover:text-purple-500/20 transition-colors" />
+              <Quote className="absolute right-4 top-4 h-7 w-7 text-[var(--liquid-purple)]/10 group-hover:text-[var(--liquid-purple)]/20 transition-colors duration-300" />
 
               {/* Stars */}
               <div className="flex gap-0.5 mb-3">
@@ -59,9 +71,9 @@ export function TestimonialSection() {
                   <Star
                     key={j}
                     className={cn(
-                      "h-4 w-4",
+                      "h-3.5 w-3.5",
                       j < testimonial.rating
-                        ? "fill-amber-400 text-amber-400"
+                        ? "fill-[var(--liquid-amber)] text-[var(--liquid-amber)]"
                         : "text-[hsl(var(--muted))]"
                     )}
                   />
@@ -75,8 +87,8 @@ export function TestimonialSection() {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-[hsl(var(--border))]">
-                  <User className="h-5 w-5 text-purple-400" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--liquid-purple)]/15 to-[var(--liquid-blue)]/15 border border-[hsl(var(--border))]">
+                  <User className="h-4 w-4 text-[var(--liquid-purple)]" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
@@ -89,7 +101,7 @@ export function TestimonialSection() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
