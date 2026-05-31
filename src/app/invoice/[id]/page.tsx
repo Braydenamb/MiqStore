@@ -135,7 +135,7 @@ export default function InvoicePage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]"
         >
-          <Link href="/" className="hover:text-purple-400 transition-colors">
+          <Link href="/" className="hover:text-[var(--liquid-purple)] transition-colors">
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5" />
@@ -205,7 +205,7 @@ export default function InvoicePage() {
                           className={cn(
                             "flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors",
                             isCompleted
-                              ? "bg-purple-600 text-white shadow-lg shadow-purple-500/30"
+                              ? "bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] text-white shadow-lg shadow-purple-500/20"
                               : "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]"
                           )}
                         >
@@ -231,7 +231,7 @@ export default function InvoicePage() {
                           className={cn(
                             "h-0.5 flex-1 mx-2 rounded-full transition-colors",
                             i < currentStepIndex
-                              ? "bg-purple-600"
+                              ? "bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)]"
                               : "bg-[hsl(var(--muted))]"
                           )}
                         />
@@ -259,11 +259,11 @@ export default function InvoicePage() {
                 {currentStatus === "pending" && (
                   <>
                     {/* Countdown */}
-                    <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-center">
-                      <p className="text-xs text-amber-400 mb-1">
+                    <div className="rounded-xl bg-[var(--liquid-amber)]/10 border border-[var(--liquid-amber)]/20 p-4 text-center">
+                      <p className="text-xs text-[var(--liquid-amber)] mb-1">
                         Bayar sebelum
                       </p>
-                      <p className="text-2xl font-mono font-bold text-amber-400">
+                      <p className="text-2xl font-mono font-bold text-[var(--liquid-amber)] tabular-nums">
                         {countdown}
                       </p>
                     </div>
@@ -273,7 +273,7 @@ export default function InvoicePage() {
                       <p className="text-xs text-[hsl(var(--muted-foreground))]">
                         {invoice.payment}
                       </p>
-                      <div className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] p-3">
+                      <div className="flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] p-3">
                         <p className="flex-1 text-lg font-mono font-bold text-[hsl(var(--foreground))] tracking-wider">
                           {invoice.paymentCode}
                         </p>
@@ -332,8 +332,8 @@ export default function InvoicePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/20">
-                    <Gamepad2 className="h-5 w-5 text-blue-400" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--liquid-blue)]/15">
+                    <Gamepad2 className="h-5 w-5 text-[var(--liquid-blue)]" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">{invoice.game}</p>
