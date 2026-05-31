@@ -127,7 +127,7 @@ export default function AdminPage() {
         animate="visible"
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
       >
-        {overviewStats.map((stat) => (
+        {overviewStats.map((stat: any) => (
           <motion.div key={stat.label} variants={staggerItem}>
             <Card className="card-hover relative overflow-hidden">
               {/* Subtle glow */}
@@ -174,7 +174,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-2 h-48 pt-4">
-                {revenueData.map((d, i) => (
+                {revenueData.map((d: any, i: number) => (
                   <div key={d.day} className={`flex-1 flex flex-col items-center gap-2 ${d.isForecast ? 'opacity-80' : ''}`}>
                     <span className={`text-[10px] font-medium ${d.isForecast ? 'text-[var(--liquid-cyan)]' : 'text-[hsl(var(--muted-foreground))]'}`}>
                       {formatCompactNumber(d.value / 1000000)}M
@@ -218,7 +218,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {hourlyTraffic.map((h) => (
+                {hourlyTraffic.map((h: any) => (
                   <div key={h.hour} className="flex items-center gap-2">
                     <span className="text-[10px] text-[hsl(var(--muted-foreground))] w-8 shrink-0 tabular-nums">
                       {h.hour}:00
@@ -276,7 +276,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {recentOrders.map((order) => (
+                {recentOrders.map((order: any) => (
                   <div
                     key={order.id}
                     className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] p-3 hover:bg-[hsl(var(--muted))] transition-colors"
@@ -316,7 +316,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {topProducts.map((product, i) => {
+                {topProducts.map((product: any, i: number) => {
                   const maxSales = topProducts[0].sales;
                   const percentage = (product.sales / maxSales) * 100;
 
