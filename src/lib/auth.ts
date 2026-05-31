@@ -1,98 +1,74 @@
-import { NextRequest } from "next/server";
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
-/**
- * NextAuth Configuration
- *
- * When connecting to a real database, install next-auth and configure:
- *   import NextAuth from "next-auth";
- *   import { PrismaAdapter } from "@auth/prisma-adapter";
- *   import GoogleProvider from "next-auth/providers/google";
- *   import CredentialsProvider from "next-auth/providers/credentials";
- *
- * For now, this module provides mock auth helpers used across the app.
- */
+export const authOptions: NextAuthOptions = {
+  // @ts-ignore - PrismaAdapter type mismatch is common between v4 and v5
+  adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 Days
+  },
+  pages: {
+    signIn: "/auth/login",
+    newUser: "/auth/register",
+  },
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing credentials");
+        }
 
-export interface SessionUser {
-  id: string;
-  name: string;
-  email: string;
-  role: "USER" | "RESELLER" | "ADMIN" | "SUPER_ADMIN";
-  membership: "BRONZE" | "SILVER" | "GOLD" | "DIAMOND";
-  avatar?: string;
-}
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-export interface Session {
-  user: SessionUser;
-  expires: string;
-}
+        if (!user || !user.password) {
+          throw new Error("Invalid email or password");
+        }
 
-// Mock session for development
-const MOCK_USER: SessionUser = {
-  id: "usr_dev_001",
-  name: "Miq User",
-  email: "miq@email.com",
-  role: "USER",
-  membership: "GOLD",
-  avatar: undefined,
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid email or password");
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      // First time JWT is created, append user details
+      if (user) {
+        token.id = user.id;
+        token.role = (user as any).role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        // @ts-ignore
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+  },
 };
-
-const MOCK_ADMIN: SessionUser = {
-  id: "usr_admin_001",
-  name: "Super Admin",
-  email: "admin@miqstore.com",
-  role: "SUPER_ADMIN",
-  membership: "DIAMOND",
-};
-
-/**
- * Get the current session from the request.
- * In production, this would verify a JWT or session cookie.
- */
-export async function getSession(req?: NextRequest): Promise<Session | null> {
-  // In development, return mock session
-  // In production, verify JWT from cookie/header
-  const authHeader = req?.headers.get("authorization");
-  if (authHeader === "Bearer admin-token") {
-    return { user: MOCK_ADMIN, expires: new Date(Date.now() + 86400000).toISOString() };
-  }
-
-  // For demo: always return a user session
-  return { user: MOCK_USER, expires: new Date(Date.now() + 86400000).toISOString() };
-}
-
-/**
- * Get current session (server component / API route).
- */
-export async function getCurrentUser(): Promise<SessionUser | null> {
-  const session = await getSession();
-  return session?.user ?? null;
-}
-
-/**
- * Check if user has a specific role.
- */
-export function hasRole(user: SessionUser, roles: SessionUser["role"][]): boolean {
-  return roles.includes(user.role);
-}
-
-/**
- * Check if user is admin.
- */
-export function isAdmin(user: SessionUser): boolean {
-  return hasRole(user, ["ADMIN", "SUPER_ADMIN"]);
-}
-
-/**
- * Generate a mock JWT token (for development).
- */
-export function generateToken(user: SessionUser): string {
-  const payload = {
-    sub: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 86400,
-  };
-  return Buffer.from(JSON.stringify(payload)).toString("base64");
-}

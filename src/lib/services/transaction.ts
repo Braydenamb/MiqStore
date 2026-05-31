@@ -147,31 +147,23 @@ export async function createTransaction(
   const discount = calculateDiscount(input.price, input.promoCode);
   const total = input.price + fee - discount;
 
-  // Create transaction record (in production, save to DB via Prisma)
-  const transaction: TransactionRecord = {
-    id: crypto.randomUUID(),
-    invoiceId,
-    userId: input.userId,
-    gameSlug: input.gameSlug,
-    gameName: input.gameName,
-    productCode: input.productCode,
-    productName: input.productName,
-    gameUserId: input.gameUserId,
-    gameZoneId: input.gameZoneId,
-    price: input.price,
-    fee,
-    discount,
-    total,
-    paymentMethod: input.paymentMethod,
-    paymentStatus: "PENDING",
-    providerStatus: "idle",
-    promoCode: input.promoCode,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  // In production: save to database
-  // await prisma.transaction.create({ data: transaction });
+  // Persist to database
+  const transaction = await prisma.transaction.create({
+    data: {
+      invoiceId,
+      userId: input.userId,
+      productId: "PENDING_PRODUCT", // Placeholder until seed logic maps these
+      productItemId: "PENDING_ITEM",
+      price: input.price,
+      fee,
+      discount,
+      total,
+      paymentMethod: input.paymentMethod,
+      status: "PENDING",
+      gameUserId: input.gameUserId,
+      gameZoneId: input.gameZoneId,
+    }
+  });
 
   logger.info(`Transaction Created: ${invoiceId}`, { 
     game: input.gameName, 
@@ -182,7 +174,7 @@ export async function createTransaction(
   metrics.increment("transaction_created");
   span.end("success");
 
-  return transaction;
+  return transaction as unknown as TransactionRecord;
 }
 
 /**

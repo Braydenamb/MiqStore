@@ -10,6 +10,8 @@ import {
   mapTransactionStatus,
   type MidtransNotification,
 } from "@/lib/services/midtrans";
+import { prisma } from "@/lib/prisma";
+import { eventBus } from "@/lib/services/event-bus";
 
 /**
  * POST /api/webhook/payment
@@ -54,37 +56,35 @@ export async function POST(req: NextRequest) {
       body.fraud_status
     );
 
-    // In production:
     // 1. Find transaction by order_id (invoiceId)
-    // const transaction = await prisma.transaction.findUnique({
-    //   where: { invoiceId: order_id }
-    // });
-    //
+    const transaction = await prisma.transaction.findUnique({
+      where: { invoiceId: order_id }
+    });
+
+    if (!transaction) {
+      console.warn(`[Webhook] Transaction not found: ${order_id}`);
+      return API_ERRORS.notFound("Transaction not found");
+    }
+
     // 2. Check idempotency (skip if already processed to same status)
-    // if (transaction.paymentStatus === internalStatus) {
-    //   return apiSuccess({ orderId: order_id, status: internalStatus, duplicate: true });
-    // }
-    //
+    if (transaction.status === internalStatus) {
+      return apiSuccess({ orderId: order_id, status: internalStatus, duplicate: true });
+    }
+
     // 3. Update payment status
-    // await prisma.transaction.update({
-    //   where: { invoiceId: order_id },
-    //   data: {
-    //     paymentStatus: internalStatus,
-    //     paidAt: internalStatus === "PAID" ? new Date() : undefined,
-    //     updatedAt: new Date(),
-    //   },
-    // });
-    //
-    // 4. If PAID → trigger topup via provider API
-    // if (internalStatus === "PAID") {
-    //   await processTopup(transaction);
-    // }
-    //
-    // 5. Send notification to user (push notification / email)
-    // await sendNotification(transaction.userId, {
-    //   title: `Pembayaran ${internalStatus === "PAID" ? "Berhasil" : "Gagal"}`,
-    //   body: `Order ${order_id} - ${transaction.productName}`,
-    // });
+    await prisma.transaction.update({
+      where: { invoiceId: order_id },
+      data: {
+        status: internalStatus,
+        updatedAt: new Date(),
+      },
+    });
+
+    // 4. Fire Event for realtime updates
+    eventBus.emit("TRANSACTION_UPDATED", {
+       invoiceId: order_id,
+       status: internalStatus
+    });
 
     console.log(
       `[Webhook] Order: ${order_id}, Status: ${transaction_status} → ${internalStatus}, Amount: ${gross_amount}`

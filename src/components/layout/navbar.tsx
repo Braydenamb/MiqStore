@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { spring } from "@/lib/motion";
 
 export function Navbar() {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const {
@@ -160,22 +162,33 @@ export function Navbar() {
 
               {/* Auth Buttons */}
               <div className="hidden sm:flex items-center gap-2 ml-1.5">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="h-8 text-xs"
-                >
-                  <Link href="/auth/login" id="nav-login-btn">
-                    Masuk
-                  </Link>
-                </Button>
-                <Button size="sm" asChild className="h-8 text-xs gap-1.5">
-                  <Link href="/auth/register" id="nav-register-btn">
-                    <Sparkles className="h-3 w-3" />
-                    Daftar
-                  </Link>
-                </Button>
+                {session ? (
+                  <Button size="sm" asChild className="h-8 text-xs gap-1.5">
+                    <Link href="/dashboard" id="nav-dashboard-btn">
+                      <User className="h-3 w-3" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="h-8 text-xs"
+                    >
+                      <Link href="/auth/login" id="nav-login-btn">
+                        Masuk
+                      </Link>
+                    </Button>
+                    <Button size="sm" asChild className="h-8 text-xs gap-1.5">
+                      <Link href="/auth/register" id="nav-register-btn">
+                        <Sparkles className="h-3 w-3" />
+                        Daftar
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
 
               {/* Mobile Menu Toggle */}

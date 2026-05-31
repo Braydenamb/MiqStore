@@ -71,6 +71,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { AuthProvider } from "@/components/providers/auth-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -83,26 +85,28 @@ export default function RootLayout({
       className=""
     >
       <body className="min-h-screen bg-[hsl(var(--background))] font-sans antialiased">
-        <ThemeProvider>
-          <QueryProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <Navbar />
-              <main className="flex-1 pb-mobile-nav">{children}</main>
-              <Footer />
-              <BottomNavbar />
-            </div>
-            <Toaster
-              position="top-right"
-              theme="dark"
-              richColors
-              closeButton
-              toastOptions={{
-                className: "glass",
-              }}
-            />
-            <PwaRegistry />
-          </QueryProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <QueryProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1 pb-mobile-nav">{children}</main>
+                <Footer />
+                <BottomNavbar />
+              </div>
+              <Toaster
+                position="top-right"
+                theme="dark"
+                richColors
+                closeButton
+                toastOptions={{
+                  className: "glass",
+                }}
+              />
+              <PwaRegistry />
+            </QueryProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
