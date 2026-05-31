@@ -3,6 +3,8 @@ import { apiSuccess, API_ERRORS } from "@/lib/api-response";
 import { createSnapTransaction } from "@/lib/services/midtrans";
 import { prisma } from "@/lib/prisma";
 import { generateInvoiceId } from "@/lib/utils";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,8 +16,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. In production: Get user session
-    const userId = "123456789"; 
-    const userName = "Demo User";
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return API_ERRORS.unauthorized();
+
+    const userId = session.user.id; 
+    const userName = session.user.name || "User";
 
     // 2. We treat wallet deposit as a special transaction in the DB
     // We can use a reserved "productId" for Wallet Topup or just handle it uniquely.

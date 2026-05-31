@@ -13,40 +13,44 @@ import {
   Sparkles,
   Crown,
 } from "lucide-react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
-import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 
-const stats = [
-  { label: "Total Transaksi", value: "47", icon: Receipt, color: "var(--liquid-purple)" },
-  { label: "Total Belanja", value: formatCurrency(2450000), icon: TrendingUp, color: "var(--liquid-blue)" },
-  { label: "Poin Reward", value: "1,250", icon: Star, color: "var(--liquid-amber)" },
-];
-
-const recentTransactions = [
-  { id: "INV-001", game: "Mobile Legends", product: "344 Diamonds", price: 68000, status: "success" as const, date: "28 Mei 2026" },
-  { id: "INV-002", game: "Genshin Impact", product: "Welkin Moon", price: 79000, status: "success" as const, date: "27 Mei 2026" },
-  { id: "INV-003", game: "Valorant", product: "700 VP", price: 79000, status: "processing" as const, date: "26 Mei 2026" },
-  { id: "INV-004", game: "Free Fire", product: "355 Diamonds", price: 65000, status: "success" as const, date: "25 Mei 2026" },
-];
-
-const walletHistory = [
-  { id: "WH-1", type: "deposit", amount: 150000, date: "Hari ini, 14:30" },
-  { id: "WH-2", type: "purchase", amount: -68000, date: "Kemarin, 19:15" },
-  { id: "WH-3", type: "cashback", amount: 680, date: "Kemarin, 19:15" },
-];
-
-const statusMap = {
-  success: { label: "Sukses", variant: "success" as const, icon: CheckCircle2 },
-  processing: { label: "Proses", variant: "warning" as const, icon: Clock },
-  pending: { label: "Pending", variant: "warning" as const, icon: Clock },
-  failed: { label: "Gagal", variant: "destructive" as const, icon: Clock },
+const statusMap: Record<string, { label: string, variant: "success" | "warning" | "destructive", icon: any }> = {
+  SUCCESS: { label: "Sukses", variant: "success", icon: CheckCircle2 },
+  PROCESSING: { label: "Proses", variant: "warning", icon: Clock },
+  PENDING: { label: "Pending", variant: "warning", icon: Clock },
+  FAILED: { label: "Gagal", variant: "destructive", icon: Clock },
 };
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/dashboard/stats");
+      if (!res.ok) throw new Error("Failed to fetch stats");
+      return res.json();
+    },
+    enabled: !!session?.user,
+  });
+
+  const stats = [
+    { label: "Total Transaksi", value: isLoading ? "..." : (data?.stats?.totalTransactions || "0"), icon: Receipt, color: "var(--liquid-purple)" },
+    { label: "Total Belanja", value: isLoading ? "..." : formatCurrency(data?.stats?.totalSpent || 0), icon: TrendingUp, color: "var(--liquid-blue)" },
+    { label: "Poin Reward", value: isLoading ? "..." : (data?.stats?.rewardPoints || "0"), icon: Star, color: "var(--liquid-amber)" },
+  ];
+
+  const recentTransactions = data?.recentTransactions || [];
+  const walletHistory = data?.walletHistory || [];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -54,7 +58,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-extrabold">Dashboard</h1>
           <p className="text-sm text-[hsl(var(--muted-foreground))]">
-            Selamat datang kembali, Miq! 👋
+            Selamat datang kembali, {session?.user?.name || "Miq"}! 👋
           </p>
         </div>
       </motion.div>
@@ -82,7 +86,7 @@ export default function DashboardPage() {
                 <span className="text-sm font-medium text-[var(--liquid-cyan)]">Saldo MiqStore</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                Rp 125.000
+                {isLoading ? "..." : formatCurrency(data?.stats?.walletBalance || 0)}
               </h2>
               <div className="mt-2 flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]">
                 <span className="flex items-center gap-1 text-green-400 font-medium">

@@ -18,89 +18,10 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatCompactNumber } from "@/lib/utils";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 import { linearRegressionForecast } from "@/lib/forecasting";
 
-/* ─── Mock Data ─── */
-const overviewStats = [
-  {
-    label: "Revenue Hari Ini",
-    value: formatCurrency(15750000),
-    change: "+12.5%",
-    trend: "up" as const,
-    icon: DollarSign,
-    color: "var(--liquid-purple)",
-  },
-  {
-    label: "Transaksi Hari Ini",
-    value: "342",
-    change: "+8.2%",
-    trend: "up" as const,
-    icon: ShoppingCart,
-    color: "var(--liquid-blue)",
-  },
-  {
-    label: "User Baru",
-    value: "58",
-    change: "+15.3%",
-    trend: "up" as const,
-    icon: Users,
-    color: "var(--liquid-cyan)",
-  },
-  {
-    label: "Tingkat Sukses",
-    value: "98.5%",
-    change: "-0.3%",
-    trend: "down" as const,
-    icon: Activity,
-    color: "var(--liquid-pink)",
-  },
-];
-
-const recentOrders = [
-  { id: "INV-2001", user: "Rizky P.", game: "Mobile Legends", product: "706 Diamonds", amount: 135000, status: "success", time: "2 menit lalu" },
-  { id: "INV-2002", user: "Sarah A.", game: "Genshin Impact", product: "Welkin Moon", amount: 79000, status: "processing", time: "5 menit lalu" },
-  { id: "INV-2003", user: "Ahmad F.", game: "Free Fire", product: "720 Diamonds", amount: 130000, status: "success", time: "8 menit lalu" },
-  { id: "INV-2004", user: "Dewi A.", game: "Valorant", product: "1375 VP", amount: 149000, status: "pending", time: "12 menit lalu" },
-  { id: "INV-2005", user: "Budi S.", game: "PUBG Mobile", product: "660 UC", amount: 159000, status: "success", time: "15 menit lalu" },
-];
-
-const topProducts = [
-  { name: "Mobile Legends", sales: 12450, color: "var(--liquid-purple)" },
-  { name: "Free Fire", sales: 8920, color: "var(--liquid-blue)" },
-  { name: "Genshin Impact", sales: 6340, color: "var(--liquid-cyan)" },
-  { name: "Valorant", sales: 5210, color: "var(--liquid-pink)" },
-  { name: "PUBG Mobile", sales: 4180, color: "var(--liquid-indigo)" },
-];
-
-/* Revenue chart — 7-day mock data + 3-day AI forecast */
-const historicalRevenue = [12400000, 15200000, 13800000, 18300000, 16500000, 14100000, 15750000];
-const forecastedRevenue = linearRegressionForecast(historicalRevenue, 3);
-const maxRevenue = Math.max(...historicalRevenue, ...forecastedRevenue);
-
-const revenueData = [
-  { day: "Sen", value: historicalRevenue[0], pct: (historicalRevenue[0] / maxRevenue) * 100, isForecast: false },
-  { day: "Sel", value: historicalRevenue[1], pct: (historicalRevenue[1] / maxRevenue) * 100, isForecast: false },
-  { day: "Rab", value: historicalRevenue[2], pct: (historicalRevenue[2] / maxRevenue) * 100, isForecast: false },
-  { day: "Kam", value: historicalRevenue[3], pct: (historicalRevenue[3] / maxRevenue) * 100, isForecast: false },
-  { day: "Jum", value: historicalRevenue[4], pct: (historicalRevenue[4] / maxRevenue) * 100, isForecast: false },
-  { day: "Sab", value: historicalRevenue[5], pct: (historicalRevenue[5] / maxRevenue) * 100, isForecast: false },
-  { day: "Min", value: historicalRevenue[6], pct: (historicalRevenue[6] / maxRevenue) * 100, isForecast: false },
-  { day: "+1", value: forecastedRevenue[0], pct: (forecastedRevenue[0] / maxRevenue) * 100, isForecast: true },
-  { day: "+2", value: forecastedRevenue[1], pct: (forecastedRevenue[1] / maxRevenue) * 100, isForecast: true },
-  { day: "+3", value: forecastedRevenue[2], pct: (forecastedRevenue[2] / maxRevenue) * 100, isForecast: true },
-];
-
-/* Hourly traffic heatmap */
-const hourlyTraffic = [
-  { hour: "00", val: 12 }, { hour: "03", val: 5 }, { hour: "06", val: 8 },
-  { hour: "09", val: 28 }, { hour: "12", val: 45 }, { hour: "15", val: 62 },
-  { hour: "18", val: 85 }, { hour: "19", val: 100 }, { hour: "20", val: 95 },
-  { hour: "21", val: 88 }, { hour: "22", val: 65 }, { hour: "23", val: 35 },
-];
-
-const statusColors: Record<string, string> = {
-  success: "bg-green-500/15 text-green-400",
-  processing: "bg-[var(--liquid-cyan)]/15 text-[var(--liquid-cyan)]",
   pending: "bg-[var(--liquid-amber)]/15 text-[var(--liquid-amber)]",
   failed: "bg-red-500/15 text-red-400",
 };
