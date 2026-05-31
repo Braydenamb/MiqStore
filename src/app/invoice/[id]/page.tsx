@@ -108,16 +108,53 @@ export default function InvoicePage() {
     return () => clearInterval(timer);
   }, [invoice.expiredAt]);
 
-  /* Simulate status progression */
+  /* Real-time status via Server-Sent Events (SSE) */
   const [currentStatus, setCurrentStatus] = useState<InvoiceStatus>("pending");
+  
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setCurrentStatus("paid"), 5000),
-      setTimeout(() => setCurrentStatus("processing"), 8000),
-      setTimeout(() => setCurrentStatus("success"), 12000),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, []);
+    // Connect to SSE stream
+    const eventSource = new EventSource(`/api/invoice/${invoice.id}/stream`);
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "update" && data.status) {
+          setCurrentStatus(data.status);
+        }
+      } catch (err) {
+        console.error("Failed to parse SSE data", err);
+      }
+    };
+
+    eventSource.onerror = () => {
+      console.warn("SSE connection lost. Reconnecting...");
+    };
+
+    return () => eventSource.close();
+  }, [invoice.id]);
+
+  /* Confetti Animation on Success */
+  useEffect(() => {
+    if (currentStatus === "success") {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+      script.onload = () => {
+        if ((window as any).confetti) {
+          (window as any).confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#c084fc', '#7dd3fc', '#67e8f9', '#f9a8d4', '#fbbf24']
+          });
+        }
+      };
+      document.body.appendChild(script);
+      
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [currentStatus]);
 
   const StatusIcon = statusConfig[currentStatus].icon;
   const currentStepIndex = timeline.findIndex((t) => t.status === currentStatus);
@@ -289,11 +326,49 @@ export default function InvoicePage() {
                       </div>
                     </div>
 
-                    {/* QR Code placeholder */}
-                    <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-[hsl(var(--border))] p-6">
-                      <QrCode className="h-24 w-24 text-[hsl(var(--muted-foreground))]" />
-                      <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                        Scan QRIS untuk bayar
+                    {/* Animated QRIS Code Area */}
+                    <div className="relative overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-white p-6 pb-8 text-center mt-6">
+                      <div className="mb-4">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS" className="h-6 mx-auto mb-2" />
+                        <p className="text-xs text-slate-500 font-medium">GPN • NMID: ID102030405060</p>
+                      </div>
+                      
+                      <div className="relative mx-auto h-48 w-48 rounded-lg p-2 bg-white border-2 border-slate-200">
+                        {/* Mock QR Pattern */}
+                        <div className="absolute inset-2 border-4 border-slate-800 rounded-sm" />
+                        <div className="absolute top-4 left-4 h-8 w-8 bg-slate-800" />
+                        <div className="absolute top-4 right-4 h-8 w-8 bg-slate-800" />
+                        <div className="absolute bottom-4 left-4 h-8 w-8 bg-slate-800" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-10 w-10 bg-slate-800 rounded-sm" />
+                        <div className="absolute inset-x-12 top-6 h-2 bg-slate-800" />
+                        <div className="absolute inset-y-12 right-6 w-2 bg-slate-800" />
+                        <div className="absolute inset-x-12 bottom-6 h-2 bg-slate-800" />
+                        <div className="absolute inset-y-12 left-6 w-2 bg-slate-800" />
+                        <div className="grid grid-cols-4 grid-rows-4 gap-2 absolute inset-10 p-2">
+                          {Array.from({length: 16}).map((_, i) => (
+                            <div key={i} className={`bg-slate-800 ${i % 3 === 0 ? 'opacity-0' : ''}`} />
+                          ))}
+                        </div>
+
+                        {/* Animated Laser Scanner */}
+                        <motion.div
+                          animate={{
+                            y: [0, 160, 0],
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="absolute left-0 right-0 top-0 h-1 bg-red-500/80 shadow-[0_0_10px_3px_rgba(239,68,68,0.5)] z-10"
+                        />
+                      </div>
+                      
+                      <p className="text-sm font-semibold text-slate-800 mt-6">
+                        MiqStore Topup
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Buka aplikasi e-wallet Anda lalu scan QR ini
                       </p>
                     </div>
                   </>

@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatCompactNumber } from "@/lib/utils";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 
+import { linearRegressionForecast } from "@/lib/forecasting";
+
 /* ─── Mock Data ─── */
 const overviewStats = [
   {
@@ -70,15 +72,22 @@ const topProducts = [
   { name: "PUBG Mobile", sales: 4180, color: "var(--liquid-indigo)" },
 ];
 
-/* Revenue chart — 7-day mock data (visual bars) */
+/* Revenue chart — 7-day mock data + 3-day AI forecast */
+const historicalRevenue = [12400000, 15200000, 13800000, 18300000, 16500000, 14100000, 15750000];
+const forecastedRevenue = linearRegressionForecast(historicalRevenue, 3);
+const maxRevenue = Math.max(...historicalRevenue, ...forecastedRevenue);
+
 const revenueData = [
-  { day: "Sen", value: 12400000, pct: 68 },
-  { day: "Sel", value: 15200000, pct: 83 },
-  { day: "Rab", value: 13800000, pct: 75 },
-  { day: "Kam", value: 18300000, pct: 100 },
-  { day: "Jum", value: 16500000, pct: 90 },
-  { day: "Sab", value: 14100000, pct: 77 },
-  { day: "Min", value: 15750000, pct: 86 },
+  { day: "Sen", value: historicalRevenue[0], pct: (historicalRevenue[0] / maxRevenue) * 100, isForecast: false },
+  { day: "Sel", value: historicalRevenue[1], pct: (historicalRevenue[1] / maxRevenue) * 100, isForecast: false },
+  { day: "Rab", value: historicalRevenue[2], pct: (historicalRevenue[2] / maxRevenue) * 100, isForecast: false },
+  { day: "Kam", value: historicalRevenue[3], pct: (historicalRevenue[3] / maxRevenue) * 100, isForecast: false },
+  { day: "Jum", value: historicalRevenue[4], pct: (historicalRevenue[4] / maxRevenue) * 100, isForecast: false },
+  { day: "Sab", value: historicalRevenue[5], pct: (historicalRevenue[5] / maxRevenue) * 100, isForecast: false },
+  { day: "Min", value: historicalRevenue[6], pct: (historicalRevenue[6] / maxRevenue) * 100, isForecast: false },
+  { day: "+1", value: forecastedRevenue[0], pct: (forecastedRevenue[0] / maxRevenue) * 100, isForecast: true },
+  { day: "+2", value: forecastedRevenue[1], pct: (forecastedRevenue[1] / maxRevenue) * 100, isForecast: true },
+  { day: "+3", value: forecastedRevenue[2], pct: (forecastedRevenue[2] / maxRevenue) * 100, isForecast: true },
 ];
 
 /* Hourly traffic heatmap */
@@ -157,24 +166,26 @@ export default function AdminPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 text-[var(--liquid-purple)]" />
-                  Revenue 7 Hari
+                  Revenue Forecast (AI)
                 </CardTitle>
-                <Badge variant="outline" className="text-[10px]">
-                  <TrendingUp className="h-3 w-3 mr-1 text-green-400" /> +12.5%
+                <Badge variant="outline" className="text-[10px] border-[var(--liquid-cyan)]/30 text-[var(--liquid-cyan)] bg-[var(--liquid-cyan)]/5">
+                  <Activity className="h-3 w-3 mr-1" /> Model Aktif
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-2 h-48 pt-4">
                 {revenueData.map((d, i) => (
-                  <div key={d.day} className="flex-1 flex flex-col items-center gap-2">
-                    <span className="text-[10px] text-[hsl(var(--muted-foreground))] font-medium">
+                  <div key={d.day} className={`flex-1 flex flex-col items-center gap-2 ${d.isForecast ? 'opacity-80' : ''}`}>
+                    <span className={`text-[10px] font-medium ${d.isForecast ? 'text-[var(--liquid-cyan)]' : 'text-[hsl(var(--muted-foreground))]'}`}>
                       {formatCompactNumber(d.value / 1000000)}M
                     </span>
                     <motion.div
-                      className="w-full rounded-xl relative overflow-hidden"
+                      className={`w-full rounded-xl relative overflow-hidden ${d.isForecast ? 'border-2 border-dashed border-[var(--liquid-cyan)]/50' : ''}`}
                       style={{
-                        background: i === revenueData.length - 1
+                        background: d.isForecast 
+                          ? `linear-gradient(180deg, rgba(34,211,238,0.2) 0%, rgba(34,211,238,0.05) 100%)`
+                          : i === 6 // Current day (Min)
                           ? `linear-gradient(180deg, var(--liquid-purple) 0%, var(--liquid-blue) 100%)`
                           : `linear-gradient(180deg, rgba(192,132,252,0.3) 0%, rgba(125,211,252,0.15) 100%)`,
                       }}
@@ -183,11 +194,11 @@ export default function AdminPage() {
                       transition={{ duration: 0.8, delay: 0.3 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                     >
                       {/* Shine effect on current day */}
-                      {i === revenueData.length - 1 && (
+                      {i === 6 && (
                         <div className="absolute inset-0 animate-shine" />
                       )}
                     </motion.div>
-                    <span className={`text-[10px] font-medium ${i === revenueData.length - 1 ? "text-[var(--liquid-purple)]" : "text-[hsl(var(--muted-foreground))]"}`}>
+                    <span className={`text-[10px] font-medium ${d.isForecast ? 'text-[var(--liquid-cyan)]' : i === 6 ? "text-[var(--liquid-purple)]" : "text-[hsl(var(--muted-foreground))]"}`}>
                       {d.day}
                     </span>
                   </div>

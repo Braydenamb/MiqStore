@@ -42,11 +42,36 @@ export function middleware(request: NextRequest) {
     // For now, allow access in development
   }
 
-  // API rate limiting headers
+  // API Protection
   if (pathname.startsWith("/api/")) {
+    // 1. CSRF Protection for state-changing requests
+    if (["POST", "PUT", "DELETE", "PATCH"].includes(request.method)) {
+      // Exclude webhooks as they come from external providers
+      if (!pathname.startsWith("/api/webhook/")) {
+        const origin = request.headers.get("origin");
+        const referer = request.headers.get("referer");
+        const host = request.headers.get("host");
+
+        // Validate origin/referer against our host
+        // In dev, origin might be localhost:3000. In prod, it will be the real domain.
+        const isOriginValid = origin ? origin.includes(host || "") : true;
+        const isRefererValid = referer ? referer.includes(host || "") : true;
+
+        if (!isOriginValid || (!origin && !isRefererValid)) {
+          console.warn(`[CSRF] Blocked request to ${pathname}. Origin: ${origin}, Referer: ${referer}, Host: ${host}`);
+          return NextResponse.json(
+            { success: false, error: "CSRF token mismatch or invalid origin" },
+            { status: 403 }
+          );
+        }
+      }
+    }
+
+    // 2. Add security headers
     const response = NextResponse.next();
-    response.headers.set("X-RateLimit-Limit", "60");
-    response.headers.set("X-RateLimit-Remaining", "59");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("X-XSS-Protection", "1; mode=block");
     response.headers.set("X-Request-Id", crypto.randomUUID());
     return response;
   }
