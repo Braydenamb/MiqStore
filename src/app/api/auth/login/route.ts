@@ -1,12 +1,21 @@
 import { NextRequest } from "next/server";
 import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
+import { authLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
 
 /**
  * POST /api/auth/login
  * Authenticate user with email/password.
+ * Rate limited: 10 req/min per IP.
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit to prevent brute force
+    const ip = getClientIP(req);
+    const rateResult = authLimiter.check(ip);
+    if (!rateResult.allowed) {
+      return rateLimitResponse(rateResult, authLimiter);
+    }
+
     const body = await req.json();
     const { email, password } = body;
 

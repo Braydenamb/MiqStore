@@ -32,6 +32,7 @@ export function apiSuccess<T>(
     message?: string;
     status?: number;
     meta?: SuccessResponse<T>["meta"];
+    headers?: Record<string, string>;
   }
 ) {
   const body: SuccessResponse<T> = {
@@ -40,7 +41,10 @@ export function apiSuccess<T>(
     ...(options?.message && { message: options.message }),
     ...(options?.meta && { meta: options.meta }),
   };
-  return NextResponse.json(body, { status: options?.status ?? 200 });
+  return NextResponse.json(body, {
+    status: options?.status ?? 200,
+    headers: options?.headers,
+  });
 }
 
 export function apiError(
