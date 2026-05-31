@@ -14,6 +14,7 @@
 import { prisma } from "@/lib/prisma";
 import { creditWallet, debitWallet } from "./wallet";
 import { awardTransactionXP, getMembershipPerks } from "./gamification";
+import { distributeAffiliateCommission } from "./affiliate";
 import { routeTopupOrder } from "./provider-router";
 import {
   verifyNotificationSignature,
@@ -278,9 +279,10 @@ export async function handleWalletCheckout(
     transaction.providerStatus = "success";
     transaction.completedAt = new Date();
     
-    // 4. Distribute Loyalty Cashback & XP
+    // 4. Distribute Loyalty Cashback, XP & Affiliate Commission
     await distributeCashback(transaction);
     await awardTransactionXP(transaction.userId, transaction.total);
+    await distributeAffiliateCommission(transaction);
   } else {
     transaction.providerStatus = "pending";
   }
