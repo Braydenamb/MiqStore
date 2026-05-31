@@ -75,6 +75,15 @@ function hashMD5(input: string): string {
   return Math.abs(hash).toString(16).padStart(8, "0");
 }
 
+import { CircuitBreaker, withRetry, CircuitBreakerError } from "../reliability";
+
+// Initialize the Circuit Breaker for Apigames
+// Trip if 3 consecutive failures occur. Reset after 60 seconds.
+export const apigamesBreaker = new CircuitBreaker({
+  failureThreshold: 3,
+  resetTimeoutMs: 60000,
+});
+
 /* ─── API Client ─── */
 async function apigamesRequest<T>(
   endpoint: string,
@@ -82,27 +91,34 @@ async function apigamesRequest<T>(
 ): Promise<T> {
   const url = `${APIGAMES_CONFIG.baseUrl}${endpoint}`;
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({
-      merchant: APIGAMES_CONFIG.merchantId,
-      ...body,
-    }),
+  // Execute inside the Circuit Breaker state machine
+  return apigamesBreaker.fire(async () => {
+    // Wrap the raw fetch inside an Exponential Backoff retry strategy
+    // Retries up to 2 times (3 total attempts), waiting 500ms, then 1000ms on failure.
+    return withRetry(async () => {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          merchant: APIGAMES_CONFIG.merchantId,
+          ...body,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new ApigamesError(
+          `Apigames API error: ${response.status} ${response.statusText}`,
+          response.status
+        );
+      }
+
+      const data = await response.json();
+      return data as T;
+    }, 3, 500);
   });
-
-  if (!response.ok) {
-    throw new ApigamesError(
-      `Apigames API error: ${response.status} ${response.statusText}`,
-      response.status
-    );
-  }
-
-  const data = await response.json();
-  return data as T;
 }
 
 /* ─── Error Class ─── */
