@@ -115,3 +115,31 @@ export async function debitWallet(
     return { wallet: updatedWallet, history };
   });
 }
+
+/**
+ * Step 5 (Wallet Ecosystem): Loyalty Cashback 
+ * Gives dynamic cashback to the user's wallet based on their Gamification Membership Tier.
+ */
+export async function distributeCashback(transaction: import("./transaction").TransactionRecord) {
+  const { getMembershipPerks } = await import("./gamification");
+  
+  const user = await prisma.user.findUnique({
+    where: { id: transaction.userId },
+    select: { membership: true }
+  });
+
+  const tier = (user?.membership as any) || "BRONZE";
+  const { cashbackPercent } = getMembershipPerks(tier);
+
+  const cashbackAmount = Math.floor(transaction.total * (cashbackPercent / 100));
+  if (cashbackAmount > 0) {
+    await creditWallet(
+      transaction.userId,
+      cashbackAmount,
+      "CASHBACK",
+      `Cashback ${cashbackPercent}% from ${transaction.invoiceId}`,
+      transaction.invoiceId
+    );
+    console.log(`[Cashback] Awarded ${cashbackAmount} IDR to User ${transaction.userId}`);
+  }
+}

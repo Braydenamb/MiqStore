@@ -12,12 +12,15 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { creditWallet, debitWallet } from "./wallet";
-import { awardTransactionXP, getMembershipPerks } from "./gamification";
-import { distributeAffiliateCommission } from "./affiliate";
+import { debitWallet } from "./wallet";
 import { calculateFraudScore } from "./ai-brain";
 import { logger, metrics, tracing } from "../telemetry";
+import { eventBus } from "./event-bus";
+import { registerSystemSubscribers } from "./subscribers";
 import { routeTopupOrder } from "./provider-router";
+
+// Boot the background event workers exactly once when this module loads
+registerSystemSubscribers();
 import {
   verifyNotificationSignature,
   mapTransactionStatus,
@@ -306,10 +309,8 @@ export async function handleWalletCheckout(
     transaction.providerStatus = "success";
     transaction.completedAt = new Date();
     
-    // 4. Distribute Loyalty Cashback, XP & Affiliate Commission
-    await distributeCashback(transaction);
-    await awardTransactionXP(transaction.userId, transaction.total);
-    await distributeAffiliateCommission(transaction);
+    // 🔥 Fire & Forget: Broadcast to decoupled workers
+    eventBus.publish("TRANSACTION_COMPLETED", { transaction });
   } else {
     transaction.providerStatus = "pending";
   }
@@ -317,32 +318,6 @@ export async function handleWalletCheckout(
   return transaction;
 }
 
-/**
- * Step 5 (Wallet Ecosystem): Loyalty Cashback 
- * Gives dynamic cashback to the user's wallet based on their Gamification Membership Tier.
- */
-export async function distributeCashback(transaction: TransactionRecord) {
-  // Retrieve user to get their current membership tier
-  const user = await prisma.user.findUnique({
-    where: { id: transaction.userId },
-    select: { membership: true }
-  });
-
-  const tier = (user?.membership as any) || "BRONZE";
-  const { cashbackPercent } = getMembershipPerks(tier);
-
-  const cashbackAmount = Math.floor(transaction.total * (cashbackPercent / 100));
-  if (cashbackAmount > 0) {
-    await creditWallet(
-      transaction.userId,
-      cashbackAmount,
-      "CASHBACK",
-      `Cashback ${cashbackPercent}% from ${transaction.invoiceId}`,
-      transaction.invoiceId
-    );
-    console.log(`[Cashback] Awarded ${cashbackAmount} IDR to User ${transaction.userId}`);
-  }
-}
 
 /**
  * Get transaction summary for dashboard/analytics
