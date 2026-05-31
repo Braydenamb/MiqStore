@@ -22,11 +22,89 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { linearRegressionForecast } from "@/lib/forecasting";
 
+const statusColors: Record<string, string> = {
+  success: "bg-green-500/15 text-green-400",
+  processing: "bg-[var(--liquid-cyan)]/15 text-[var(--liquid-cyan)]",
   pending: "bg-[var(--liquid-amber)]/15 text-[var(--liquid-amber)]",
   failed: "bg-red-500/15 text-red-400",
 };
 
 export default function AdminPage() {
+  const { data: session } = useSession();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/stats");
+      if (!res.ok) throw new Error("Failed to fetch admin stats");
+      return res.json();
+    },
+    enabled: !!session?.user,
+  });
+
+  const overviewStats = [
+    {
+      label: "Revenue Hari Ini",
+      value: isLoading ? "..." : formatCurrency(data?.overview?.todayRevenue || 0),
+      change: "+0.0%",
+      trend: "up" as const,
+      icon: DollarSign,
+      color: "var(--liquid-purple)",
+    },
+    {
+      label: "Transaksi Hari Ini",
+      value: isLoading ? "..." : (data?.overview?.todayTx || 0).toString(),
+      change: "+0.0%",
+      trend: "up" as const,
+      icon: ShoppingCart,
+      color: "var(--liquid-blue)",
+    },
+    {
+      label: "User Baru",
+      value: isLoading ? "..." : (data?.overview?.newUsers || 0).toString(),
+      change: "+0.0%",
+      trend: "up" as const,
+      icon: Users,
+      color: "var(--liquid-cyan)",
+    },
+    {
+      label: "Tingkat Sukses",
+      value: isLoading ? "..." : `${data?.overview?.successRate || 0}%`,
+      change: "0.0%",
+      trend: "up" as const,
+      icon: Activity,
+      color: "var(--liquid-pink)",
+    },
+  ];
+
+  const recentOrders = data?.recentOrders || [];
+  const topProducts = data?.topProducts || [];
+
+  const historicalRevenue = data?.historicalRevenue || [0,0,0,0,0,0,0];
+  const forecastedRevenue = historicalRevenue.some((val: number) => val > 0) ? linearRegressionForecast(historicalRevenue, 3) : [0,0,0];
+  const maxRevenue = Math.max(...historicalRevenue, ...forecastedRevenue, 1);
+
+  const revenueData = [
+    { day: "Sen", value: historicalRevenue[0], pct: (historicalRevenue[0] / maxRevenue) * 100, isForecast: false },
+    { day: "Sel", value: historicalRevenue[1], pct: (historicalRevenue[1] / maxRevenue) * 100, isForecast: false },
+    { day: "Rab", value: historicalRevenue[2], pct: (historicalRevenue[2] / maxRevenue) * 100, isForecast: false },
+    { day: "Kam", value: historicalRevenue[3], pct: (historicalRevenue[3] / maxRevenue) * 100, isForecast: false },
+    { day: "Jum", value: historicalRevenue[4], pct: (historicalRevenue[4] / maxRevenue) * 100, isForecast: false },
+    { day: "Sab", value: historicalRevenue[5], pct: (historicalRevenue[5] / maxRevenue) * 100, isForecast: false },
+    { day: "Min", value: historicalRevenue[6], pct: (historicalRevenue[6] / maxRevenue) * 100, isForecast: false },
+    { day: "+1", value: forecastedRevenue[0], pct: (forecastedRevenue[0] / maxRevenue) * 100, isForecast: true },
+    { day: "+2", value: forecastedRevenue[1], pct: (forecastedRevenue[1] / maxRevenue) * 100, isForecast: true },
+    { day: "+3", value: forecastedRevenue[2], pct: (forecastedRevenue[2] / maxRevenue) * 100, isForecast: true },
+  ];
+
+  /* Hourly traffic heatmap */
+  const hourlyTraffic = [
+    { hour: "00", val: 12 }, { hour: "03", val: 5 }, { hour: "06", val: 8 },
+    { hour: "09", val: 28 }, { hour: "12", val: 45 }, { hour: "15", val: 62 },
+    { hour: "18", val: 85 }, { hour: "19", val: 100 }, { hour: "20", val: 95 },
+    { hour: "21", val: 88 }, { hour: "22", val: 65 }, { hour: "23", val: 35 },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}

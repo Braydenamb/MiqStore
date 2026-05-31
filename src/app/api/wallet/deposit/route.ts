@@ -3,7 +3,7 @@ import { apiSuccess, API_ERRORS } from "@/lib/api-response";
 import { createSnapTransaction } from "@/lib/services/midtrans";
 import { prisma } from "@/lib/prisma";
 import { generateInvoiceId } from "@/lib/utils";
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
