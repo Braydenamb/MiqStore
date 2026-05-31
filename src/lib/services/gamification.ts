@@ -88,7 +88,7 @@ export async function awardTransactionXP(userId: string, transactionTotal: numbe
     where: { id: userId },
     data: { 
       rewardPoints: newPoints,
-      membership: newTier as string 
+      membership: newTier as any 
     }
   });
 
