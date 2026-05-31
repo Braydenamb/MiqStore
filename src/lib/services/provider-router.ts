@@ -1,3 +1,5 @@
+import { logger, metrics, tracing } from "../telemetry";
+
 export interface TopupOrderResponse {
   success: boolean;
   providerName: string;
@@ -121,7 +123,8 @@ export async function routeTopupOrder(
   zoneId?: string,
   invoiceId?: string
 ): Promise<TopupOrderResponse> {
-  console.log(`[Router] Initiating Smart Route for ${invoiceId || "Unknown"}`);
+  const span = tracing.startSpan("route_topup_order", { invoiceId, productCode });
+  logger.info(`Initiating Smart Route for ${invoiceId || "Unknown"}`);
   
   // 1. Check stock across all providers in parallel
   const stockResults = await Promise.all(
@@ -134,7 +137,9 @@ export async function routeTopupOrder(
   const availableProviders = stockResults.filter((r) => r.inStock).map((r) => r.provider);
 
   if (availableProviders.length === 0) {
-    console.error(`[Router] FATAL: Product ${productCode} is OUT OF STOCK on all providers!`);
+    logger.error(`FATAL: Product ${productCode} is OUT OF STOCK on all providers!`, undefined, { invoiceId });
+    metrics.increment("router_fatal_out_of_stock");
+    span.end("error");
     return {
       success: false,
       providerName: "SYSTEM",
@@ -153,28 +158,30 @@ export async function routeTopupOrder(
   // Sort by lowest price first
   priceResults.sort((a, b) => a.price - b.price);
 
-  console.log(`[Router] Ranked Providers by Price: ${priceResults.map(p => `${p.provider.name} (Rp${p.price})`).join(' -> ')}`);
+  logger.debug(`Ranked Providers by Price: ${priceResults.map(p => `${p.provider.name} (Rp${p.price})`).join(' -> ')}`);
 
   // 3. Fallback Engine: Check latency sequentially down the list
   for (const candidate of priceResults) {
     const { provider, price } = candidate;
     
-    console.log(`[Router] Testing primary candidate: ${provider.name}...`);
+    logger.debug(`Testing primary candidate: ${provider.name}...`);
     const latency = await provider.ping();
 
     if (latency > 2000) {
-      console.warn(`[Router] ⚠️ ${provider.name} is too slow (${latency}ms). Triggering fallback to next provider.`);
+      logger.warn(`Provider ${provider.name} is too slow (${latency}ms). Triggering fallback.`, { provider: provider.name, latency });
+      metrics.increment(`router_latency_fallback_${provider.name.toLowerCase()}`);
       continue; // Fallback to next provider in loop
     }
 
-    console.log(`[Router] ✅ ${provider.name} selected! Latency: ${latency}ms, Price: Rp${price}`);
+    logger.info(`Provider selected!`, { provider: provider.name, latency, price });
 
     // 4. Execute Topup
     try {
       const startTime = Date.now();
       const order = await provider.createOrder(productCode, gameUserId, zoneId, invoiceId);
       const executionTime = Date.now() - startTime;
-
+      
+      span.end("success");
       return {
         success: order.success,
         providerName: provider.name,
@@ -185,12 +192,15 @@ export async function routeTopupOrder(
         latencyMs: executionTime
       };
     } catch (e) {
-      console.error(`[Router] ❌ ${provider.name} execution failed! Trying fallback...`);
+      logger.error(`Execution failed for ${provider.name}! Trying fallback...`, e, { provider: provider.name });
+      metrics.increment(`router_execution_failed_${provider.name.toLowerCase()}`);
       // Fall through to next provider loop if error
     }
   }
 
   // If all providers failed latency or execution checks
+  span.end("error");
+  metrics.increment("router_all_providers_failed");
   return {
     success: false,
     providerName: "SYSTEM",

@@ -16,6 +16,7 @@ import { creditWallet, debitWallet } from "./wallet";
 import { awardTransactionXP, getMembershipPerks } from "./gamification";
 import { distributeAffiliateCommission } from "./affiliate";
 import { calculateFraudScore } from "./ai-brain";
+import { logger, metrics, tracing } from "../telemetry";
 import { routeTopupOrder } from "./provider-router";
 import {
   verifyNotificationSignature,
@@ -124,10 +125,17 @@ function generateInvoiceId(): string {
 export async function createTransaction(
   input: CreateTransactionInput
 ): Promise<TransactionRecord> {
+  const span = tracing.startSpan("create_transaction");
+
   // 🚨 AI Risk Engine Check
   const riskAnalysis = await calculateFraudScore(input.userId);
   if (riskAnalysis.isSuspicious) {
-    console.error(`[Security] Transaction blocked for user ${input.userId}. Fraud Score: ${riskAnalysis.score}. Reasons: ${riskAnalysis.reasons.join(", ")}`);
+    logger.warn(`Transaction blocked for user ${input.userId} by AI Risk Engine`, {
+      fraudScore: riskAnalysis.score,
+      reasons: riskAnalysis.reasons
+    });
+    metrics.increment("fraud_blocks");
+    span.end("error");
     throw new Error("Transaction declined due to unusual activity. Please contact support.");
   }
 
@@ -162,9 +170,14 @@ export async function createTransaction(
   // In production: save to database
   // await prisma.transaction.create({ data: transaction });
 
-  console.log(
-    `[Transaction] Created ${invoiceId}: ${input.gameName} - ${input.productName} = ${total}`
-  );
+  logger.info(`Transaction Created: ${invoiceId}`, { 
+    game: input.gameName, 
+    total, 
+    paymentMethod: input.paymentMethod 
+  });
+  
+  metrics.increment("transaction_created");
+  span.end("success");
 
   return transaction;
 }
@@ -231,9 +244,14 @@ export async function processTopup(
     );
 
     if (order.success) {
-      console.log(`[Topup] Smart Route Selected: ${order.providerName} (TrxID: ${order.providerTrxId})`);
+      logger.info(`Smart Route Selected: ${order.providerName}`, {
+        invoiceId: transaction.invoiceId,
+        providerTrxId: order.providerTrxId
+      });
+      metrics.increment(`topup_success_${order.providerName.toLowerCase()}`);
     } else {
-      console.error(`[Topup] Smart Route Failed: ${order.message}`);
+      logger.error(`Smart Route Failed: ${order.message}`, undefined, { invoiceId: transaction.invoiceId });
+      metrics.increment("topup_failed_all_providers");
     }
 
     return {
@@ -243,7 +261,8 @@ export async function processTopup(
       message: order.message,
     };
   } catch (error) {
-    console.error(`[Topup] Critical Failure for ${transaction.invoiceId}:`, error);
+    logger.error(`Critical Failure processing topup for ${transaction.invoiceId}`, error);
+    metrics.increment("topup_critical_failure");
 
     return {
       success: false,

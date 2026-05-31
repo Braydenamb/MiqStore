@@ -16,6 +16,7 @@ import {
   BarChart3,
   ShieldCheck,
   BrainCircuit,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
@@ -30,6 +31,7 @@ const adminLinks = [
   { label: "Promos", href: "/admin/promos", icon: Percent },
   { label: "Providers", href: "/admin/providers", icon: Server },
   { label: "AI Insights", href: "/admin/ai-insights", icon: BrainCircuit },
+  { label: "System Health", href: "/admin/system", icon: Activity },
   { label: "Logs", href: "/admin/logs", icon: FileText },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
