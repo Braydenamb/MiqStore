@@ -15,6 +15,7 @@ import {
   Bell,
   BarChart3,
   ShieldCheck,
+  BrainCircuit,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
@@ -28,6 +29,7 @@ const adminLinks = [
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
   { label: "Promos", href: "/admin/promos", icon: Percent },
   { label: "Providers", href: "/admin/providers", icon: Server },
+  { label: "AI Insights", href: "/admin/ai-insights", icon: BrainCircuit },
   { label: "Logs", href: "/admin/logs", icon: FileText },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];

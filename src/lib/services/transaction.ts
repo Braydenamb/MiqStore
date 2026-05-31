@@ -15,6 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { creditWallet, debitWallet } from "./wallet";
 import { awardTransactionXP, getMembershipPerks } from "./gamification";
 import { distributeAffiliateCommission } from "./affiliate";
+import { calculateFraudScore } from "./ai-brain";
 import { routeTopupOrder } from "./provider-router";
 import {
   verifyNotificationSignature,
@@ -123,6 +124,13 @@ function generateInvoiceId(): string {
 export async function createTransaction(
   input: CreateTransactionInput
 ): Promise<TransactionRecord> {
+  // 🚨 AI Risk Engine Check
+  const riskAnalysis = await calculateFraudScore(input.userId);
+  if (riskAnalysis.isSuspicious) {
+    console.error(`[Security] Transaction blocked for user ${input.userId}. Fraud Score: ${riskAnalysis.score}. Reasons: ${riskAnalysis.reasons.join(", ")}`);
+    throw new Error("Transaction declined due to unusual activity. Please contact support.");
+  }
+
   const invoiceId = generateInvoiceId();
   const fee = calculateFee(input.price, input.paymentMethod);
   const discount = calculateDiscount(input.price, input.promoCode);
