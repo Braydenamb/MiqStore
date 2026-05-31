@@ -70,14 +70,17 @@ export async function triggerRetentionCampaign(userId: string) {
   const code = `COMEBACK-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
   
   // Create a 10% discount promo
-  await prisma.userPromo.create({
+  await prisma.promoCode.create({
     data: {
-      userId,
-      promoCode: code,
-      discountType: "PERCENTAGE",
+      code: code,
+      name: "Retention Promo",
+      description: "Exclusive comeback promo!",
+      discountType: "percent",
       discountValue: 10,
-      isUsed: false,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Valid for 7 days
+      maxUsage: 1,
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Valid for 7 days
+      isActive: true,
     }
   });
 
