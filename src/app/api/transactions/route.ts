@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
 import { createTransactionSchema } from "@/lib/validators";
-import { getCurrentUser } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * POST /api/transactions
@@ -9,7 +10,8 @@ import { getCurrentUser } from "@/lib/auth";
  */
 export async function POST(req: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
     if (!user) return API_ERRORS.unauthorized();
 
     const body = await req.json();
@@ -76,7 +78,8 @@ export async function POST(req: NextRequest) {
  */
 export async function GET(req: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
     if (!user) return API_ERRORS.unauthorized();
 
     const { searchParams } = new URL(req.url);

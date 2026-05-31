@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 const protectedRoutes = ["/dashboard", "/admin"];
 const authRoutes = ["/auth/login", "/auth/register"];
 
-export function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // In production, check for a real session token cookie
