@@ -1,0 +1,43 @@
+name: Production CI/CD Gatekeeper
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Lint, Test, and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Lint Codebase
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test
+        env:
+          NODE_ENV: test
+
+      - name: Next.js Typecheck & Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          # Note: Real database URL is required for Prisma build phase
+          # In GitHub Actions, provide a mock or shadow database URL in repository secrets
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
