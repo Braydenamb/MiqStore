@@ -183,6 +183,58 @@ function CheckoutContent() {
               </Card>
             </motion.div>
 
+            {/* MiqStore Wallet Top Section */}
+            <motion.div variants={staggerItem}>
+              <Card className={cn(
+                "overflow-hidden transition-all border-2",
+                selectedPayment === "wallet"
+                  ? "border-[var(--liquid-cyan)] bg-[var(--liquid-cyan)]/5 ring-1 ring-[var(--liquid-cyan)]/30"
+                  : "border-[var(--liquid-cyan)]/30 hover:border-[var(--liquid-cyan)]/50"
+              )}>
+                <button
+                  className="w-full p-4 flex items-center justify-between transition-colors"
+                  onClick={() => setSelectedPayment("wallet")}
+                  disabled={total > 125000} // Mock check for insufficient balance
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-xl"
+                      style={{ backgroundColor: `color-mix(in srgb, var(--liquid-cyan) 15%, transparent)` }}
+                    >
+                      <Wallet className="h-6 w-6 text-[var(--liquid-cyan)]" />
+                    </div>
+                    <div className="text-left">
+                      <div className="flex items-center gap-2">
+                        <p className="text-base font-bold">Saldo MiqStore</p>
+                        <Badge variant="glow" className="text-[9px] px-1.5 py-0 bg-[var(--liquid-cyan)]/10 text-[var(--liquid-cyan)] border-[var(--liquid-cyan)]/30">
+                          <Sparkles className="h-2.5 w-2.5 mr-0.5" /> Bebas Biaya
+                        </Badge>
+                      </div>
+                      <p className="text-sm font-medium tabular-nums text-[hsl(var(--muted-foreground))] mt-0.5">
+                        Sisa saldo: <span className={total > 125000 ? "text-red-400" : "text-foreground"}>Rp 125.000</span>
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    {total > 125000 ? (
+                      <span className="text-xs font-semibold text-red-400">Saldo Tidak Cukup</span>
+                    ) : (
+                      selectedPayment === "wallet" && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--liquid-cyan)]"
+                        >
+                          <Check className="h-3.5 w-3.5 text-black" />
+                        </motion.div>
+                      )
+                    )}
+                  </div>
+                </button>
+              </Card>
+            </motion.div>
+
             {/* Payment Groups */}
             {paymentGroups.map((group) => (
               <motion.div key={group.id} variants={staggerItem}>
@@ -206,7 +258,7 @@ function CheckoutContent() {
                           <p className="text-sm font-semibold">{group.label}</p>
                           {group.recommended && (
                             <Badge variant="glow" className="text-[9px] px-1.5 py-0">
-                              <Sparkles className="h-2.5 w-2.5 mr-0.5" /> Tercepat
+                               Tercepat
                             </Badge>
                           )}
                         </div>

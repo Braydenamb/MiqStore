@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Sparkles,
+  Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ const sidebarLinks = [
   { label: "Membership", href: "/dashboard/membership", icon: Crown, badge: "Gold" },
   { label: "Voucher Saya", href: "/dashboard/vouchers", icon: Ticket },
   { label: "Game Favorit", href: "/dashboard/favorites", icon: Heart },
+  { label: "Reseller API", href: "/dashboard/reseller", icon: Terminal, badge: "PRO" },
   { label: "Pengaturan", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -66,10 +68,12 @@ export default function DashboardLayout({
                         "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300",
                         isActive
                           ? "bg-[var(--liquid-purple)]/10 text-[var(--liquid-purple)]"
-                          : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
+                          : link.label === "Membership" 
+                            ? "text-[var(--liquid-amber)]/90 hover:bg-[var(--liquid-amber)]/10 hover:text-[var(--liquid-amber)] shadow-[0_0_10px_rgba(245,158,11,0.1)] border border-[var(--liquid-amber)]/20"
+                            : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
                       )}
                     >
-                      <link.icon className="h-4 w-4 shrink-0" />
+                      <link.icon className={cn("h-4 w-4 shrink-0", link.label === "Membership" && !isActive && "animate-pulse")} />
                       <span className="flex-1">{link.label}</span>
                       {isActive && (
                         <span className="h-1.5 w-1.5 rounded-full bg-[var(--liquid-purple)]" />

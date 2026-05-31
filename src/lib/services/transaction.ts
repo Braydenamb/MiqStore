@@ -11,6 +11,9 @@
  * This is the central service that connects payment ↔ provider.
  */
 
+import { prisma } from "@/lib/prisma";
+import { creditWallet, debitWallet } from "./wallet";
+import { awardTransactionXP, getMembershipPerks } from "./gamification";
 import {
   verifyNotificationSignature,
   mapTransactionStatus,
@@ -66,6 +69,7 @@ export interface TransactionRecord {
 
 /* ─── Fee Calculation ─── */
 const PAYMENT_FEES: Record<string, { type: "flat" | "percent"; value: number }> = {
+  wallet: { type: "flat", value: 0 },
   qris: { type: "percent", value: 0.7 },
   gopay: { type: "percent", value: 2 },
   ovo: { type: "flat", value: 1000 },
@@ -208,14 +212,6 @@ export async function processTopup(
   message: string;
 }> {
   try {
-    // In production: call Apigames API
-    // const result = await apigamesCreateOrder({
-    //   productCode: transaction.productCode,
-    //   userId: transaction.gameUserId,
-    //   zoneId: transaction.gameZoneId,
-    //   invoiceId: transaction.invoiceId,
-    // });
-
     // Mock success for development
     const mockResult: ApigamesOrderResponse = {
       success: true,
@@ -225,17 +221,6 @@ export async function processTopup(
       message: "Topup berhasil diproses",
       sn: `SN${Date.now()}`,
     };
-
-    // In production: update transaction in database
-    // await prisma.transaction.update({
-    //   where: { id: transaction.id },
-    //   data: {
-    //     providerStatus: mockResult.status,
-    //     providerTrxId: mockResult.trxId,
-    //     serialNumber: mockResult.sn,
-    //     completedAt: mockResult.status === "success" ? new Date() : undefined,
-    //   }
-    // });
 
     console.log(
       `[Topup] ${transaction.invoiceId}: ${mockResult.status} (TrxID: ${mockResult.trxId})`
@@ -254,6 +239,78 @@ export async function processTopup(
       success: false,
       message: "Gagal memproses topup. Akan dicoba ulang secara otomatis.",
     };
+  }
+}
+
+/**
+ * Step 4 (Wallet Ecosystem): Instant Checkout via Internal Wallet
+ * Bypasses Midtrans completely.
+ */
+export async function handleWalletCheckout(
+  input: CreateTransactionInput
+): Promise<TransactionRecord> {
+  const transaction = await createTransaction(input);
+
+  if (transaction.paymentMethod.toLowerCase() !== "wallet") {
+    throw new Error("Invalid payment method for wallet checkout");
+  }
+
+  // 1. Debit Wallet
+  await debitWallet(
+    transaction.userId,
+    transaction.total,
+    "PURCHASE",
+    `Payment for ${transaction.invoiceId} - ${transaction.gameName}`,
+    transaction.invoiceId
+  );
+
+  // 2. Mark as PAID instantly
+  transaction.paymentStatus = "PAID";
+  transaction.paidAt = new Date();
+  
+  console.log(`[Wallet Checkout] Instant payment successful for ${transaction.invoiceId}`);
+
+  // 3. Trigger Topup
+  const topupResult = await processTopup(transaction);
+  
+  if (topupResult.success) {
+    transaction.providerStatus = "success";
+    transaction.completedAt = new Date();
+    
+    // 4. Distribute Loyalty Cashback & XP
+    await distributeCashback(transaction);
+    await awardTransactionXP(transaction.userId, transaction.total);
+  } else {
+    transaction.providerStatus = "pending";
+  }
+
+  return transaction;
+}
+
+/**
+ * Step 5 (Wallet Ecosystem): Loyalty Cashback 
+ * Gives dynamic cashback to the user's wallet based on their Gamification Membership Tier.
+ */
+export async function distributeCashback(transaction: TransactionRecord) {
+  // Retrieve user to get their current membership tier
+  const user = await prisma.user.findUnique({
+    where: { id: transaction.userId },
+    select: { membership: true }
+  });
+
+  const tier = (user?.membership as any) || "BRONZE";
+  const { cashbackPercent } = getMembershipPerks(tier);
+
+  const cashbackAmount = Math.floor(transaction.total * (cashbackPercent / 100));
+  if (cashbackAmount > 0) {
+    await creditWallet(
+      transaction.userId,
+      cashbackAmount,
+      "CASHBACK",
+      `Cashback ${cashbackPercent}% from ${transaction.invoiceId}`,
+      transaction.invoiceId
+    );
+    console.log(`[Cashback] Awarded ${cashbackAmount} IDR to User ${transaction.userId}`);
   }
 }
 

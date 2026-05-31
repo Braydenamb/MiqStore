@@ -23,7 +23,6 @@ import { staggerContainer, staggerItem } from "@/lib/motion";
 const stats = [
   { label: "Total Transaksi", value: "47", icon: Receipt, color: "var(--liquid-purple)" },
   { label: "Total Belanja", value: formatCurrency(2450000), icon: TrendingUp, color: "var(--liquid-blue)" },
-  { label: "Saldo Bonus", value: formatCurrency(125000), icon: Wallet, color: "var(--liquid-cyan)" },
   { label: "Poin Reward", value: "1,250", icon: Star, color: "var(--liquid-amber)" },
 ];
 
@@ -32,6 +31,12 @@ const recentTransactions = [
   { id: "INV-002", game: "Genshin Impact", product: "Welkin Moon", price: 79000, status: "success" as const, date: "27 Mei 2026" },
   { id: "INV-003", game: "Valorant", product: "700 VP", price: 79000, status: "processing" as const, date: "26 Mei 2026" },
   { id: "INV-004", game: "Free Fire", product: "355 Diamonds", price: 65000, status: "success" as const, date: "25 Mei 2026" },
+];
+
+const walletHistory = [
+  { id: "WH-1", type: "deposit", amount: 150000, date: "Hari ini, 14:30" },
+  { id: "WH-2", type: "purchase", amount: -68000, date: "Kemarin, 19:15" },
+  { id: "WH-3", type: "cashback", amount: 680, date: "Kemarin, 19:15" },
 ];
 
 const statusMap = {
@@ -45,11 +50,55 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-extrabold">Dashboard</h1>
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">
-          Selamat datang kembali, Miq! 👋
-        </p>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-end">
+        <div>
+          <h1 className="text-2xl font-extrabold">Dashboard</h1>
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">
+            Selamat datang kembali, Miq! 👋
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Hero Wallet Card */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8"
+          style={{
+            background: `linear-gradient(135deg, rgba(34,211,238,0.15) 0%, rgba(192,132,252,0.1) 50%, rgba(59,130,246,0.15) 100%)`,
+            border: "1px solid rgba(34,211,238,0.2)",
+            boxShadow: "0 20px 40px -15px rgba(34,211,238,0.1)",
+          }}
+        >
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="orb h-64 w-64 -top-32 -right-32 bg-[var(--liquid-cyan)] opacity-20 blur-[80px]" />
+            <div className="orb h-64 w-64 -bottom-32 -left-32 bg-[var(--liquid-purple)] opacity-20 blur-[80px]" />
+          </div>
+          
+          <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--liquid-cyan)]/20">
+                  <Wallet className="h-4 w-4 text-[var(--liquid-cyan)]" />
+                </div>
+                <span className="text-sm font-medium text-[var(--liquid-cyan)]">Saldo MiqStore</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                Rp 125.000
+              </h2>
+              <div className="mt-2 flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]">
+                <span className="flex items-center gap-1 text-green-400 font-medium">
+                  <TrendingUp className="h-3.5 w-3.5" /> +Rp 680 (Cashback)
+                </span>
+                <span>Bulan ini</span>
+              </div>
+            </div>
+            
+            <div className="flex w-full md:w-auto flex-row gap-3">
+              <Button size="lg" className="w-full md:w-auto bg-[var(--liquid-cyan)] text-black hover:bg-[var(--liquid-cyan)]/90 shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+                Deposit Saldo
+              </Button>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Stats Grid */}
@@ -57,7 +106,7 @@ export default function DashboardPage() {
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
         {stats.map((stat) => (
           <motion.div key={stat.label} variants={staggerItem}>
@@ -66,7 +115,7 @@ export default function DashboardPage() {
                 className="absolute -top-6 -right-6 h-20 w-20 rounded-full blur-3xl opacity-10"
                 style={{ background: stat.color }}
               />
-              <CardContent className="p-4 relative">
+              <CardContent className="p-5 relative">
                 <div className="flex items-center justify-between">
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
@@ -74,9 +123,8 @@ export default function DashboardPage() {
                   >
                     <stat.icon className="h-5 w-5" style={{ color: stat.color }} />
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-400" />
                 </div>
-                <p className="mt-3 text-xl font-bold">{stat.value}</p>
+                <p className="mt-3 text-2xl font-bold">{stat.value}</p>
                 <p className="text-xs text-[hsl(var(--muted-foreground))]">{stat.label}</p>
               </CardContent>
             </Card>
@@ -123,44 +171,101 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Recent Transactions */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Transaksi Terakhir</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard/transactions">Lihat Semua</Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {recentTransactions.map((tx) => {
-                const st = statusMap[tx.status];
-                return (
+      {/* Recent Transactions & Wallet History */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Game Transactions */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base">Transaksi Terakhir</CardTitle>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/dashboard/transactions">Semua</Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {recentTransactions.map((tx) => {
+                  const st = statusMap[tx.status];
+                  return (
+                    <div
+                      key={tx.id}
+                      className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] p-3 transition-colors hover:bg-[hsl(var(--muted))]"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--liquid-purple)]/10 shrink-0">
+                        <Gamepad2 className="h-5 w-5 text-[var(--liquid-purple)]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{tx.game}</p>
+                        <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                          {tx.product} • {tx.date}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-semibold tabular-nums">{formatCurrency(tx.price)}</p>
+                        <Badge variant={st.variant} className="text-[10px] mt-0.5">{st.label}</Badge>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Wallet History */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base">Riwayat Saldo</CardTitle>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/dashboard/wallet">Semua</Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {walletHistory.map((wh) => (
                   <div
-                    key={tx.id}
+                    key={wh.id}
                     className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] p-3 transition-colors hover:bg-[hsl(var(--muted))]"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--liquid-purple)]/10 shrink-0">
-                      <Gamepad2 className="h-5 w-5 text-[var(--liquid-purple)]" />
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl shrink-0 ${
+                      wh.type === 'deposit' ? 'bg-green-500/10' : 
+                      wh.type === 'cashback' ? 'bg-[var(--liquid-cyan)]/10' : 
+                      'bg-red-500/10'
+                    }`}>
+                      {wh.type === 'deposit' ? <ArrowUpRight className="h-5 w-5 text-green-400" /> :
+                       wh.type === 'cashback' ? <Sparkles className="h-5 w-5 text-[var(--liquid-cyan)]" /> :
+                       <ArrowUpRight className="h-5 w-5 text-red-400 rotate-90" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">{tx.game}</p>
+                      <p className="text-sm font-semibold truncate capitalize">
+                        {wh.type === 'deposit' ? 'Topup Saldo' : 
+                         wh.type === 'cashback' ? 'Cashback Loyalty' : 'Pembelian Game'}
+                      </p>
                       <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                        {tx.product} • {tx.date}
+                        {wh.date}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-semibold tabular-nums">{formatCurrency(tx.price)}</p>
-                      <Badge variant={st.variant} className="text-[10px] mt-0.5">{st.label}</Badge>
+                      <p className={`text-sm font-semibold tabular-nums ${wh.amount > 0 ? 'text-green-400' : ''}`}>
+                        {wh.amount > 0 ? '+' : ''}{formatCurrency(wh.amount)}
+                      </p>
+                      <Badge variant="outline" className="text-[10px] mt-0.5 border-[hsl(var(--border))]">Berhasil</Badge>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                ))}
+                
+                {/* Promo Empty State if history is short */}
+                <div className="mt-4 p-4 rounded-xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--muted))]/30 flex flex-col items-center justify-center text-center">
+                  <Wallet className="h-6 w-6 text-[hsl(var(--muted-foreground))] mb-2 opacity-50" />
+                  <p className="text-sm font-medium">Bayar pakai Saldo MiqStore</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Lebih cepat, tanpa biaya admin, dan dapat cashback 1%!</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 }
