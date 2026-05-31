@@ -112,7 +112,7 @@ export default function DashboardPage() {
         animate="visible"
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        {stats.map((stat) => (
+        {stats.map((stat: any) => (
           <motion.div key={stat.label} variants={staggerItem}>
             <Card className="card-hover relative overflow-hidden">
               <div
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {recentTransactions.map((tx) => {
+                {recentTransactions.map((tx: any) => {
                   const st = statusMap[tx.status];
                   return (
                     <div
@@ -227,7 +227,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {walletHistory.map((wh) => (
+                {walletHistory.map((wh: any) => (
                   <div
                     key={wh.id}
                     className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] p-3 transition-colors hover:bg-[hsl(var(--muted))]"
