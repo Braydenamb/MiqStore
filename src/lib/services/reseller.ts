@@ -74,11 +74,12 @@ export async function logApiRequest(data: {
   endpoint: string;
   method: string;
   status: number;
-  requestPayload?: any;
-  responsePayload?: any;
+  requestPayload?: Record<string, unknown>;
+  responsePayload?: Record<string, unknown>;
   ip?: string;
   userAgent?: string;
   durationMs: number;
+  error?: string;
 }) {
   // In production:
   // await prisma.apiLog.create({

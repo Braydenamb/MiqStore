@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       status: 500,
       error: error instanceof Error ? error.message : "Unknown error",
       durationMs: Date.now() - startTime,
-    } as any);
+    });
 
     return API_ERRORS.internal("Internal Server Error");
   }

@@ -35,8 +35,9 @@ function formatLog(level: LogLevel, message: string, context?: Record<string, an
 export const logger = {
   info: (msg: string, ctx?: Record<string, any>) => formatLog("info", msg, ctx),
   warn: (msg: string, ctx?: Record<string, any>) => formatLog("warn", msg, ctx),
-  error: (msg: string, err?: any, ctx?: Record<string, any>) => {
-    formatLog("error", msg, { ...ctx, error: err?.message, stack: err?.stack });
+  error: (msg: string, err?: unknown, ctx?: Record<string, unknown>) => {
+    const errorDetails = err instanceof Error ? { error: err.message, stack: err.stack } : { error: String(err) };
+    formatLog("error", msg, { ...ctx, ...errorDetails });
     // TODO: Connect to Sentry SDK here via @sentry/nextjs captureException
   },
   debug: (msg: string, ctx?: Record<string, any>) => {

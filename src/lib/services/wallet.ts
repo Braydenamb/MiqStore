@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
+type PrismaTx = Omit<typeof prisma, "$transaction" | "$connect" | "$disconnect" | "$on" | "$use">;
+
 // Mocking BalanceType since `npx prisma generate` cannot be run in this environment
 export type BalanceType = "DEPOSIT" | "PURCHASE" | "REFUND" | "CASHBACK" | "BONUS" | "WITHDRAWAL";
 
@@ -39,7 +41,7 @@ export async function creditWallet(
 ) {
   if (amount <= 0) throw new Error("Amount must be greater than 0");
 
-  return prisma.$transaction(async (tx: any) => {
+  return prisma.$transaction(async (tx: PrismaTx) => {
     // 1. Get or create wallet
     const wallet = await tx.wallet.upsert({
       where: { userId },
@@ -83,7 +85,7 @@ export async function debitWallet(
 ) {
   if (amount <= 0) throw new Error("Amount must be greater than 0");
 
-  return prisma.$transaction(async (tx: any) => {
+  return prisma.$transaction(async (tx: PrismaTx) => {
     // 1. Get wallet and lock it for update (optional if DB supports atomic decrement without dropping below 0 easily, but we'll manually check)
     const wallet = await tx.wallet.findUnique({
       where: { userId },
@@ -128,7 +130,7 @@ export async function distributeCashback(transaction: import("./transaction").Tr
     select: { membership: true }
   });
 
-  const tier = (user?.membership as any) || "BRONZE";
+  const tier = ((user?.membership as string) || "BRONZE") as import("./gamification").MembershipTier;
   const { cashbackPercent } = getMembershipPerks(tier);
 
   const cashbackAmount = Math.floor(transaction.total * (cashbackPercent / 100));

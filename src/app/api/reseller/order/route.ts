@@ -6,7 +6,7 @@ import { handleWalletCheckout } from "@/lib/services/transaction";
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
   let apiKeyId = "unknown";
-  let requestPayload: any = {};
+  let requestPayload: Record<string, unknown> = {};
 
   try {
     // 1. Auth Validation
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return API_ERRORS.validation({ body: ["Invalid JSON payload"] });
     }
 
-    const { gameSlug, productCode, gameUserId, gameZoneId, callbackUrl } = requestPayload;
+    const { gameSlug, productCode, gameUserId, gameZoneId, callbackUrl } = requestPayload as Record<string, string>;
 
     if (!gameSlug || !productCode || !gameUserId) {
       return API_ERRORS.validation({ fields: ["gameSlug, productCode, and gameUserId are required"] });
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     return apiSuccess(responseData);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Reseller API Order Error:", error);
 
     const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
