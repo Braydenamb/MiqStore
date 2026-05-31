@@ -49,7 +49,8 @@ export type MidtransTransactionStatus =
   | "FAILED"
   | "EXPIRED"
   | "REFUNDED"
-  | "CANCELLED";
+  | "PROCESSING"
+  | "SUCCESS";
 
 /* ─── Config ─── */
 const MIDTRANS_CONFIG = {
@@ -198,7 +199,7 @@ export function mapTransactionStatus(
     settlement: "PAID",
     pending: "PENDING",
     deny: "FAILED",
-    cancel: "CANCELLED",
+    cancel: "FAILED",
     expire: "EXPIRED",
     refund: "REFUNDED",
     partial_refund: "REFUNDED",
