@@ -156,28 +156,22 @@ export default function ResellerPage() {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <h4 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider flex items-center justify-between">
-                    Cek Saldo
-                    <Badge className="bg-green-500/20 text-green-400 hover:bg-green-500/20 text-[9px] h-4">GET</Badge>
-                  </h4>
-                  <div className="bg-black/50 p-3 rounded-lg border border-[hsl(var(--border))] font-mono text-[10px] text-gray-300 overflow-x-auto whitespace-pre">
-                    <span className="text-[var(--liquid-cyan)]">curl</span> -X GET \{"\n"}
-                    {'  '}https://miqstore.com/api/reseller/balance \{"\n"}
-                    {'  '}-H <span className="text-green-300">'x-api-key: YOUR_KEY'</span>
+                <div className="space-y-4 font-mono text-[10px] sm:text-xs">
+                  <div>
+                    <p className="text-[hsl(var(--muted-foreground))] mb-1">// 1. Cek Saldo</p>
+                    <div className="p-3 bg-black/40 rounded-lg overflow-x-auto border border-white/5 whitespace-pre">
+                      <span className="text-[var(--liquid-cyan)]">curl</span> -X GET https://api.miqstore.com/v1/balance \<br/>
+                      {'  '}-H <span className="text-[var(--liquid-amber)]">"x-api-key: {apiKey || "YOUR_API_KEY"}"</span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider flex items-center justify-between">
-                    Buat Pesanan
-                    <Badge className="bg-[var(--liquid-amber)]/20 text-[var(--liquid-amber)] hover:bg-[var(--liquid-amber)]/20 text-[9px] h-4">POST</Badge>
-                  </h4>
-                  <div className="bg-black/50 p-3 rounded-lg border border-[hsl(var(--border))] font-mono text-[10px] text-gray-300 overflow-x-auto whitespace-pre">
-                    <span className="text-[var(--liquid-cyan)]">curl</span> -X POST \{"\n"}
-                    {'  '}https://miqstore.com/api/reseller/order \{"\n"}
-                    {'  '}-H <span className="text-green-300">'x-api-key: YOUR_KEY'</span> \{"\n"}
-                    {'  '}-d <span className="text-[var(--liquid-amber)]">'&#123;"gameSlug":"ml", "productCode":"86D", "gameUserId":"123"&#125;'</span>
+                  <div>
+                    <p className="text-[hsl(var(--muted-foreground))] mb-1">// 2. Buat Pesanan (Smart Routed to Best Provider)</p>
+                    <div className="p-3 bg-black/40 rounded-lg overflow-x-auto border border-white/5 whitespace-pre">
+                      <span className="text-[var(--liquid-cyan)]">curl</span> -X POST https://api.miqstore.com/v1/order \<br/>
+                      {'  '}-H <span className="text-[var(--liquid-amber)]">"x-api-key: {apiKey || "YOUR_API_KEY"}"</span> \<br/>
+                      {'  '}-H <span className="text-[var(--liquid-amber)]">"Content-Type: application/json"</span> \<br/>
+                      {'  '}-d <span className="text-[var(--liquid-purple)]">'&#123;"game":"mlbb", "userId":"12345", "zoneId":"1234", "product":"86_dm"&#125;'</span>
+                    </div>
                   </div>
                 </div>
                 

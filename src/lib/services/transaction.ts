@@ -14,6 +14,7 @@
 import { prisma } from "@/lib/prisma";
 import { creditWallet, debitWallet } from "./wallet";
 import { awardTransactionXP, getMembershipPerks } from "./gamification";
+import { routeTopupOrder } from "./provider-router";
 import {
   verifyNotificationSignature,
   mapTransactionStatus,
@@ -212,32 +213,32 @@ export async function processTopup(
   message: string;
 }> {
   try {
-    // Mock success for development
-    const mockResult: ApigamesOrderResponse = {
-      success: true,
-      trxId: `AG-${Date.now()}`,
-      refId: transaction.invoiceId,
-      status: "success",
-      message: "Topup berhasil diproses",
-      sn: `SN${Date.now()}`,
-    };
-
-    console.log(
-      `[Topup] ${transaction.invoiceId}: ${mockResult.status} (TrxID: ${mockResult.trxId})`
+    // 🔥 Delegate to Smart Provider Routing Engine 🔥
+    const order = await routeTopupOrder(
+      transaction.productCode,
+      transaction.gameUserId,
+      transaction.gameZoneId,
+      transaction.invoiceId
     );
 
+    if (order.success) {
+      console.log(`[Topup] Smart Route Selected: ${order.providerName} (TrxID: ${order.providerTrxId})`);
+    } else {
+      console.error(`[Topup] Smart Route Failed: ${order.message}`);
+    }
+
     return {
-      success: mockResult.success,
-      providerTrxId: mockResult.trxId,
-      serialNumber: mockResult.sn,
-      message: mockResult.message,
+      success: order.success,
+      providerTrxId: order.providerTrxId,
+      serialNumber: order.serialNumber,
+      message: order.message,
     };
   } catch (error) {
-    console.error(`[Topup] Failed for ${transaction.invoiceId}:`, error);
+    console.error(`[Topup] Critical Failure for ${transaction.invoiceId}:`, error);
 
     return {
       success: false,
-      message: "Gagal memproses topup. Akan dicoba ulang secara otomatis.",
+      message: "Gagal memproses topup. Sistem sedang down.",
     };
   }
 }
