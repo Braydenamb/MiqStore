@@ -18,7 +18,7 @@ interface AdminRecentProps {
   topProducts: any[];
 }
 
-export function AdminRecent({ recentOrders, topProducts }: AdminRecentProps) {
+export default function AdminRecent({ recentOrders, topProducts }: AdminRecentProps) {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>

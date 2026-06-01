@@ -9,7 +9,7 @@ import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import "./globals.css";
 
-const Mascot = dynamic(() => import("@/components/mascot").then(mod => mod.Mascot), {
+const Mascot = dynamic(() => import("@/components/mascot"), {
   ssr: false,
 });
 

@@ -8,7 +8,7 @@ import { Sparkles, MessageCircle } from "lucide-react";
 // Note: Replace '/mascot.riv' with your actual Rive file path in the public folder
 // You can get free Rive assets from https://rive.app/community/
 
-export function Mascot() {
+export default function Mascot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 

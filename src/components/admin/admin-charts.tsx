@@ -11,7 +11,7 @@ interface AdminChartsProps {
   historicalRevenue: number[];
 }
 
-export function AdminCharts({ historicalRevenue }: AdminChartsProps) {
+export default function AdminCharts({ historicalRevenue }: AdminChartsProps) {
   const forecastedRevenue = historicalRevenue.some((val: number) => val > 0) ? linearRegressionForecast(historicalRevenue, 3) : [0,0,0];
   const maxRevenue = Math.max(...historicalRevenue, ...forecastedRevenue, 1);
 

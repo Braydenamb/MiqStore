@@ -6,12 +6,12 @@ import dynamic from "next/dynamic";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminStatsGrid } from "@/components/admin/admin-stats-grid";
 
-const AdminCharts = dynamic(() => import("@/components/admin/admin-charts").then(mod => mod.AdminCharts), {
+const AdminCharts = dynamic(() => import("@/components/admin/admin-charts"), {
   ssr: false,
   loading: () => <div className="h-[340px] w-full bg-[hsl(var(--card))]/40 backdrop-blur-md rounded-2xl animate-pulse border border-white/5" />
 });
 
-const AdminRecent = dynamic(() => import("@/components/admin/admin-recent").then(mod => mod.AdminRecent), {
+const AdminRecent = dynamic(() => import("@/components/admin/admin-recent"), {
   ssr: false,
   loading: () => <div className="h-[400px] w-full bg-[hsl(var(--card))]/40 backdrop-blur-md rounded-2xl animate-pulse border border-white/5" />
 });
