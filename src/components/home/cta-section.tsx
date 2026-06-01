@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion";
 import { ArrowRight, Sparkles, Gift, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeUp, staggerContainer, staggerItem, viewportConfig } from "@/lib/motion";
+import { Meteors } from "@/components/ui/meteors";
 
 const benefits = [
   { icon: Zap, label: "Proses 1-5 detik" },
@@ -35,11 +36,12 @@ export function CTASection() {
           }}
         >
           {/* Aurora background */}
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
             <div className="orb orb-purple h-72 w-72 -top-32 -right-32 animate-glow-pulse" />
             <div className="orb orb-blue h-56 w-56 -bottom-28 -left-28 animate-glow-pulse" style={{ animationDelay: "3s" }} />
             <div className="orb orb-cyan h-40 w-40 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-glow-pulse" style={{ animationDelay: "1.5s" }} />
             <div className="absolute inset-0 bg-grid opacity-10" />
+            <Meteors number={20} />
           </div>
 
           {/* Content */}
