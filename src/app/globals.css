@@ -591,3 +591,14 @@ body {
 .animate-meteor {
   animation: meteor 5s linear infinite;
 }
+
+/* ---------- MAGIC UI BORDER BEAM ---------- */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam var(--duration) infinite linear;
+}

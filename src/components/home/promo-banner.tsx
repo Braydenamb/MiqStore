@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PROMO_BANNERS } from "@/lib/constants";
+import { BorderBeam } from "@/components/ui/border-beam";
 import { cn } from "@/lib/utils";
 
 export function PromoBanner() {
@@ -46,6 +47,9 @@ export function PromoBanner() {
                   <div className="absolute inset-0 bg-grid opacity-20" />
                   <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
                   <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-white/5 blur-3xl" />
+                  
+                  {/* Magic UI Border Beam */}
+                  <BorderBeam duration={12} size={400} className="opacity-70" colorFrom="#ffffff" colorTo="transparent" />
 
                   <div className="relative z-10 max-w-lg">
                     {banner.badge && (
