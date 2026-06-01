@@ -7,6 +7,9 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
+  // Required when running behind a reverse proxy (Vercel + custom domain)
+  // Without this, NextAuth rejects callbacks from the proxied hostname
+  trustHost: true,
   // @ts-ignore - PrismaAdapter type mismatch is common between v4 and v5
   adapter: PrismaAdapter(prisma),
   session: {
