@@ -7,7 +7,11 @@ import { Search, ArrowRight, Zap, Shield, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import Spline from "@splinetool/react-spline";
+import dynamic from "next/dynamic";
+
+const Spline = dynamic(() => import("@splinetool/react-spline"), {
+  ssr: false,
+});
 
 const features = [
   { icon: Zap, label: "Proses Instan", desc: "1-5 detik", color: "var(--liquid-amber)" },

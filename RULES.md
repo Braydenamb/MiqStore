@@ -1,0 +1,27 @@
+# AI Coding Assistant Rules
+
+The following rules must be strictly adhered to by any AI coding assistant or agent working on this project:
+
+## 1. Context7 Documentation Requirement
+**Always use Context7 documentation before generating code.**
+Whenever you are writing, refactoring, or debugging code that relies on external libraries, frameworks, SDKs, or APIs (e.g., Next.js, Prisma, Tailwind, Aceternity UI, Magic UI, etc.), you must first fetch and review the documentation using the Context7 MCP. Do not rely solely on your pre-trained knowledge, as it may be outdated.
+
+## 2. Latest Stable APIs
+**Use latest stable APIs only.**
+Always ensure that the code you generate implements the most recent, stable versions of the APIs as confirmed by the Context7 documentation. Avoid using deprecated features, beta APIs, or legacy patterns.
+
+## 3. Workspace Security & Scoping
+**Do not grant or attempt to access the full drive.**
+To prevent accidental data loss or vulnerabilities from prompt injections, the agent's workspace is strictly limited to the project folder (`/home/miq/Projects/Website/MiqStore`).
+Never execute commands, read files, or write files in root directories like `/home/` or root drives. All terminal commands and file operations MUST be contained strictly within the project directory.
+
+## 4. Structured Workflow Requirement
+**Always follow a structured, phased roadmap for major tasks.**
+Modern agents perform best with structured roadmaps rather than vague instructions (e.g., "make dashboard better"). When undertaking significant features or refactoring, strictly follow this phased approach:
+- **Phase 1:** Analyze project structure.
+- **Phase 2:** Generate improvement roadmap.
+- **Phase 3:** Redesign / Implement UI and Logic.
+- **Phase 4:** Improve performance.
+- **Phase 5:** Add tests.
+- **Phase 6:** Prepare Vercel deployment.
+- **Phase 7:** Generate documentation.
