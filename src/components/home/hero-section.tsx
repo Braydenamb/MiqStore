@@ -35,9 +35,9 @@ export function HeroSection() {
       className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-[hsl(var(--background))]"
       id="hero-section"
     >
-      {/* Spline 3D Background */}
+      {/* Spline 3D Background - TEMPORARILY DISABLED FOR DEBUGGING */}
       <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
-        <Spline scene="https://prod.spline.design/kZEXS6z8zK3aG6qL/scene.splinecode" className="w-full h-full" />
+        <div className="w-full h-full bg-gradient-to-br from-indigo-900/20 via-purple-900/20 to-black/40" />
         {/* Liquid Overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background))]/10 via-[hsl(var(--background))]/40 to-[hsl(var(--background))] backdrop-blur-[1px] pointer-events-none" />
       </motion.div>
