@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 /**
  * Middleware for route protection and redirects.
@@ -15,26 +16,25 @@ const authRoutes = ["/auth/login", "/auth/register"];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // In production, check for a real session token cookie
-  // const token = request.cookies.get("next-auth.session-token")?.value;
-  const token = request.cookies.get("miqstore-session")?.value;
+  // Extract NextAuth token
+  const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
 
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
-  // Redirect unauthenticated users to login (disabled in dev for convenience)
-  // if (isProtected && !token) {
-  //   const loginUrl = new URL("/auth/login", request.url);
-  //   loginUrl.searchParams.set("callbackUrl", pathname);
-  //   return NextResponse.redirect(loginUrl);
-  // }
+  // Redirect unauthenticated users to login
+  if (isProtected && !token) {
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
 
   // Redirect authenticated users away from auth pages
-  // if (isAuthRoute && token) {
-  //   return NextResponse.redirect(new URL("/dashboard", request.url));
-  // }
+  if (isAuthRoute && token) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
   // Admin route protection
   if (pathname.startsWith("/admin")) {
