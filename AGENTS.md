@@ -34,6 +34,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Modern Dashboard**: Clean, grid-based layouts with clear typography (e.g., Inter, Outfit) and ample whitespace.
 - **Smooth Animation**: Use CSS transitions or `framer-motion` for micro-interactions (hover states, dialog reveals, page transitions). Keep animations quick and subtle (150ms-300ms).
 
+## Common Errors to Avoid
+- **Path Duplication (`src/src/`)**: Pay strict attention to file paths when creating or modifying files. NEVER accidentally create nested directories like `src/src/middleware.ts` instead of `src/middleware.ts`.
+- **Middleware & Proxy Conflicts**: Next.js will throw a build error if both `middleware.ts` and `proxy.ts` exist. Only use one (or combine their logic appropriately) to avoid the `Both middleware file and proxy file are detected` build crash.
+
 ## Agent Workflow (Always)
 - **Use Context7**: Query Context7 for any library documentation or API usage (e.g., Next.js 15, Tailwind v4, Prisma) before guessing or assuming based on old training data.
 - **Generate Tests**: Write Playwright tests for new UI flows and unit tests for complex pure functions before considering a task complete.
