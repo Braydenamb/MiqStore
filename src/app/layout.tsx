@@ -4,7 +4,6 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { PwaRegistry } from "@/components/pwa-registry";
-import Mascot from "@/components/mascot";
 import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import "./globals.css";
@@ -106,7 +105,6 @@ export default function RootLayout({
             }}
           />
           <PwaRegistry />
-          <Mascot />
         </Providers>
       </body>
     </html>
