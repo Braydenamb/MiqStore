@@ -1,42 +1,48 @@
 "use client";
 
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PROMO_BANNERS } from "@/lib/constants";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { cn } from "@/lib/utils";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 export function PromoBanner() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 5000, stopOnInteraction: false }),
-  ]);
+  const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-
   useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
-    emblaApi.on("select", onSelect);
+    if (!api) return;
+    const onSelect = () => setSelectedIndex(api.selectedScrollSnap());
+    api.on("select", onSelect);
     return () => {
-      emblaApi.off("select", onSelect);
+      api.off("select", onSelect);
     };
-  }, [emblaApi]);
+  }, [api]);
 
   return (
     <section className="relative py-8 sm:py-12" id="promo-banner">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl" ref={emblaRef}>
-          <div className="flex">
+        <Carousel
+          setApi={setApi}
+          opts={{ loop: true }}
+          plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
+          className="relative overflow-hidden rounded-3xl"
+        >
+          <CarouselContent className="-ml-0">
             {PROMO_BANNERS.map((banner) => (
-              <div key={banner.id} className="min-w-0 flex-[0_0_100%]">
+              <CarouselItem key={banner.id} className="pl-0">
                 <div
                   className={cn(
                     "relative overflow-hidden rounded-3xl bg-gradient-to-r p-8 sm:p-12 md:p-16",
@@ -76,30 +82,20 @@ export function PromoBanner() {
                     </Button>
                   </div>
                 </div>
-              </div>
+              </CarouselItem>
             ))}
-          </div>
+          </CarouselContent>
 
           {/* Navigation Buttons */}
-          <Button
+          <CarouselPrevious
             variant="glass"
-            size="icon"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-2xl"
-            onClick={scrollPrev}
-            aria-label="Previous slide"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-2xl border-none [&_svg]:h-5 [&_svg]:w-5"
+          />
+          <CarouselNext
             variant="glass"
-            size="icon"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-2xl"
-            onClick={scrollNext}
-            aria-label="Next slide"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-2xl border-none [&_svg]:h-5 [&_svg]:w-5"
+          />
+        </Carousel>
 
         {/* Dots Indicator */}
         <div className="mt-4 flex items-center justify-center gap-2">
@@ -112,7 +108,7 @@ export function PromoBanner() {
                   ? "w-8 bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)]"
                   : "w-2 bg-[hsl(var(--muted))] hover:bg-[hsl(var(--muted-foreground))]"
               )}
-              onClick={() => emblaApi?.scrollTo(i)}
+              onClick={() => api?.scrollTo(i)}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
