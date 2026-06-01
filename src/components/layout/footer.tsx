@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Gamepad2,
   Mail,
@@ -74,8 +77,12 @@ const paymentIcons = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/dashboard")) return null;
+
   return (
-    <footer className="relative border-t border-[hsl(var(--border))] bg-[hsl(var(--background))]">
+    <footer className="relative mt-20 overflow-hidden border-t border-[hsl(var(--border))] bg-[hsl(var(--background))] pt-16">
       {/* Subtle gradient top edge */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--liquid-purple)]/30 to-transparent" />
 

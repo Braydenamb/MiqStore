@@ -43,6 +43,8 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [setIsScrolled]);
 
+  if (pathname.startsWith("/dashboard")) return null;
+
   return (
     <>
       <header
