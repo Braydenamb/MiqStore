@@ -81,7 +81,6 @@ export const createProductItemSchema = z.object({
   amount: z.number().int().positive(),
   price: z.number().int().positive("Harga harus lebih dari 0"),
   originalPrice: z.number().int().positive().optional(),
-  resellerPrice: z.number().int().positive().optional(),
   providerCode: z.string().optional(),
   isActive: z.boolean().default(true),
   isPopular: z.boolean().default(false),

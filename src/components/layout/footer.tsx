@@ -42,8 +42,6 @@ const footerLinks = {
       { label: "Tentang Kami", href: "/about" },
       { label: "Blog", href: "/blog" },
       { label: "Karir", href: "/careers" },
-      { label: "Program Reseller", href: "/reseller" },
-      { label: "API Documentation", href: "/api-docs" },
     ],
   },
   legal: {

@@ -13,7 +13,6 @@ import {
   Settings,
   LogOut,
   Sparkles,
-  Terminal,
   Megaphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,7 +26,6 @@ const sidebarLinks = [
   { label: "Voucher Saya", href: "/dashboard/vouchers", icon: Ticket },
   { label: "Game Favorit", href: "/dashboard/favorites", icon: Heart },
   { label: "Affiliate", href: "/dashboard/affiliate", icon: Megaphone, badge: "NEW" },
-  { label: "Reseller API", href: "/dashboard/reseller", icon: Terminal, badge: "PRO" },
   { label: "Pengaturan", href: "/dashboard/settings", icon: Settings },
 ];
 
