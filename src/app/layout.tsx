@@ -5,13 +5,13 @@ import { Footer } from "@/components/layout/footer";
 import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { PwaRegistry } from "@/components/pwa-registry";
 import dynamic from "next/dynamic";
+import { Toaster } from "sonner";
+import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
+import "./globals.css";
 
 const Mascot = dynamic(() => import("@/components/mascot").then(mod => mod.Mascot), {
   ssr: false,
 });
-import { Toaster } from "sonner";
-import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
-import "./globals.css";
 
 /*
  * Font Strategy: Using system font stack defined in globals.css.
