@@ -5,7 +5,7 @@
   "description": "TopUp Digital Store - Premium Game Top-Up & Digital Product Marketplace",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push && next build",
+    "build": "prisma db push --accept-data-loss && next build",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
