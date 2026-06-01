@@ -1,4 +1,4 @@
-const { chromium } = require('@playwright/test');
+const { chromium } = require('playwright');
 
 (async () => {
   const browser = await chromium.launch();
@@ -15,7 +15,7 @@ const { chromium } = require('@playwright/test');
   });
 
   console.log("Navigating to homepage...");
-  const response = await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' });
+  const response = await page.goto('https://www.miqstore.online/', { waitUntil: 'networkidle' });
   console.log(`Status: ${response.status()}`);
 
   // Wait a bit just in case
