@@ -19,9 +19,9 @@ export function DashboardSidebar() {
           
           <div className="space-y-2 mb-5">
             {[
-              { name: 'Mobile Legends', img: '/images/mlbb-logo.webp' }, 
-              { name: 'Free Fire', img: '/images/ff-logo.webp' }, 
-              { name: 'PUBG Mobile', img: '/images/pubgm-logo.webp' }
+              { name: 'Mobile Legends', img: '/images/mlbb-logo.png' }, 
+              { name: 'Free Fire', img: '/images/ff-logo.png' }, 
+              { name: 'PUBG Mobile', img: '/images/pubgm-logo.png' }
             ].map((game, i) => (
               <Link href={`/games/${game.name.toLowerCase().replace(' ', '-')}`} key={i} className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[hsl(var(--muted))] transition-colors border border-transparent hover:border-[hsl(var(--border))] group">
                 <div className="h-10 w-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-[hsl(var(--border))]">
