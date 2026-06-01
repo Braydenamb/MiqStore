@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   // Required: NextAuth behind Vercel proxy + custom domain needs trustHost
-  trustHost: true,
   // @ts-ignore - PrismaAdapter type mismatch is common between v4 and v5
   adapter: PrismaAdapter(prisma),
   session: {
