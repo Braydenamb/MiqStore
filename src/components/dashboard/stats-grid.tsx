@@ -24,7 +24,7 @@ interface StatsGridProps {
 
 export function StatsGrid({ isLoading, totalTransactions = "0", totalSpent = 0, rewardPoints = "0" }: StatsGridProps) {
   const stats = [
-    { label: "Transaksi", title: "Total Transaksi", value: isLoading ? "..." : totalTransactions, icon: Receipt, color: "var(--liquid-purple)" },
+    { label: "Transaksi", title: "Total Transaksi", value: isLoading ? "..." : totalTransactions, icon: Receipt, color: "var(--liquid-cyan)" },
     { label: "Bulan ini", title: "Total Belanja", value: isLoading ? "..." : formatCurrency(totalSpent), icon: TrendingUp, color: "var(--liquid-blue)" },
     { label: "Poin", title: "Poin Reward", value: isLoading ? "..." : rewardPoints, icon: Star, color: "var(--liquid-amber)" },
   ];
@@ -38,7 +38,7 @@ export function StatsGrid({ isLoading, totalTransactions = "0", totalSpent = 0, 
     >
       {stats.map((stat) => (
         <motion.div key={stat.label} variants={staggerItem}>
-          <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-3xl p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div className="glass-card rounded-3xl p-5 shadow-sm hover:shadow-md transition-shadow border border-[hsl(var(--border))]">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div

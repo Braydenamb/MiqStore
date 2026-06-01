@@ -11,7 +11,7 @@ export function DashboardSidebar() {
     <div className="xl:w-80 shrink-0 flex flex-col gap-6">
       {/* Quick Top Up */}
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-        <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-3xl p-6 shadow-sm">
+        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[hsl(var(--border))]">
           <div className="flex items-center gap-2 mb-5">
             <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />
             <h3 className="font-bold text-sm">Quick Top Up</h3>
@@ -24,9 +24,9 @@ export function DashboardSidebar() {
               { name: 'PUBG Mobile', img: '/images/pubgm-logo.png' }
             ].map((game, i) => (
               <Link href={`/games/${game.name.toLowerCase().replace(' ', '-')}`} key={i} className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[hsl(var(--muted))] transition-colors border border-transparent hover:border-[hsl(var(--border))] group">
-                <div className="h-10 w-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-[hsl(var(--border))]">
-                  {/* For now use Gamepad icon if image fails */}
-                  <Gamepad2 className="h-5 w-5 text-[hsl(var(--muted-foreground))] group-hover:text-[var(--liquid-purple)] transition-colors" />
+                <div className="h-10 w-10 rounded-xl bg-slate-900/40 dark:bg-slate-900/60 flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-[hsl(var(--border))]">
+                  {/* Real Image or Fallback */}
+                  <img src={game.img} alt={game.name} className="h-full w-full object-cover p-1.5 drop-shadow-md" />
                 </div>
                 <span className="text-sm font-semibold flex-1">{game.name}</span>
               </Link>
@@ -41,7 +41,7 @@ export function DashboardSidebar() {
 
       {/* Daily Check-in */}
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-        <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-3xl p-6 shadow-sm relative overflow-hidden">
+        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[hsl(var(--border))] relative overflow-hidden">
           <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-purple-500/5 blur-2xl rounded-full pointer-events-none" />
           <div className="flex gap-4 relative z-10">
             <div className="flex-1">
@@ -52,12 +52,12 @@ export function DashboardSidebar() {
               <p className="text-[11px] font-medium text-[hsl(var(--muted-foreground))] leading-relaxed mb-4">
                 Check-in setiap hari dan dapatkan poin reward!
               </p>
-              <Button size="sm" className="bg-[var(--liquid-purple)] hover:bg-[var(--liquid-purple)]/90 text-white rounded-xl text-xs font-semibold shadow-md shadow-purple-500/20 px-5">
+              <Button className="w-full rounded-xl bg-[var(--liquid-blue)] hover:bg-[var(--liquid-blue)]/90 text-[hsl(var(--background))] font-semibold shadow-md shadow-cyan-500/20">
                 Check-in Sekarang
               </Button>
             </div>
             <div className="shrink-0 pt-2">
-              <div className="h-16 w-16 bg-gradient-to-br from-purple-100 to-white dark:from-purple-900/40 dark:to-purple-900/10 rounded-2xl shadow-lg shadow-purple-500/10 border border-purple-200 dark:border-purple-800 flex items-center justify-center rotate-6 hover:rotate-12 transition-transform cursor-pointer">
+              <div className="h-16 w-16 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 flex items-center justify-center rotate-6 hover:rotate-12 transition-transform cursor-pointer">
                 <CheckCircle2 className="h-8 w-8 text-[var(--liquid-purple)]" strokeWidth={2.5} />
               </div>
             </div>
@@ -67,13 +67,13 @@ export function DashboardSidebar() {
 
       {/* Event Terbaru */}
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-        <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-3xl p-6 shadow-sm">
+        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[hsl(var(--border))]">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[var(--liquid-purple)]" />
+              <Sparkles className="h-4 w-4 text-[var(--liquid-blue)]" />
               <h3 className="font-bold text-sm">Event Terbaru</h3>
             </div>
-            <Link href="/promo" className="text-[10px] font-semibold text-[var(--liquid-purple)] hover:underline">
+            <Link href="/events" className="text-xs font-semibold text-[var(--liquid-blue)] hover:underline">
               Lihat Semua
             </Link>
           </div>

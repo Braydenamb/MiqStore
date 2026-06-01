@@ -51,11 +51,11 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-[hsl(var(--background))] overflow-hidden">
       {/* Sidebar */}
-      <aside className="hidden lg:flex w-72 flex-col justify-between shrink-0 p-4 border-r border-[hsl(var(--border))] overflow-y-auto no-scrollbar">
+      <aside className="hidden lg:flex w-72 flex-col justify-between shrink-0 p-4 border-r border-[hsl(var(--border))] overflow-y-auto no-scrollbar relative z-20 bg-[hsl(var(--background))]/80 backdrop-blur-xl">
         <div className="flex flex-col gap-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 px-4 pt-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] text-white shadow-lg shadow-purple-500/20">
+          <Link href="/" className="flex items-center gap-3 px-4 pt-4 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--liquid-blue)] to-[var(--liquid-cyan)] text-white shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-shadow">
               <Gamepad2 className="h-5 w-5" />
             </div>
             <span className="text-xl font-bold tracking-tight text-[hsl(var(--foreground))]">
@@ -64,9 +64,9 @@ export default function DashboardLayout({
           </Link>
 
           {/* User Info (Profile Card like mock) */}
-          <div className="flex flex-col p-4 rounded-2xl bg-[hsl(var(--muted))]/30 border border-[hsl(var(--border))]">
+          <div className="flex flex-col p-4 rounded-2xl glass-card border border-[hsl(var(--border))]">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] text-white font-bold text-lg shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[var(--liquid-blue)] to-[var(--liquid-cyan)] text-white font-bold text-lg shadow-lg">
                 {session?.user?.name?.[0]?.toUpperCase() || "M"}
               </div>
               <div className="min-w-0 flex-1">
@@ -84,7 +84,7 @@ export default function DashboardLayout({
                 <ChevronUp className="h-3 w-3 text-[hsl(var(--muted-foreground))]" />
               </div>
               <div className="h-1.5 w-full rounded-full bg-[hsl(var(--muted))] overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)] w-[65%]" />
+                <div className="h-full rounded-full bg-gradient-to-r from-[var(--liquid-blue)] to-[var(--liquid-cyan)] w-[65%]" />
               </div>
             </div>
           </div>
@@ -100,11 +100,11 @@ export default function DashboardLayout({
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300",
                     isActive
-                      ? "bg-[var(--liquid-purple)]/10 text-[var(--liquid-purple)] font-semibold"
-                      : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
+                      ? "bg-[var(--liquid-blue)]/10 text-[var(--liquid-blue)] font-semibold border border-[var(--liquid-blue)]/20 shadow-[0_0_15px_rgba(125,211,252,0.15)]"
+                      : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]/50 hover:text-[hsl(var(--foreground))]"
                   )}
                 >
-                  <link.icon className={cn("h-4 w-4 shrink-0", isActive && "text-[var(--liquid-purple)]")} />
+                  <link.icon className={cn("h-4 w-4 shrink-0", isActive && "text-[var(--liquid-blue)]")} />
                   <span className="flex-1">{link.label}</span>
                   {link.badge && !isActive && (
                     <Badge variant="glow" className="text-[9px] px-1.5 py-0 bg-[var(--liquid-amber)]/10 text-[var(--liquid-amber)] border-none">{link.badge}</Badge>
@@ -137,17 +137,17 @@ export default function DashboardLayout({
 
         <div className="flex flex-col gap-4 mt-6">
           {/* Promo Card */}
-          <div className="relative overflow-hidden rounded-2xl p-4 bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] text-white shadow-lg shadow-purple-500/20">
+          <div className="relative overflow-hidden rounded-2xl p-4 bg-gradient-to-br from-[var(--liquid-blue)] to-[var(--liquid-cyan)] text-[hsl(var(--background))] shadow-lg shadow-cyan-500/20">
             <div className="absolute -right-6 -bottom-6 opacity-30 rotate-12">
-              <Gamepad2 className="h-28 w-28" />
+              <Gamepad2 className="h-28 w-28 text-[hsl(var(--background))]" />
             </div>
             <div className="absolute top-2 right-2 opacity-50">
               <Sparkles className="h-6 w-6" />
             </div>
             <div className="relative z-10">
-              <h4 className="font-bold text-sm mb-1 text-white">Top Up Lebih Cepat</h4>
-              <p className="text-xs text-white/80 mb-4 leading-relaxed">Simpan metode favoritmu untuk top up lebih cepat!</p>
-              <Button size="sm" variant="secondary" className="text-xs font-bold bg-white text-[var(--liquid-purple)] hover:bg-white/90 rounded-xl px-4">
+              <h4 className="font-bold text-sm mb-1">Top Up Lebih Cepat</h4>
+              <p className="text-xs opacity-90 mb-4 leading-relaxed font-medium">Simpan metode favoritmu untuk top up lebih cepat!</p>
+              <Button size="sm" variant="secondary" className="text-xs font-bold bg-[hsl(var(--background))] text-[var(--liquid-blue)] hover:bg-[hsl(var(--background))]/90 rounded-xl px-4">
                 Atur Sekarang →
               </Button>
             </div>
@@ -165,9 +165,14 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
+        
+        {/* Animated Background Orbs for Deep Dark Glassmorphism */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] orb orb-blue opacity-50 dark:opacity-30"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] orb orb-cyan opacity-50 dark:opacity-30"></div>
+
         {/* Top Navbar */}
-        <header className="flex items-center justify-between px-6 lg:px-10 py-5 border-b border-[hsl(var(--border))] shrink-0 bg-[hsl(var(--background))]/80 backdrop-blur-md z-10">
+        <header className="flex items-center justify-between px-6 lg:px-10 py-5 border-b border-[hsl(var(--border))] shrink-0 glass z-30">
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
@@ -195,7 +200,7 @@ export default function DashboardLayout({
               <input 
                 type="text" 
                 placeholder="Cari game, voucher, dll..." 
-                className="h-11 w-72 rounded-full bg-[hsl(var(--muted))]/50 pl-11 pr-4 text-sm font-medium outline-none border border-[hsl(var(--border))] focus:border-[var(--liquid-purple)] focus:bg-[hsl(var(--background))] transition-all shadow-sm hover:border-[var(--liquid-purple)]/50"
+                className="h-11 w-72 rounded-full glass pl-11 pr-4 text-sm font-medium outline-none focus:border-[var(--liquid-blue)] focus:bg-[hsl(var(--background))]/50 transition-all hover:border-[var(--liquid-blue)]/50"
               />
             </div>
             
@@ -211,17 +216,17 @@ export default function DashboardLayout({
             
             <Button variant="ghost" size="icon" className="rounded-full relative text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] h-10 w-10">
               <Bell className="h-4 w-4" />
-              <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-[var(--liquid-purple)] border-2 border-[hsl(var(--background))]" />
+              <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-[var(--liquid-blue)] border-2 border-[hsl(var(--background))]" />
             </Button>
             
-            <Button className="hidden sm:flex rounded-xl bg-[var(--liquid-purple)] hover:bg-[var(--liquid-purple)]/90 text-white font-semibold px-5 h-10 gap-2 shadow-lg shadow-purple-500/20">
+            <Button className="hidden sm:flex rounded-xl bg-[var(--liquid-blue)] hover:bg-[var(--liquid-blue)]/90 text-[hsl(var(--background))] font-semibold px-5 h-10 gap-2 shadow-lg shadow-cyan-500/20">
               <User className="h-4 w-4" /> Dashboard
             </Button>
           </div>
         </header>
 
         {/* Scrollable Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-24 bg-[hsl(var(--muted))]/10">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-24 z-20 relative">
           <div className="mx-auto max-w-[1200px]">
             {children}
           </div>
