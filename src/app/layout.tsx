@@ -72,6 +72,8 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { LenisProvider } from "@/components/providers/lenis-provider";
+import { Mascot } from "@/components/mascot";
 
 export default function RootLayout({
   children,
@@ -85,28 +87,31 @@ export default function RootLayout({
       className=""
     >
       <body className="min-h-screen bg-[hsl(var(--background))] font-sans antialiased">
-        <AuthProvider>
-          <ThemeProvider>
-            <QueryProvider>
-              <div className="relative flex min-h-screen flex-col">
-                <Navbar />
-                <main className="flex-1 pb-mobile-nav">{children}</main>
-                <Footer />
-                <BottomNavbar />
-              </div>
-              <Toaster
-                position="top-right"
-                theme="dark"
-                richColors
-                closeButton
-                toastOptions={{
-                  className: "glass",
-                }}
-              />
-              <PwaRegistry />
-            </QueryProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <LenisProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <QueryProvider>
+                <div className="relative flex min-h-screen flex-col">
+                  <Navbar />
+                  <main className="flex-1 pb-mobile-nav">{children}</main>
+                  <Footer />
+                  <BottomNavbar />
+                </div>
+                <Toaster
+                  position="top-right"
+                  theme="dark"
+                  richColors
+                  closeButton
+                  toastOptions={{
+                    className: "glass",
+                  }}
+                />
+                <PwaRegistry />
+                <Mascot />
+              </QueryProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </LenisProvider>
       </body>
     </html>
   );

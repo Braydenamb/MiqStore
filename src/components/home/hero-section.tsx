@@ -2,17 +2,12 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Search, ArrowRight, Zap, Shield, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  fadeUp,
-  staggerContainer,
-  staggerItem,
-  viewportConfig,
-} from "@/lib/motion";
+import Spline from "@splinetool/react-spline";
 
 const features = [
   { icon: Zap, label: "Proses Instan", desc: "1-5 detik", color: "var(--liquid-amber)" },
@@ -21,180 +16,184 @@ const features = [
 ];
 
 export function HeroSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, viewportConfig);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
     <section
-      ref={ref}
-      className="relative min-h-[92vh] flex items-center justify-center overflow-hidden aurora-bg noise-overlay"
+      ref={containerRef}
+      className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-[hsl(var(--background))]"
       id="hero-section"
     >
-      {/* Aurora Orbs — Liquid Pastel */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="orb orb-purple h-[600px] w-[600px] top-[10%] left-[15%] animate-glow-pulse" />
-        <div
-          className="orb orb-blue h-[500px] w-[500px] bottom-[15%] right-[10%] animate-glow-pulse"
-          style={{ animationDelay: "2s" }}
-        />
-        <div
-          className="orb orb-pink h-[400px] w-[400px] top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 animate-glow-pulse"
-          style={{ animationDelay: "4s" }}
-        />
-        <div
-          className="orb orb-cyan h-[300px] w-[300px] bottom-[5%] left-[25%] animate-glow-pulse"
-          style={{ animationDelay: "3s" }}
-        />
+      {/* Spline 3D Background */}
+      <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
+        <Spline scene="https://prod.spline.design/kZEXS6z8zK3aG6qL/scene.splinecode" className="w-full h-full" />
+        {/* Liquid Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background))]/10 via-[hsl(var(--background))]/40 to-[hsl(var(--background))] backdrop-blur-[1px] pointer-events-none" />
+      </motion.div>
 
-        {/* Subtle Grid */}
-        <div className="absolute inset-0 bg-grid opacity-20" />
-
-        {/* Bottom Fade */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(var(--background))]" />
-      </div>
-
-      {/* Floating Elements — Reduced, elegant */}
-      <div className="absolute inset-0 pointer-events-none hidden sm:block">
+      {/* Floating Holographic Cards */}
+      <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block perspective-1000">
         {[
-          { char: "💎", x: "12%", y: "22%", delay: 0 },
-          { char: "⚡", x: "82%", y: "18%", delay: 0.8 },
-          { char: "🎯", x: "88%", y: "65%", delay: 1.2 },
-          { char: "🏆", x: "8%", y: "68%", delay: 1.6 },
-        ].map((item, i) => (
+          { icon: "💎", delay: 0, x: "10%", y: "20%", rotate: -12, scale: 1.1 },
+          { icon: "⚡", delay: 0.2, x: "85%", y: "15%", rotate: 15, scale: 0.9 },
+          { icon: "🎯", delay: 0.4, x: "80%", y: "70%", rotate: -8, scale: 1.2 },
+          { icon: "🎮", delay: 0.6, x: "15%", y: "65%", rotate: 10, scale: 1 },
+        ].map((card, i) => (
           <motion.div
             key={i}
-            className="absolute text-2xl opacity-10 select-none"
-            style={{ left: item.x, top: item.y }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={isInView ? { opacity: 0.1, scale: 1 } : {}}
-            transition={{ delay: item.delay, duration: 0.6 }}
+            className="absolute glass-card border border-[hsl(var(--border))]/50 rounded-2xl p-4 flex items-center justify-center bg-[hsl(var(--background))]/40 backdrop-blur-md shadow-[0_0_30px_rgba(192,132,252,0.15)]"
+            style={{ left: card.x, top: card.y }}
+            initial={{ opacity: 0, scale: 0, rotateX: 45, rotateY: 45 }}
+            animate={{ opacity: 1, scale: card.scale, rotateX: 0, rotateY: card.rotate }}
+            transition={{
+              type: "spring",
+              damping: 20,
+              stiffness: 100,
+              delay: card.delay,
+            }}
           >
-            <motion.span
-              animate={{ y: [0, -10, 0] }}
+            <motion.div
+              animate={{ y: [0, -15, 0] }}
               transition={{
-                duration: 5 + i,
+                duration: 4 + i,
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
-              className="block"
+              className="text-4xl filter drop-shadow-lg"
             >
-              {item.char}
-            </motion.span>
+              {card.icon}
+            </motion.div>
           </motion.div>
         ))}
       </div>
 
-      {/* Content */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8"
-      >
+      {/* Main Content */}
+      <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8 mt-16">
         {/* Flash Sale Badge */}
-        <motion.div variants={staggerItem}>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="flex justify-center"
+        >
           <Badge
-            variant="glow"
-            className="mb-8 px-4 py-1.5 text-sm gap-1.5 animate-shine"
+            variant="outline"
+            className="mb-8 px-5 py-2 text-sm gap-2 animate-pulse border-[var(--liquid-purple)]/50 bg-[var(--liquid-purple)]/10 text-[var(--liquid-purple)] backdrop-blur-md"
           >
-            <Sparkles className="h-3 w-3" />
-            Flash Sale — Diskon hingga 20%
+            <Sparkles className="h-4 w-4" />
+            Liquid Cyber Pastel Era
           </Badge>
         </motion.div>
 
         {/* Headline */}
         <motion.h1
-          variants={staggerItem}
-          className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl leading-[1.1] filter drop-shadow-sm"
         >
           <span className="block text-[hsl(var(--foreground))]">
             Top Up Game
           </span>
-          <span className="block mt-2 gradient-text">
+          <span className="block mt-2 bg-gradient-to-r from-[#b184fc] via-[#84b5fc] to-[#fc84c5] bg-clip-text text-transparent animate-gradient">
             Tercepat & Termurah
           </span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
-          variants={staggerItem}
-          className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-[hsl(var(--muted-foreground))] leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-[hsl(var(--muted-foreground))] leading-relaxed"
         >
-          Beli diamond, UC, voucher game, pulsa, dan produk digital
-          lainnya dengan harga terbaik. Proses otomatis, aman, dan cepat.
+          Masuk ke dimensi baru top-up digital. Beli diamond, UC, dan voucher dengan 
+          kecepatan instan, keamanan berlapis, dan harga paling masuk akal.
         </motion.p>
 
         {/* Search Bar */}
-        <motion.div variants={staggerItem} className="mx-auto mt-8 max-w-lg">
-          <div className="glass-card relative flex items-center rounded-2xl p-1.5">
-            <Search className="absolute left-4 h-5 w-5 text-[hsl(var(--muted-foreground))]" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-auto mt-10 max-w-xl"
+        >
+          <div className="group relative flex items-center rounded-2xl p-1.5 bg-[hsl(var(--background))]/60 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all hover:border-[var(--liquid-purple)]/50 hover:shadow-[0_8px_30px_rgba(177,132,252,0.2)]">
+            <Search className="absolute left-5 h-5 w-5 text-[hsl(var(--muted-foreground))] transition-colors group-hover:text-[var(--liquid-purple)]" />
             <Input
-              placeholder="Cari game, voucher, atau produk digital..."
-              className="flex-1 border-0 bg-transparent pl-11 text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[hsl(var(--muted-foreground))]"
-              id="hero-search-input"
+              placeholder="Cari game, voucher..."
+              className="flex-1 h-12 border-0 bg-transparent pl-12 text-lg focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[hsl(var(--muted-foreground))]/70"
             />
             <Button
-              size="default"
-              className="ml-2 shrink-0 rounded-xl gap-1"
-              id="hero-search-btn"
+              size="lg"
+              className="ml-2 shrink-0 rounded-xl gap-2 bg-gradient-to-r from-[#b184fc] to-[#84b5fc] text-white hover:opacity-90 shadow-[0_0_20px_rgba(177,132,252,0.4)]"
             >
-              Cari
+              Cari Sekarang
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
 
           {/* Popular Tags */}
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-[hsl(var(--muted-foreground))]">
-              Populer:
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <span className="text-sm text-[hsl(var(--muted-foreground))] mr-1">
+              Trending:
             </span>
-            {["Mobile Legends", "Free Fire", "Genshin Impact", "Valorant"].map(
-              (tag) => (
-                <Link
-                  key={tag}
-                  href={`/games/${tag.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="rounded-full border border-[hsl(var(--border))] px-3 py-1 text-xs text-[hsl(var(--muted-foreground))] transition-all hover:border-[var(--liquid-purple)] hover:text-[var(--liquid-purple)] hover:bg-[rgba(192,132,252,0.05)]"
-                >
-                  {tag}
-                </Link>
-              )
-            )}
+            {["Mobile Legends", "Free Fire", "Valorant"].map((tag) => (
+              <Link
+                key={tag}
+                href={`/games/${tag.toLowerCase().replace(/\s+/g, "-")}`}
+                className="rounded-full border border-[hsl(var(--border))] px-4 py-1.5 text-sm text-[hsl(var(--muted-foreground))] transition-all hover:border-[var(--liquid-purple)] hover:text-[var(--liquid-purple)] hover:bg-[rgba(192,132,252,0.1)] hover:shadow-[0_0_15px_rgba(192,132,252,0.2)]"
+              >
+                {tag}
+              </Link>
+            ))}
           </div>
         </motion.div>
 
         {/* Feature Pills */}
         <motion.div
-          variants={staggerItem}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 flex flex-wrap items-center justify-center gap-4 sm:gap-6"
         >
-          {features.map((feature) => (
-            <div
+          {features.map((feature, idx) => (
+            <motion.div
               key={feature.label}
-              className="flex items-center gap-2.5 glass-card rounded-2xl px-4 py-2.5"
+              whileHover={{ y: -5, scale: 1.02 }}
+              className="flex items-center gap-3 bg-[hsl(var(--background))]/50 backdrop-blur-lg border border-[hsl(var(--border))]/50 rounded-2xl px-5 py-3 shadow-lg"
             >
               <div
-                className="flex h-8 w-8 items-center justify-center rounded-lg"
+                className="flex h-10 w-10 items-center justify-center rounded-xl"
                 style={{
                   backgroundColor: `color-mix(in srgb, ${feature.color} 15%, transparent)`,
+                  boxShadow: `0 0 15px color-mix(in srgb, ${feature.color} 30%, transparent)`,
                 }}
               >
                 <feature.icon
-                  className="h-4 w-4"
+                  className="h-5 w-5"
                   style={{ color: feature.color }}
                 />
               </div>
               <div className="text-left">
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                <p className="text-sm font-bold text-[hsl(var(--foreground))]">
                   {feature.label}
                 </p>
-                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
+                <p className="text-xs text-[hsl(var(--muted-foreground))] font-medium">
                   {feature.desc}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
