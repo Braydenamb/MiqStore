@@ -46,14 +46,16 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith("/api/")) {
     // 1. CSRF Protection for state-changing requests
     if (["POST", "PUT", "DELETE", "PATCH"].includes(request.method)) {
-      // Exclude webhooks as they come from external providers
-      if (!pathname.startsWith("/api/webhook/")) {
+      // Exclude webhooks (external providers) and auth routes (NextAuth manages its own CSRF)
+      const isCsrfExempt =
+        pathname.startsWith("/api/webhook/") ||
+        pathname.startsWith("/api/auth/");
+
+      if (!isCsrfExempt) {
         const origin = request.headers.get("origin");
         const referer = request.headers.get("referer");
         const host = request.headers.get("host");
 
-        // Validate origin/referer against our host
-        // In dev, origin might be localhost:3000. In prod, it will be the real domain.
         const isOriginValid = origin ? origin.includes(host || "") : true;
         const isRefererValid = referer ? referer.includes(host || "") : true;
 
