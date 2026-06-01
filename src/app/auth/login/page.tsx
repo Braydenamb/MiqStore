@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -25,11 +27,33 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+    setError("");
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (res?.error) {
+        setError("Email atau password salah");
+      } else {
+        router.push(callbackUrl);
+      }
+    } catch (err) {
+      setError("Terjadi kesalahan sistem");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -66,11 +90,11 @@ export default function LoginPage() {
         <div className="glass rounded-2xl p-6 sm:p-8">
           {/* OAuth Buttons */}
           <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="gap-2" id="login-google">
+            <Button variant="outline" className="gap-2" id="login-google" onClick={() => signIn("google", { callbackUrl })}>
               <Globe className="h-4 w-4" />
               Google
             </Button>
-            <Button variant="outline" className="gap-2" id="login-discord">
+            <Button variant="outline" className="gap-2" id="login-discord" onClick={() => signIn("discord", { callbackUrl })}>
               <MessageCircle className="h-4 w-4" />
               Discord
             </Button>
@@ -85,6 +109,11 @@ export default function LoginPage() {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-500/10 rounded-lg border border-red-500/20">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="login-email">Email</Label>
               <div className="relative">

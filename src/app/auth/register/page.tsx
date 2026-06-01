@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -32,14 +34,55 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [agree, setAgree] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const update = (key: string, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.password !== form.confirmPassword) {
+      setError("Password tidak cocok");
+      return;
+    }
+    
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Gagal mendaftar");
+      }
+
+      // Auto login after successful registration
+      const signInRes = await signIn("credentials", {
+        redirect: false,
+        email: form.email,
+        password: form.password,
+      });
+
+      if (signInRes?.error) {
+        throw new Error("Gagal login otomatis. Silakan login manual.");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.message || "Terjadi kesalahan sistem");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,11 +119,11 @@ export default function RegisterPage() {
         <div className="glass rounded-2xl p-6 sm:p-8">
           {/* OAuth */}
           <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="gap-2" id="register-google">
+            <Button variant="outline" className="gap-2" id="register-google" onClick={() => signIn("google", { callbackUrl: "/dashboard" })}>
               <Globe className="h-4 w-4" />
               Google
             </Button>
-            <Button variant="outline" className="gap-2" id="register-discord">
+            <Button variant="outline" className="gap-2" id="register-discord" onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}>
               <MessageCircle className="h-4 w-4" />
               Discord
             </Button>
@@ -95,6 +138,11 @@ export default function RegisterPage() {
 
           {/* Register Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-500/10 rounded-lg border border-red-500/20">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="reg-name">Nama Lengkap</Label>
               <div className="relative">
