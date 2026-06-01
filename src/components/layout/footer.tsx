@@ -79,7 +79,7 @@ const paymentIcons = [
 export function Footer() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/dashboard")) return null;
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return null;
 
   return (
     <footer className="relative mt-20 overflow-hidden border-t border-[hsl(var(--border))] bg-[hsl(var(--background))] pt-16">

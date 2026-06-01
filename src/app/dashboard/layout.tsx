@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import {
   LayoutDashboard,
@@ -21,6 +21,7 @@ import {
   Sun,
   Bell,
   ChevronUp,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { data: session } = useSession();
 
   return (
     <div className="flex h-screen bg-[hsl(var(--background))] overflow-hidden">
@@ -65,10 +67,10 @@ export default function DashboardLayout({
           <div className="flex flex-col p-4 rounded-2xl bg-[hsl(var(--muted))]/30 border border-[hsl(var(--border))]">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] text-white font-bold text-lg shadow-lg">
-                MQ
+                {session?.user?.name?.[0]?.toUpperCase() || "M"}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold truncate">Miq User</p>
+                <p className="text-sm font-semibold truncate">{session?.user?.name || "Miq User"}</p>
                 <div className="flex items-center gap-1 mt-0.5">
                   <Sparkles className="h-3 w-3 text-[var(--liquid-amber)]" />
                   <span className="text-xs text-[var(--liquid-amber)] font-medium">Gold Member</span>
@@ -113,6 +115,23 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+            
+            {/* Admin Conditional Link */}
+            {(session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPER_ADMIN" ? (
+              <Link
+                href="/admin"
+                className={cn(
+                  "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 mt-2",
+                  pathname.startsWith("/admin")
+                    ? "bg-red-500/10 text-red-500 font-semibold"
+                    : "text-red-400 hover:bg-red-500/5 hover:text-red-500 border border-red-500/10"
+                )}
+              >
+                <ShieldAlert className="h-4 w-4 shrink-0" />
+                <span className="flex-1">Admin Panel</span>
+                <Badge variant="glow" className="text-[9px] px-1.5 py-0 bg-red-500/20 text-red-500 border-none">PRO</Badge>
+              </Link>
+            ) : null}
           </nav>
         </div>
 

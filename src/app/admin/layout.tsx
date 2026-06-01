@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -42,6 +43,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <div className="min-h-screen flex pt-0">
@@ -85,13 +87,13 @@ export default function AdminLayout({
         {/* Admin Badge */}
         <div className="absolute bottom-0 left-0 right-0 border-t border-[hsl(var(--sidebar-border))] p-4">
           <div className="flex items-center gap-3 rounded-lg bg-[hsl(var(--muted))] p-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white text-xs font-bold">
-              SA
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white text-xs font-bold uppercase">
+              {session?.user?.name?.substring(0, 2) || "SA"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold truncate">Super Admin</p>
-              <p className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                admin@miqstore.com
+              <p className="text-xs font-semibold truncate">{session?.user?.name || "Super Admin"}</p>
+              <p className="text-[10px] text-[hsl(var(--muted-foreground))] truncate">
+                {session?.user?.email || "admin@miqstore.com"}
               </p>
             </div>
             <ShieldCheck className="h-4 w-4 text-green-400 shrink-0" />
