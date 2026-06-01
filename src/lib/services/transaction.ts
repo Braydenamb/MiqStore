@@ -147,7 +147,7 @@ export async function createTransaction(
   const discount = calculateDiscount(input.price, input.promoCode);
   const total = input.price + fee - discount;
 
-  // Persist to database
+  // Persist to database — payment method lives on the Payment model, not Transaction
   const transaction = await prisma.transaction.create({
     data: {
       invoiceId,
@@ -158,11 +158,19 @@ export async function createTransaction(
       fee,
       discount,
       total,
-      paymentMethod: input.paymentMethod,
       status: "PENDING",
       gameUserId: input.gameUserId,
       gameZoneId: input.gameZoneId,
-    }
+      payment: {
+        create: {
+          gateway: "midtrans",
+          method: input.paymentMethod,
+          amount: total,
+          status: "PENDING",
+        },
+      },
+    },
+    include: { payment: true },
   });
 
   logger.info(`Transaction Created: ${invoiceId}`, { 
