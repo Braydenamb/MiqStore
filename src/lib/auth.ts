@@ -7,7 +7,12 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
-  // Required: NextAuth behind Vercel proxy + custom domain needs trustHost
+  /**
+   * CRITICAL: Do NOT remove this.
+   * Vercel runs behind a reverse proxy — without trustHost, NextAuth rejects
+   * callbacks from your custom domain (www.miqstore.online) and throws OAuthCreateAccount.
+   */
+  trustHost: true,
   // @ts-ignore - PrismaAdapter type mismatch is common between v4 and v5
   adapter: PrismaAdapter(prisma),
   session: {
