@@ -22,6 +22,7 @@ export const Meteors = ({ number = 20, className }: MeteorsProps) => {
         duration: Math.floor(Math.random() * (10 - 2) + 2) + "s",
       }));
     };
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMeteors(generateMeteors());
   }, [number]);
 

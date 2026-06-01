@@ -38,7 +38,8 @@ export function AdminCharts({ historicalRevenue }: AdminChartsProps) {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-        <Card>
+        <Card className="border-white/5 bg-[hsl(var(--card))]/40 backdrop-blur-md relative overflow-hidden">
+          <div className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full blur-[100px] bg-[var(--liquid-purple)]/20 pointer-events-none" />
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
@@ -83,7 +84,8 @@ export function AdminCharts({ historicalRevenue }: AdminChartsProps) {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <Card className="h-full">
+        <Card className="h-full border-white/5 bg-[hsl(var(--card))]/40 backdrop-blur-md relative overflow-hidden">
+          <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full blur-[100px] bg-[var(--liquid-cyan)]/20 pointer-events-none" />
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <Activity className="h-4 w-4 text-[var(--liquid-cyan)]" />

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 import { ArrowUpRight, ArrowDownRight, DollarSign, ShoppingCart, Users, Activity } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 interface AdminStatsGridProps {
   isLoading: boolean;
@@ -56,9 +57,14 @@ export function AdminStatsGrid({ isLoading, data }: AdminStatsGridProps) {
     >
       {overviewStats.map((stat: any) => (
         <motion.div key={stat.label} variants={staggerItem}>
-          <Card className="card-hover relative overflow-hidden">
+          <Card className="card-hover relative overflow-hidden group border-white/5 bg-[hsl(var(--card))]/40 backdrop-blur-md">
+            {/* Border Beam on Hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none">
+              <BorderBeam duration={8} size={150} colorFrom={stat.color} colorTo="transparent" />
+            </div>
+
             <div
-              className="absolute -top-8 -right-8 h-24 w-24 rounded-full blur-3xl opacity-10"
+              className="absolute -top-8 -right-8 h-24 w-24 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"
               style={{ background: stat.color }}
             />
             <CardContent className="p-5 relative">

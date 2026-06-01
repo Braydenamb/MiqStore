@@ -9,6 +9,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - TypeScript
 - Tailwind v4
 - shadcn/ui
+- pnpm (Package Manager)
+- Docker (Containerization & Local DBs)
+- Playwright (E2E Testing & UI Validation)
 
 ## Rules
 - No any
