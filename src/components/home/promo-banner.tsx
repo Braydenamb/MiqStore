@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
@@ -21,6 +21,9 @@ import {
 export function PromoBanner() {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const plugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false })
+  );
 
   useEffect(() => {
     if (!api) return;
@@ -37,7 +40,7 @@ export function PromoBanner() {
         <Carousel
           setApi={setApi}
           opts={{ loop: true }}
-          plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
+          plugins={[plugin.current]}
           className="relative overflow-hidden rounded-3xl"
         >
           <CarouselContent className="-ml-0">
