@@ -11,11 +11,14 @@ const registerSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    console.log("REGISTER ROUTE HIT");
+
     const body = await req.json();
-    
-    // 1. Validation
+    console.log("BODY:", body);
+
     const parsedData = registerSchema.safeParse(body);
     if (!parsedData.success) {
+      console.log("VALIDATION FAILED");
       return NextResponse.json(
         { message: parsedData.error.errors[0].message },
         { status: 400 }
@@ -24,10 +27,11 @@ export async function POST(req: Request) {
 
     const { name, email, password } = parsedData.data;
 
-    // 2. Check if user already exists
+    console.log("CHECKING USER");
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
+    console.log("USER CHECK DONE");
 
     if (existingUser) {
       return NextResponse.json(
@@ -36,21 +40,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Hash Password
+    console.log("HASHING PASSWORD");
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // 4. Persist to Database
+    console.log("CREATING USER");
     const newUser = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        // Optional: you can generate a referral code here
         referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
       },
     });
+    console.log("USER CREATED", newUser.id);
 
-    // We don't want to return the password
     const { password: _, ...userWithoutPassword } = newUser;
 
     return NextResponse.json(
@@ -58,7 +61,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[REGISTER_ERROR]", error);
+    console.error("REGISTER ERROR:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
