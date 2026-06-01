@@ -14,8 +14,8 @@ const { chromium } = require('@playwright/test');
     console.log(`UNCAUGHT EXCEPTION: ${exception}`);
   });
 
-  console.log("Navigating to dashboard...");
-  const response = await page.goto('http://localhost:3000/dashboard', { waitUntil: 'networkidle' });
+  console.log("Navigating to homepage...");
+  const response = await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' });
   console.log(`Status: ${response.status()}`);
 
   // Wait a bit just in case
