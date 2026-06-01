@@ -4,14 +4,10 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { PwaRegistry } from "@/components/pwa-registry";
-import dynamic from "next/dynamic";
+import Mascot from "@/components/mascot";
 import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import "./globals.css";
-
-const Mascot = dynamic(() => import("@/components/mascot"), {
-  ssr: false,
-});
 
 /*
  * Font Strategy: Using system font stack defined in globals.css.
