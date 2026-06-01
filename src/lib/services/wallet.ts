@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-type PrismaTx = Omit<typeof prisma, "$transaction" | "$connect" | "$disconnect" | "$on" | "$use">;
+import { Prisma } from "@prisma/client";
 
 // Mocking BalanceType since `npx prisma generate` cannot be run in this environment
 export type BalanceType = "DEPOSIT" | "PURCHASE" | "REFUND" | "CASHBACK" | "BONUS" | "WITHDRAWAL";
@@ -41,7 +40,7 @@ export async function creditWallet(
 ) {
   if (amount <= 0) throw new Error("Amount must be greater than 0");
 
-  return prisma.$transaction(async (tx: PrismaTx) => {
+  return prisma.$transaction(async (tx) => {
     // 1. Get or create wallet
     const wallet = await tx.wallet.upsert({
       where: { userId },
@@ -85,7 +84,7 @@ export async function debitWallet(
 ) {
   if (amount <= 0) throw new Error("Amount must be greater than 0");
 
-  return prisma.$transaction(async (tx: PrismaTx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // 1. Get wallet and lock it for update (optional if DB supports atomic decrement without dropping below 0 easily, but we'll manually check)
     const wallet = await tx.wallet.findUnique({
       where: { userId },
@@ -124,7 +123,7 @@ export async function debitWallet(
  */
 export async function distributeCashback(transaction: import("./transaction").TransactionRecord) {
   const { getMembershipPerks } = await import("./gamification");
-  
+
   const user = await prisma.user.findUnique({
     where: { id: transaction.userId },
     select: { membership: true }
