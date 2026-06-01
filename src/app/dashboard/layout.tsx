@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Receipt,
@@ -90,7 +91,10 @@ export default function DashboardLayout({
 
               {/* Logout */}
               <div className="mt-4 pt-4 border-t border-[hsl(var(--border))]">
-                <button className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/8 transition-colors w-full">
+                <button 
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/8 transition-colors w-full"
+                >
                   <LogOut className="h-4 w-4" />
                   Keluar
                 </button>

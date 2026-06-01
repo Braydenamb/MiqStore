@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   Moon,
@@ -202,7 +203,7 @@ export default function SettingsPage() {
                   Logout dari semua sesi yang sedang aktif
                 </p>
               </div>
-              <Button variant="outline" className="shrink-0">
+              <Button variant="outline" className="shrink-0" onClick={() => signOut({ callbackUrl: "/" })}>
                 <LogOut className="mr-1 h-3.5 w-3.5" />
                 Logout Semua
               </Button>
