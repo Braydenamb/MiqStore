@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { CATEGORIES } from "@/lib/constants";
+import { Spotlight } from "@/components/ui/spotlight";
 import { cn } from "@/lib/utils";
 import {
   fadeUp,
@@ -23,8 +24,8 @@ export function CategorySection() {
       id="category-section"
     >
       {/* Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="orb orb-purple h-80 w-80 top-1/2 -left-40 opacity-20" />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="var(--liquid-purple)" />
         <div className="orb orb-cyan h-60 w-60 top-1/4 -right-30 opacity-15" />
       </div>
 
