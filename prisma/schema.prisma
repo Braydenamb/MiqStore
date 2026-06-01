@@ -64,23 +64,23 @@ enum NotificationType {
 // ─── USERS & AUTH ────────────────────────────────
 
 model User {
-  id            String          @id @default(uuid())
-  email         String?         @unique
-  emailVerified DateTime?                         // Required by NextAuth PrismaAdapter for OAuth
-  name          String?                           // Optional: OAuth providers may not always send name
-  image         String?                           // Required by NextAuth PrismaAdapter (profile picture)
+  id            String         @id @default(uuid())
+  email         String?        @unique
+  emailVerified DateTime? // Required by NextAuth PrismaAdapter for OAuth
+  name          String? // Optional: OAuth providers may not always send name
+  image         String? // Required by NextAuth PrismaAdapter (profile picture)
   phone         String?
   password      String?
   avatar        String?
-  role          Role            @default(USER)
-  membership    MembershipTier  @default(BRONZE)
-  rewardPoints  Int             @default(0)
-  isVerified    Boolean         @default(false)
-  isActive      Boolean         @default(true)
-  referralCode  String?         @unique
+  role          Role           @default(USER)
+  membership    MembershipTier @default(BRONZE)
+  rewardPoints  Int            @default(0)
+  isVerified    Boolean        @default(false)
+  isActive      Boolean        @default(true)
+  referralCode  String?        @unique
   referredBy    String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   // Relations
   accounts       Account[]
@@ -101,7 +101,7 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(uuid())
+  id                String @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -145,17 +145,17 @@ model VerificationToken {
 // ─── PRODUCTS ────────────────────────────────────
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
-  slug        String    @unique
-  description String?
+  slug        String   @unique
+  description String?  @db.Text
   icon        String?
   color       String?
   gradient    String?
-  order       Int       @default(0)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   products Product[]
 
@@ -164,23 +164,23 @@ model Category {
 }
 
 model Product {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   categoryId  String
   providerId  String?
   name        String
-  slug        String    @unique
+  slug        String   @unique
   publisher   String?
-  description String?
+  description String?  @db.Text
   image       String?
   banner      String?
   color       String?
-  fields      Json?     // JSON array of input field configs
-  gameType    String?   // mobile, pc, console
-  isActive    Boolean   @default(true)
-  isPopular   Boolean   @default(false)
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  fields      Json?    @db.JsonB
+  gameType    String? // mobile, pc, console
+  isActive    Boolean  @default(true)
+  isPopular   Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   category      Category       @relation(fields: [categoryId], references: [id])
   provider      Provider?      @relation(fields: [providerId], references: [id])
@@ -190,31 +190,31 @@ model Product {
   favoriteGames FavoriteGame[]
 
   @@index([slug])
-  @@index([categoryId])
+  @@index([categoryId, isActive])
   @@index([isActive, isPopular])
   @@map("products")
 }
 
 model ProductItem {
-  id             String  @id @default(uuid())
-  productId      String
-  providerCode   String? // Provider's product code (e.g., DigiFlazz SKU)
-  name           String
-  description    String?
-  amount         Int     // Nominal amount (e.g., 86 diamonds)
-  price          Int     // Selling price in IDR
-  originalPrice  Int?    // Original price (for showing discount)
-  resellerPrice  Int?    // Special reseller price
-  isActive       Boolean @default(true)
-  isPopular      Boolean @default(false)
-  order          Int     @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            String   @id @default(uuid())
+  productId     String
+  providerCode  String? // Provider's product code (e.g., DigiFlazz SKU)
+  name          String
+  description   String?  @db.Text
+  amount        Int // Nominal amount (e.g., 86 diamonds)
+  price         Int // Selling price in IDR
+  originalPrice Int? // Original price (for showing discount)
+  resellerPrice Int? // Special reseller price
+  isActive      Boolean  @default(true)
+  isPopular     Boolean  @default(false)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   transactions Transaction[]
 
-  @@index([productId])
+  @@index([productId, isActive])
   @@index([providerCode])
   @@map("product_items")
 }
@@ -246,17 +246,17 @@ model Transaction {
   productId     String
   productItemId String
   quantity      Int               @default(1)
-  price         Int               // Product price
+  price         Int // Product price
   fee           Int               @default(0) // Payment fee
   discount      Int               @default(0) // Discount amount
-  total         Int               // Final amount to pay
+  total         Int // Final amount to pay
   status        TransactionStatus @default(PENDING)
-  gameUserId    String?           // e.g., ML User ID
-  gameZoneId    String?           // e.g., ML Zone ID
-  gameNickname  String?           // Validated nickname
-  providerRef   String?           // Provider transaction reference
-  providerData  Json?             // Raw provider response
-  notes         String?
+  gameUserId    String? // e.g., ML User ID
+  gameZoneId    String? // e.g., ML Zone ID
+  gameNickname  String? // Validated nickname
+  providerRef   String? // Provider transaction reference
+  providerData  Json?             @db.JsonB
+  notes         String?           @db.Text
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
@@ -267,31 +267,34 @@ model Transaction {
 
   @@index([invoiceId])
   @@index([userId])
+  @@index([userId, status])
   @@index([status])
+  @@index([status, createdAt])
   @@index([createdAt])
   @@map("transactions")
 }
 
 model Payment {
-  id              String        @id @default(uuid())
-  transactionId   String        @unique
-  gateway         String        // midtrans, xendit, tripay
-  method          String        // qris, gopay, bca_va, etc.
-  externalId      String?       @unique // Payment gateway reference ID
-  amount          Int
-  status          PaymentStatus @default(PENDING)
-  paymentUrl      String?       // Redirect URL
-  paymentCode     String?       // VA number, QR code URL
-  paidAt          DateTime?
-  expiredAt       DateTime?
-  callbackData    Json?         // Raw webhook data
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id            String        @id @default(uuid())
+  transactionId String        @unique
+  gateway       String // midtrans, xendit, tripay
+  method        String // qris, gopay, bca_va, etc.
+  externalId    String?       @unique // Payment gateway reference ID
+  amount        Int
+  status        PaymentStatus @default(PENDING)
+  paymentUrl    String? // Redirect URL
+  paymentCode   String? // VA number, QR code URL
+  paidAt        DateTime?
+  expiredAt     DateTime?
+  callbackData  Json?         @db.JsonB
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 
   @@index([externalId])
   @@index([status])
+  @@index([transactionId, status])
   @@map("payments")
 }
 
@@ -310,15 +313,15 @@ model Wallet {
 }
 
 model BalanceHistory {
-  id          String      @id @default(uuid())
-  userId      String
-  type        BalanceType
-  amount      Int
+  id            String      @id @default(uuid())
+  userId        String
+  type          BalanceType
+  amount        Int
   balanceBefore Int
   balanceAfter  Int
-  description String?
-  referenceId String?     // Related transaction ID
-  createdAt   DateTime    @default(now())
+  description   String?     @db.Text
+  referenceId   String? // Related transaction ID
+  createdAt     DateTime    @default(now())
 
   user User @relation(fields: [userId], references: [id])
 
@@ -331,21 +334,21 @@ model BalanceHistory {
 // ─── PROMOS ──────────────────────────────────────
 
 model PromoCode {
-  id            String    @id @default(uuid())
-  code          String    @unique
+  id            String   @id @default(uuid())
+  code          String   @unique
   name          String
-  description   String?
-  discountType  String    // percent, flat
-  discountValue Int       // e.g., 10 for 10% or 5000 for Rp5000
-  minPurchase   Int       @default(0)
-  maxDiscount   Int?      // Max discount for percentage type
-  maxUsage      Int?      // Total usage limit
-  usedCount     Int       @default(0)
+  description   String?  @db.Text
+  discountType  String // percent, flat
+  discountValue Int // e.g., 10 for 10% or 5000 for Rp5000
+  minPurchase   Int      @default(0)
+  maxDiscount   Int? // Max discount for percentage type
+  maxUsage      Int? // Total usage limit
+  usedCount     Int      @default(0)
   startDate     DateTime
   endDate       DateTime
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   userPromos UserPromo[]
 
@@ -373,8 +376,8 @@ model Review {
   id        String   @id @default(uuid())
   userId    String
   productId String
-  rating    Int      // 1-5
-  comment   String?
+  rating    Int // 1-5
+  comment   String?  @db.Text
   isVisible Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -394,9 +397,9 @@ model Notification {
   userId    String
   type      NotificationType
   title     String
-  message   String
+  message   String           @db.Text
   isRead    Boolean          @default(false)
-  data      Json?            // Extra data (e.g., transaction ID)
+  data      Json?            @db.JsonB
   createdAt DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id])
@@ -424,15 +427,15 @@ model FavoriteGame {
 // ─── RESELLER API ────────────────────────────────
 
 model ApiKey {
-  id        String   @id @default(uuid())
-  userId    String
-  key       String   @unique
-  name      String
-  isActive  Boolean  @default(true)
-  rateLimit Int      @default(60) // Requests per minute
+  id         String    @id @default(uuid())
+  userId     String
+  key        String    @unique
+  name       String
+  isActive   Boolean   @default(true)
+  rateLimit  Int       @default(60) // Requests per minute
   lastUsedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   user    User     @relation(fields: [userId], references: [id])
   apiLogs ApiLog[]
@@ -447,11 +450,11 @@ model ApiLog {
   endpoint  String
   method    String
   status    Int
-  request   Json?
-  response  Json?
+  request   Json?    @db.JsonB
+  response  Json?    @db.JsonB
   ip        String?
   userAgent String?
-  duration  Int?     // Response time in ms
+  duration  Int? // Response time in ms
   createdAt DateTime @default(now())
 
   apiKey ApiKey @relation(fields: [apiKeyId], references: [id])
@@ -466,8 +469,8 @@ model ApiLog {
 model Setting {
   id        String   @id @default(uuid())
   key       String   @unique
-  value     String
-  group     String?  // e.g., "payment", "general", "notification"
+  value     String   @db.Text
+  group     String? // e.g., "payment", "general", "notification"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
