@@ -26,7 +26,7 @@ export function Navbar() {
         
         {/* Left: Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <img src="/images/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+          <img src="/icons/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
           <span className="font-heading text-2xl font-bold tracking-tight text-[hsl(var(--primary))]">
             MiqStore
           </span>

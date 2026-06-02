@@ -79,14 +79,14 @@ export default function DashboardLayout({
   const progressPercent = Math.min(100, (rewardPoints / nextTierReq) * 100);
 
   return (
-    <div className="flex h-screen bg-[#F6EFE2] texture-overlay overflow-hidden text-[var(--color-navy)]">
+    <div className="flex min-h-screen bg-[#F6EFE2] texture-overlay text-[var(--color-navy)]">
       {/* Sidebar */}
-      <aside className="hidden lg:flex w-[280px] flex-col justify-between shrink-0 p-4 border-r border-[#E8DCC7]/50 overflow-y-auto no-scrollbar relative z-20 bg-white/40 backdrop-blur-xl">
+      <aside className="sticky top-0 hidden lg:flex w-[280px] h-screen flex-col justify-between shrink-0 p-4 border-r border-[#E8DCC7]/50 overflow-y-auto no-scrollbar z-20 bg-white/40 backdrop-blur-xl">
         <div className="flex flex-col gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 px-4 pt-2 group">
             <img 
-              src="/images/logo.png" 
+              src="/icons/logo.png" 
               alt="MiqStore Logo" 
               className="h-8 w-auto object-contain transition-all group-hover:scale-105" 
             />
@@ -197,10 +197,10 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-w-0 relative">
         
         {/* Top Navbar */}
-        <header className="flex items-center justify-between px-6 lg:px-10 py-5 border-b border-[#E8DCC7]/50 shrink-0 bg-white/50 backdrop-blur-md z-30">
+        <header className="sticky top-0 flex items-center justify-between px-6 lg:px-10 py-5 border-b border-[#E8DCC7]/50 shrink-0 bg-[#F6EFE2]/90 backdrop-blur-md z-30">
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
             {topNavLinks.map((link) => {
@@ -222,7 +222,7 @@ export default function DashboardLayout({
 
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-2">
-            <img src="/images/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+            <img src="/icons/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
           </div>
 
           {/* Actions */}
@@ -251,8 +251,8 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        {/* Scrollable Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-24 z-20 relative">
+        {/* Main Content */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-10 pb-24 z-20 relative">
           <div className="mx-auto max-w-[1200px]">
             {children}
           </div>
