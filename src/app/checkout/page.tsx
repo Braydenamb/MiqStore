@@ -13,7 +13,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
 import { formatCurrency } from "@/lib/utils";
 
@@ -153,8 +152,14 @@ export default function CheckoutPage() {
           {/* Terms & CTA */}
           <div className="space-y-6 pt-4">
             <div className="flex items-start space-x-3">
-              <Checkbox id="terms" checked={isAgreed} onCheckedChange={(c) => setIsAgreed(c as boolean)} className="mt-1 border-gray-300 data-[state=checked]:bg-[var(--color-teal)] data-[state=checked]:border-[var(--color-teal)]" />
-              <label htmlFor="terms" className="text-sm text-gray-500 leading-tight">
+              <input 
+                type="checkbox" 
+                id="terms" 
+                checked={isAgreed} 
+                onChange={(e) => setIsAgreed(e.target.checked)} 
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--color-teal)] focus:ring-[var(--color-teal)] accent-[var(--color-teal)] cursor-pointer" 
+              />
+              <label htmlFor="terms" className="text-sm text-gray-500 leading-tight cursor-pointer">
                 Saya menyetujui <Link href="/terms" className="text-[var(--color-teal)] font-medium hover:underline">Syarat & Ketentuan</Link> serta <Link href="/privacy" className="text-[var(--color-teal)] font-medium hover:underline">Kebijakan Privasi</Link> yang berlaku di MiqStore.
               </label>
             </div>
