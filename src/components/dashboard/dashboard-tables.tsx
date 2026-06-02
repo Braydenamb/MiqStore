@@ -66,7 +66,7 @@ export function DashboardTables({ recentTransactions, walletHistory }: Dashboard
       </motion.div>
 
       {/* Tables Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Transaksi Terakhir */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="bg-[hsl(var(--card))]/40 backdrop-blur-xl border border-[hsl(var(--border))] rounded-3xl p-6 h-[340px] flex flex-col shadow-sm"
@@ -124,50 +124,6 @@ export function DashboardTables({ recentTransactions, walletHistory }: Dashboard
           )}
         </motion.div>
 
-        {/* Riwayat Saldo */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="bg-[hsl(var(--card))]/40 backdrop-blur-xl border border-[hsl(var(--border))] rounded-3xl p-6 h-[340px] flex flex-col shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-sm">Riwayat Saldo</h3>
-            <Link href="/dashboard/wallet" className="text-xs font-semibold text-[var(--liquid-blue)] hover:underline flex items-center gap-1">
-              Lihat Semua <ChevronRight className="h-3 w-3" />
-            </Link>
-          </div>
-          
-          {walletHistory.length > 0 ? (
-            <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-2">
-              {walletHistory.map((wh: any) => (
-                <div key={wh.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-[hsl(var(--muted))] transition-colors border border-transparent hover:border-[hsl(var(--border))] group">
-                  <div className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${wh.amount > 0 ? 'bg-green-500/10 group-hover:bg-green-500/20' : 'bg-red-500/10 group-hover:bg-red-500/20'}`}>
-                      <Wallet className={`h-5 w-5 ${wh.amount > 0 ? 'text-green-500' : 'text-red-500'}`} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{wh.type === 'deposit' ? 'Topup Saldo' : wh.type === 'cashback' ? 'Cashback' : 'Pembayaran'}</p>
-                      <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mt-0.5">{wh.date}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-bold ${wh.amount > 0 ? 'text-green-500' : 'text-foreground'}`}>
-                      {wh.amount > 0 ? '+' : ''}{formatCurrency(wh.amount)}
-                    </p>
-                    <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-1 font-semibold">Berhasil</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-slate-900/40 dark:bg-slate-900/60 rounded-2xl border border-[hsl(var(--border))] border-dashed backdrop-blur-md">
-              <Wallet className="h-12 w-12 text-blue-400 mb-3 opacity-50" strokeWidth={1} />
-              <p className="font-bold text-sm text-[hsl(var(--foreground))]">Belum ada riwayat saldo</p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))] mb-4 max-w-[200px]">Lakukan top up untuk melihat riwayat saldo.</p>
-              <Button variant="secondary" size="sm" className="bg-[var(--liquid-blue)] hover:bg-[var(--liquid-blue)]/90 text-[hsl(var(--background))] font-semibold rounded-xl">
-                Deposit Sekarang
-              </Button>
-            </div>
-          )}
-        </motion.div>
       </div>
     </div>
   );

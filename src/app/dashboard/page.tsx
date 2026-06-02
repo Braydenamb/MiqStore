@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
-import { PremiumWalletCard } from "@/components/dashboard/premium-wallet-card";
-import { MembershipUpgradeCard } from "@/components/dashboard/membership-upgrade-card";
+// import { PremiumWalletCard } from "@/components/dashboard/premium-wallet-card";
+// import { MembershipUpgradeCard } from "@/components/dashboard/membership-upgrade-card";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { FavoriteGamesList } from "@/components/dashboard/favorite-games-list";
 
@@ -33,17 +33,17 @@ export default function DashboardPage() {
         </p>
       </motion.div>
 
-      {/* Main Balance Hero Card */}
-      <PremiumWalletCard 
+      {/* Main Balance Hero Card (OUT OF SCOPE) */}
+      {/* <PremiumWalletCard 
         isLoading={isLoading} 
         walletBalance={data?.stats?.walletBalance} 
-      />
+      /> */}
 
-      {/* Membership Upgrade Banner */}
-      <MembershipUpgradeCard 
+      {/* Membership Upgrade Banner (OUT OF SCOPE) */}
+      {/* <MembershipUpgradeCard 
         rewardPoints={data?.stats?.rewardPoints}
         membership={data?.stats?.membership}
-      />
+      /> */}
 
       {/* Bottom Grid: Transactions & Favorite Games */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

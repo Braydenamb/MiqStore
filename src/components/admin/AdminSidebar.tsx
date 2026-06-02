@@ -23,7 +23,7 @@ const navItems = [
   { label: "Orders", href: "/admin/orders", icon: Receipt },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: Wallet },
-  { label: "Analytics", href: "/admin/analytics", icon: LineChart },
+  // { label: "Analytics", href: "/admin/analytics", icon: LineChart }, // OUT OF SCOPE FOR MVP
 ];
 
 export function AdminSidebar({

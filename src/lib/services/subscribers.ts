@@ -1,7 +1,7 @@
 import { eventBus } from "./event-bus";
 import { awardTransactionXP } from "./gamification";
-import { distributeAffiliateCommission } from "./affiliate";
-import { distributeCashback } from "./wallet";
+// import { distributeAffiliateCommission } from "./affiliate";
+// import { distributeCashback } from "./wallet";
 import { logger } from "../telemetry";
 
 let isSubscribed = false;
@@ -22,17 +22,17 @@ export function registerSystemSubscribers() {
     
     // Fire off independent tasks in parallel
     await Promise.allSettled([
-      distributeCashback(transaction).catch(err => 
-        logger.error(`[Worker] Cashback failed for ${transaction.invoiceId}`, err)
-      ),
+      // distributeCashback(transaction).catch(err => 
+      //   logger.error(`[Worker] Cashback failed for ${transaction.invoiceId}`, err)
+      // ),
       
       awardTransactionXP(transaction.userId, transaction.total).catch(err => 
         logger.error(`[Worker] XP awarding failed for ${transaction.invoiceId}`, err)
       ),
       
-      distributeAffiliateCommission(transaction).catch(err => 
-        logger.error(`[Worker] Affiliate payout failed for ${transaction.invoiceId}`, err)
-      )
+      // distributeAffiliateCommission(transaction).catch(err => 
+      //   logger.error(`[Worker] Affiliate payout failed for ${transaction.invoiceId}`, err)
+      // )
     ]);
     
     logger.info(`[Worker] Finished background jobs for ${transaction.invoiceId}`);

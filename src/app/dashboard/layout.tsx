@@ -30,7 +30,7 @@ const sidebarLinks = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Riwayat Transaksi", href: "/dashboard/transactions", icon: Receipt },
   { label: "Profil", href: "/dashboard/profile", icon: User },
-  { label: "Membership", href: "/dashboard/membership", icon: Crown, badge: "Gold" },
+  // { label: "Membership", href: "/dashboard/membership", icon: Crown, badge: "Gold" }, // OUT OF SCOPE
   { label: "Voucher Saya", href: "/dashboard/vouchers", icon: Ticket },
   // { label: "Game Favorit", href: "/dashboard/favorites", icon: Heart },
   // { label: "Affiliate", href: "/dashboard/affiliate", icon: Megaphone, badge: "NEW" },

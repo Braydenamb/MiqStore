@@ -38,6 +38,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Path Duplication (`src/src/`)**: Pay strict attention to file paths when creating or modifying files. NEVER accidentally create nested directories like `src/src/middleware.ts` instead of `src/middleware.ts`.
 - **Middleware & Proxy Conflicts**: Next.js will throw a build error if both `middleware.ts` and `proxy.ts` exist. Only use one (or combine their logic appropriately) to avoid the `Both middleware file and proxy file are detected` build crash.
 - **JSX Dynamic Component Names**: When rendering components dynamically from an object map (e.g., icons), ALWAYS extract the component reference to an uppercase variable before rendering. Never use lowercase property access directly in JSX as it will crash the Turbopack build. Example: `const Icon = map[key].icon; <Icon />` (Correct) vs `<map[key].icon />` (Incorrect).
+- **Missing Shadcn Components**: Do not blindly import Shadcn components (e.g. `Checkbox`, `DropdownMenu`) assuming they are installed. Verify their existence first. If a component is missing and causes a build error, either use native HTML elements (e.g. `<input type="checkbox">`, `<select>`) or properly install them using the `pnpm dlx shadcn@latest add` command.
 
 ## Agent Workflow (Always)
 - **Use Context7**: Query Context7 for any library documentation or API usage (e.g., Next.js 15, Tailwind v4, Prisma) before guessing or assuming based on old training data.
@@ -51,3 +52,15 @@ This version has breaking changes — APIs, conventions, and file structure may 
   5. Build UI & Core Functionality
   6. Test & Refine (E2E & Unit tests)
   7. Document & Finalize
+
+## Features to Avoid (Out of Scope for MVP)
+Do NOT implement or suggest the following features as they will slow down development. Disable or hide them if they exist in templates:
+- Wallet System
+- Loyalty Programs
+- AI Integrations
+- Affiliate Systems
+- Multi-supplier Integrations
+- Complex Analytics
+- Chat Systems
+- Ranking Systems
+- Live Feed
