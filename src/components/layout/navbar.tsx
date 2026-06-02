@@ -17,6 +17,9 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname = usePathname();
 
+  // Hide on dashboard and admin pages
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return null;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[hsl(var(--border))]/50 glass-panel">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -66,9 +69,11 @@ export function Navbar() {
             </span>
           </Button>
 
-          <Button variant="ghost" size="icon" className="hidden sm:flex rounded-full text-[hsl(var(--foreground))]">
-            <User className="h-5 w-5" />
-          </Button>
+          <Link href="/dashboard" tabIndex={-1}>
+            <Button variant="ghost" size="icon" className="hidden sm:flex rounded-full text-[hsl(var(--foreground))]">
+              <User className="h-5 w-5" />
+            </Button>
+          </Link>
 
           <Button variant="ghost" size="icon" className="md:hidden rounded-full text-[hsl(var(--foreground))]">
             <Menu className="h-5 w-5" />

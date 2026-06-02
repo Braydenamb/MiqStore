@@ -1,7 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Gamepad2, Twitter, Instagram, Facebook } from "lucide-react";
 
 export function Footer() {
+  const pathname = usePathname();
+  
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return null;
+
   return (
     <footer className="bg-[var(--color-navy)] text-white pt-16 pb-8 border-t border-[var(--color-teal)]/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

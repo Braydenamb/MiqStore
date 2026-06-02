@@ -24,8 +24,8 @@ const tabs = [
 export function BottomNavbar() {
   const pathname = usePathname();
 
-  // Hide on admin pages
-  if (pathname.startsWith("/admin")) return null;
+  // Hide on admin and dashboard pages
+  if (pathname.startsWith("/admin") || pathname.startsWith("/dashboard")) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">

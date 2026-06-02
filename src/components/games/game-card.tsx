@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Star, Smartphone, Monitor } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Image from "next/image";
 
 interface GameCardProps {
   id: string;
@@ -14,9 +15,10 @@ interface GameCardProps {
   color: string;
   bg: string;
   index: number;
+  image?: string;
 }
 
-export function GameCard({ name, publisher, platform, popular, icon: Icon, color, bg, index }: GameCardProps) {
+export function GameCard({ name, publisher, platform, popular, icon: Icon, color, bg, index, image }: GameCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -39,9 +41,15 @@ export function GameCard({ name, publisher, platform, popular, icon: Icon, color
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 z-10 transition-opacity group-hover:opacity-80" />
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay pointer-events-none z-10" />
 
-        {/* Scaling Icon Container */}
-        <div className="relative z-0 transition-transform duration-500 ease-out group-hover:scale-110">
-          <Icon className="h-16 w-16 opacity-80" style={{ color }} />
+        {/* Scaling Icon Container or Image */}
+        <div className="relative w-full h-full z-0 transition-transform duration-500 ease-out group-hover:scale-110">
+          {image ? (
+            <Image src={image} alt={name} fill className="object-cover opacity-90" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Icon className="h-16 w-16 opacity-80" style={{ color }} />
+            </div>
+          )}
         </div>
       </div>
 
