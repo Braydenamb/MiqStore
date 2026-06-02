@@ -18,7 +18,7 @@ const GAMES = [
 ];
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 
 function GamesContent() {
   const searchParams = useSearchParams();
