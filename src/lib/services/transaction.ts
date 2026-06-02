@@ -12,7 +12,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { debitWallet } from "./wallet";
+// import { debitWallet } from "./wallet"; // OUT OF SCOPE
 import { calculateFraudScore } from "./ai-brain";
 import { logger, metrics, tracing } from "../telemetry";
 import { eventBus } from "./event-bus";
@@ -277,46 +277,47 @@ export async function processTopup(
 /**
  * Step 4 (Wallet Ecosystem): Instant Checkout via Internal Wallet
  * Bypasses Midtrans completely.
+ * (OUT OF SCOPE FOR MVP)
  */
-export async function handleWalletCheckout(
-  input: CreateTransactionInput
-): Promise<TransactionRecord> {
-  const transaction = await createTransaction(input);
+// export async function handleWalletCheckout(
+//   input: CreateTransactionInput
+// ): Promise<TransactionRecord> {
+//   const transaction = await createTransaction(input);
 
-  if (transaction.paymentMethod.toLowerCase() !== "wallet") {
-    throw new Error("Invalid payment method for wallet checkout");
-  }
+//   if (transaction.paymentMethod.toLowerCase() !== "wallet") {
+//     throw new Error("Invalid payment method for wallet checkout");
+//   }
 
-  // 1. Debit Wallet
-  await debitWallet(
-    transaction.userId,
-    transaction.total,
-    "PURCHASE",
-    `Payment for ${transaction.invoiceId} - ${transaction.gameName}`,
-    transaction.invoiceId
-  );
+//   // 1. Debit Wallet
+//   await debitWallet(
+//     transaction.userId,
+//     transaction.total,
+//     "PURCHASE",
+//     `Payment for ${transaction.invoiceId} - ${transaction.gameName}`,
+//     transaction.invoiceId
+//   );
 
-  // 2. Mark as PAID instantly
-  transaction.paymentStatus = "PAID";
-  transaction.paidAt = new Date();
+//   // 2. Mark as PAID instantly
+//   transaction.paymentStatus = "PAID";
+//   transaction.paidAt = new Date();
   
-  console.log(`[Wallet Checkout] Instant payment successful for ${transaction.invoiceId}`);
+//   console.log(`[Wallet Checkout] Instant payment successful for ${transaction.invoiceId}`);
 
-  // 3. Trigger Topup
-  const topupResult = await processTopup(transaction);
+//   // 3. Trigger Topup
+//   const topupResult = await processTopup(transaction);
   
-  if (topupResult.success) {
-    transaction.providerStatus = "success";
-    transaction.completedAt = new Date();
+//   if (topupResult.success) {
+//     transaction.providerStatus = "success";
+//     transaction.completedAt = new Date();
     
-    // 🔥 Fire & Forget: Broadcast to decoupled workers
-    eventBus.publish("TRANSACTION_COMPLETED", { transaction });
-  } else {
-    transaction.providerStatus = "pending";
-  }
+//     // 🔥 Fire & Forget: Broadcast to decoupled workers
+//     eventBus.publish("TRANSACTION_COMPLETED", { transaction });
+//   } else {
+//     transaction.providerStatus = "pending";
+//   }
 
-  return transaction;
-}
+//   return transaction;
+// }
 
 
 /**
