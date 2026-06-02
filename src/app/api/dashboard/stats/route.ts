@@ -70,7 +70,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       take: 4,
       include: {
-        product: { select: { id: true, name: true, publisher: true, color: true } }
+        product: { select: { id: true, name: true, publisher: true, color: true, image: true } }
       }
     });
     
@@ -79,6 +79,7 @@ export async function GET() {
       name: fg.product.name,
       publisher: fg.product.publisher || "Unknown",
       color: fg.product.color || "from-blue-500 to-indigo-600",
+      image: fg.product.image || null,
     }));
 
     return NextResponse.json({

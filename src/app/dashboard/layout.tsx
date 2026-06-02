@@ -86,7 +86,7 @@ export default function DashboardLayout({
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 px-4 pt-2 group">
             <img 
-              src="/icons/logo.png" 
+              src="/images/logo.png" 
               alt="MiqStore Logo" 
               className="h-8 w-auto object-contain transition-all group-hover:scale-105" 
             />
@@ -222,7 +222,7 @@ export default function DashboardLayout({
 
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-2">
-            <img src="/icons/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+            <img src="/images/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
           </div>
 
           {/* Actions */}

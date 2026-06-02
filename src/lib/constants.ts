@@ -144,7 +144,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "mobile-legends",
     publisher: "Moonton",
     category: "mobile",
-    image: "/games/mobile-legends.webp",
+    image: "/images/Mobile_legends(1).jpg",
     banner: "/games/banners/mobile-legends.webp",
     color: "#1a56db",
     fields: [
@@ -159,7 +159,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "free-fire",
     publisher: "Garena",
     category: "mobile",
-    image: "/games/free-fire.webp",
+    image: "/images/Free_Fire.webp",
     banner: "/games/banners/free-fire.webp",
     color: "#ff5722",
     fields: [
@@ -173,7 +173,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "pubg-mobile",
     publisher: "Tencent",
     category: "mobile",
-    image: "/games/pubg-mobile.webp",
+    image: "/images/pubgm.jpg",
     banner: "/games/banners/pubg-mobile.webp",
     color: "#f5a623",
     fields: [
@@ -187,7 +187,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "valorant",
     publisher: "Riot Games",
     category: "pc",
-    image: "/games/valorant.webp",
+    image: "/images/Valorant_(1).jpg",
     banner: "/games/banners/valorant.webp",
     color: "#ff4655",
     fields: [
@@ -201,7 +201,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "genshin-impact",
     publisher: "miHoYo",
     category: "pc",
-    image: "/games/genshin-impact.webp",
+    image: "/images/genshin-impact-(1).jpg",
     banner: "/games/banners/genshin-impact.webp",
     color: "#5b8cff",
     fields: [
@@ -227,7 +227,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "honkai-star-rail",
     publisher: "miHoYo",
     category: "pc",
-    image: "/games/honkai-star-rail.webp",
+    image: "/images/Honkai_star_rail.png",
     banner: "/games/banners/honkai-star-rail.webp",
     color: "#a855f7",
     fields: [
@@ -253,7 +253,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "roblox",
     publisher: "Roblox Corp",
     category: "pc",
-    image: "/games/roblox.webp",
+    image: "/images/roblox.jpg",
     banner: "/games/banners/roblox.webp",
     color: "#e2231a",
     fields: [
@@ -267,7 +267,7 @@ export const POPULAR_GAMES: Game[] = [
     slug: "steam-wallet",
     publisher: "Valve",
     category: "pc",
-    image: "/games/steam.webp",
+    image: "/images/steam.png",
     banner: "/games/banners/steam.webp",
     color: "#171a21",
     fields: [],

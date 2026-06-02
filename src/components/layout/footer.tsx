@@ -10,7 +10,7 @@ export function Footer() {
           {/* Brand Col */}
           <div className="col-span-1 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-6">
-              <img src="/icons/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain brightness-0 invert" />
+              <img src="/images/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain brightness-0 invert" />
               <span className="font-heading text-2xl font-bold tracking-tight text-[var(--color-gold)]">
                 MiqStore
               </span>

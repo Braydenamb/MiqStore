@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Heart, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 interface Game {
@@ -10,6 +11,7 @@ interface Game {
   name: string;
   publisher: string;
   color: string;
+  image?: string | null;
 }
 
 const FAVORITE_GAMES: Game[] = [
@@ -18,24 +20,28 @@ const FAVORITE_GAMES: Game[] = [
     name: "Mobile Legends",
     publisher: "Moonton",
     color: "from-blue-500 to-indigo-600",
+    image: "/images/Mobile_legends(1).jpg",
   },
   {
     id: "pubgm",
     name: "PUBG Mobile",
     publisher: "Tencent",
     color: "from-orange-500 to-red-600",
+    image: "/images/pubgm.jpg",
   },
   {
     id: "valorant",
     name: "Valorant",
     publisher: "Riot Games",
     color: "from-red-500 to-rose-700",
+    image: "/images/Valorant_(1).jpg",
   },
   {
     id: "genshin",
     name: "Genshin Impact",
     publisher: "HoYoverse",
     color: "from-teal-400 to-emerald-600",
+    image: "/images/genshin-impact-(1).jpg",
   },
 ];
 
@@ -63,17 +69,25 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
             transition={{ delay: i * 0.1 }}
             className="group cursor-pointer"
           >
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1">
-              <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-80 group-hover:opacity-100 transition-opacity`} />
-              
-              {/* Abstract pattern placeholder */}
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay" />
-              
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-heading font-extrabold text-white/90 text-2xl tracking-tighter -rotate-12 group-hover:scale-110 transition-transform">
-                  {game.name.substring(0, 2).toUpperCase()}
-                </span>
-              </div>
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-[var(--color-navy)]">
+              {game.image ? (
+                <Image 
+                  src={game.image} 
+                  alt={game.name} 
+                  fill
+                  className="object-cover opacity-90 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-300"
+                />
+              ) : (
+                <>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-80 group-hover:opacity-100 transition-opacity`} />
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="font-heading font-extrabold text-white/90 text-2xl tracking-tighter -rotate-12 group-hover:scale-110 transition-transform">
+                      {game.name.substring(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             <h4 className="font-bold text-[var(--color-navy)] text-sm truncate">{game.name}</h4>
             <p className="text-[10px] font-medium text-[var(--color-navy)]/50 truncate">{game.publisher}</p>

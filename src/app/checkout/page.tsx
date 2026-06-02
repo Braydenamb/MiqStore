@@ -167,11 +167,12 @@ function CheckoutContent() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-11 w-11 items-center justify-center rounded-xl shrink-0"
-                      style={{ backgroundColor: game.color + "18" }}
-                    >
-                      <Gamepad2 className="h-5 w-5" style={{ color: game.color }} />
+                    <div className="relative flex h-11 w-11 items-center justify-center rounded-xl shrink-0 overflow-hidden bg-[var(--color-navy)]">
+                      {game.image ? (
+                        <img src={game.image} alt={game.name} className="object-cover h-full w-full" />
+                      ) : (
+                        <Gamepad2 className="h-5 w-5 text-white/50" />
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold truncate">{game.name}</p>
@@ -337,11 +338,12 @@ function CheckoutContent() {
                 <CardContent className="space-y-4">
                   {/* Product */}
                   <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-12 w-12 items-center justify-center rounded-xl shrink-0"
-                      style={{ backgroundColor: game.color + "18" }}
-                    >
-                      <Gamepad2 className="h-6 w-6" style={{ color: game.color }} />
+                    <div className="relative flex h-12 w-12 items-center justify-center rounded-xl shrink-0 overflow-hidden bg-[var(--color-navy)]">
+                      {game.image ? (
+                        <img src={game.image} alt={game.name} className="object-cover h-full w-full" />
+                      ) : (
+                        <Gamepad2 className="h-6 w-6 text-white/50" />
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold truncate">{game.name}</p>
