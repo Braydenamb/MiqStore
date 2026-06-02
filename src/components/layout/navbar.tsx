@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Games", href: "/games" },
-  { label: "Top Up", href: "/top-up" },
-  { label: "Membership", href: "/membership" },
-  { label: "Vouchers", href: "/vouchers" },
-  { label: "Deals", href: "/deals" },
+  // { label: "Top Up", href: "/top-up" },
+  // { label: "Membership", href: "/membership" },
+  // { label: "Vouchers", href: "/vouchers" },
+  // { label: "Deals", href: "/deals" },
 ];
 
 export function Navbar() {
