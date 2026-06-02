@@ -77,23 +77,22 @@
 /* Light Mode Override */
 [data-theme="light"],
 .light {
-  --background: 220 20% 97%;
+  --background: 210 40% 98%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --muted: 210 30% 93%;
-  --muted-foreground: 215 18% 42%;
-  --border: 214 28% 90%;
-  --input: 214 28% 90%;
+  --muted: 214 32% 91%;
+  --muted-foreground: 215 16% 47%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
 
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-bg-strong: rgba(255, 255, 255, 0.75);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-bg-strong: rgba(255, 255, 255, 1);
   --glass-border: rgba(0, 0, 0, 0.05);
   --glass-border-strong: rgba(0, 0, 0, 0.08);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04);
 }
 
 /* ---------- BASE STYLES ---------- */

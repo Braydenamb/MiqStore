@@ -7,6 +7,8 @@ import { WalletBanner } from "@/components/dashboard/wallet-banner";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { DashboardTables } from "@/components/dashboard/dashboard-tables";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { QuickActions } from "@/components/dashboard/quick-actions";
+import { AiInsights } from "@/components/dashboard/ai-insights";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -33,11 +35,14 @@ export default function DashboardPage() {
         </p>
       </motion.div>
 
-      {/* Main Saldo Banner */}
-      <WalletBanner isLoading={isLoading} walletBalance={data?.stats?.walletBalance} />
-
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="flex-1 space-y-6">
+          {/* Main Saldo Banner */}
+          <WalletBanner isLoading={isLoading} walletBalance={data?.stats?.walletBalance} />
+
+          {/* Quick Actions (Top Up, Voucher, dll) */}
+          <QuickActions />
+
           {/* Stats Grid */}
           <StatsGrid 
             isLoading={isLoading} 
@@ -45,6 +50,9 @@ export default function DashboardPage() {
             totalSpent={data?.stats?.totalSpent}
             rewardPoints={data?.stats?.rewardPoints}
           />
+
+          {/* AI-Powered Insights & Recommendations */}
+          <AiInsights />
 
           {/* Tables Row (includes Membership Upgrade Banner) */}
           <DashboardTables 

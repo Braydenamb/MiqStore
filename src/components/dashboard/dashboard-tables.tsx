@@ -87,8 +87,16 @@ export function DashboardTables({ recentTransactions, walletHistory }: Dashboard
                       <Gamepad2 className="h-5 w-5 text-purple-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold">{tx.game}</p>
-                      <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mt-0.5">{tx.date}</p>
+                      <p className="text-sm font-semibold flex items-center gap-2">
+                        {statusMap[tx.status]?.icon && <statusMap[tx.status].icon className={`h-3.5 w-3.5 text-${statusMap[tx.status].variant === 'success' ? 'green' : statusMap[tx.status].variant === 'warning' ? 'yellow' : 'red'}-500`} />}
+                        Top Up {tx.game}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[11px] font-medium text-[hsl(var(--muted-foreground))]">{tx.date}</span>
+                        <span className="text-[10px] bg-green-500/10 text-green-500 px-1.5 rounded-sm font-bold flex items-center gap-1">
+                          <Sparkles className="h-2.5 w-2.5" /> +500
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">

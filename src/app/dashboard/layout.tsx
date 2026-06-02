@@ -55,8 +55,12 @@ export default function DashboardLayout({
         <div className="flex flex-col gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 px-4 pt-4 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--liquid-blue)] to-[var(--liquid-cyan)] text-white shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-shadow">
-              <Gamepad2 className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-white/10 shadow-sm transition-all group-hover:scale-105">
+              <img 
+                src="/images/logo.png" 
+                alt="MiqStore Logo" 
+                className="h-6 w-6 object-contain dark:invert transition-all" 
+              />
             </div>
             <span className="text-xl font-bold tracking-tight text-[hsl(var(--foreground))]">
               {APP_NAME}
@@ -64,7 +68,7 @@ export default function DashboardLayout({
           </Link>
 
           {/* User Info (Profile Card like mock) */}
-          <div className="flex flex-col p-4 rounded-2xl glass-card border border-[hsl(var(--border))]">
+          <div className="flex flex-col p-3 rounded-2xl bg-[hsl(var(--card))]/50 border border-[hsl(var(--border))] shadow-sm transition-all hover:bg-[hsl(var(--card))]">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[var(--liquid-blue)] to-[var(--liquid-cyan)] text-white font-bold text-lg shadow-lg">
                 {session?.user?.name?.[0]?.toUpperCase() || "M"}
@@ -100,7 +104,7 @@ export default function DashboardLayout({
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300",
                     isActive
-                      ? "bg-[var(--liquid-blue)]/10 text-[var(--liquid-blue)] font-semibold border border-[var(--liquid-blue)]/20 shadow-[0_0_15px_rgba(125,211,252,0.15)]"
+                      ? "bg-[var(--liquid-blue)]/10 text-[var(--liquid-blue)] font-semibold border border-[var(--liquid-blue)]/20 dark:shadow-[0_0_15px_rgba(125,211,252,0.15)]"
                       : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]/50 hover:text-[hsl(var(--foreground))]"
                   )}
                 >
@@ -219,7 +223,7 @@ export default function DashboardLayout({
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-[var(--liquid-blue)] border-2 border-[hsl(var(--background))]" />
             </Button>
             
-            <Button className="hidden sm:flex rounded-xl bg-[var(--liquid-blue)] hover:bg-[var(--liquid-blue)]/90 text-[hsl(var(--background))] font-semibold px-5 h-10 gap-2 shadow-lg shadow-cyan-500/20">
+            <Button className="hidden sm:flex rounded-xl bg-slate-900 dark:bg-[var(--liquid-blue)] hover:bg-slate-800 dark:hover:bg-[var(--liquid-blue)]/90 text-white dark:text-[hsl(var(--background))] font-semibold px-5 h-10 gap-2 shadow-lg dark:shadow-cyan-500/20 transition-all">
               <User className="h-4 w-4" /> Dashboard
             </Button>
           </div>

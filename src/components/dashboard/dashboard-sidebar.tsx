@@ -4,104 +4,97 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Zap, CalendarCheck, CheckCircle2, Sparkles, Crown, Gamepad2 } from "lucide-react";
+import { Zap, CalendarCheck, CheckCircle2, Sparkles, Crown, Gamepad2, Gift } from "lucide-react";
 
 export function DashboardSidebar() {
   return (
     <div className="xl:w-80 shrink-0 flex flex-col gap-6">
-      {/* Quick Top Up */}
+      
+      {/* Personalized Quick Top Up */}
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[hsl(var(--border))]">
-          <div className="flex items-center gap-2 mb-5">
-            <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />
-            <h3 className="font-bold text-sm">Quick Top Up</h3>
-          </div>
-          
-          <div className="space-y-2 mb-5">
-            {[
-              { name: 'Mobile Legends', img: '/images/mlbb-logo.png' }, 
-              { name: 'Free Fire', img: '/images/ff-logo.png' }, 
-              { name: 'PUBG Mobile', img: '/images/pubgm-logo.png' }
-            ].map((game, i) => (
-              <Link href={`/games/${game.name.toLowerCase().replace(' ', '-')}`} key={i} className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[hsl(var(--muted))] transition-colors border border-transparent hover:border-[hsl(var(--border))] group">
-                <div className="h-10 w-10 rounded-xl bg-slate-900/40 dark:bg-slate-900/60 flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-[hsl(var(--border))]">
-                  {/* Real Image or Fallback */}
-                  <img src={game.img} alt={game.name} className="h-full w-full object-cover p-1.5 drop-shadow-md" />
-                </div>
-                <span className="text-sm font-semibold flex-1">{game.name}</span>
-              </Link>
-            ))}
-          </div>
-          
-          <Button variant="outline" className="w-full rounded-xl border-[hsl(var(--border))] text-xs font-semibold hover:bg-[hsl(var(--muted))]">
-            <Gamepad2 className="h-3.5 w-3.5 mr-2" /> Lihat Semua Game
-          </Button>
-        </div>
-      </motion.div>
-
-      {/* Daily Check-in */}
-      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[hsl(var(--border))] relative overflow-hidden">
-          <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-purple-500/5 blur-2xl rounded-full pointer-events-none" />
-          <div className="flex gap-4 relative z-10">
-            <div className="flex-1">
-              <div className="flex items-center gap-1.5 mb-2">
-                <CalendarCheck className="h-4 w-4 text-orange-500" />
-                <h3 className="font-bold text-sm">Daily Check-in</h3>
-              </div>
-              <p className="text-[11px] font-medium text-[hsl(var(--muted-foreground))] leading-relaxed mb-4">
-                Check-in setiap hari dan dapatkan poin reward!
-              </p>
-              <Button className="w-full rounded-xl bg-[var(--liquid-blue)] hover:bg-[var(--liquid-blue)]/90 text-[hsl(var(--background))] font-semibold shadow-md shadow-cyan-500/20">
-                Check-in Sekarang
-              </Button>
-            </div>
-            <div className="shrink-0 pt-2">
-              <div className="h-16 w-16 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 flex items-center justify-center rotate-6 hover:rotate-12 transition-transform cursor-pointer">
-                <CheckCircle2 className="h-8 w-8 text-[var(--liquid-purple)]" strokeWidth={2.5} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Event Terbaru */}
-      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[hsl(var(--border))]">
+        <div className="glass-card rounded-3xl p-5 shadow-sm border border-[hsl(var(--border))]">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[var(--liquid-blue)]" />
-              <h3 className="font-bold text-sm">Event Terbaru</h3>
+              <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />
+              <h3 className="font-bold text-sm">Lanjut Main?</h3>
             </div>
-            <Link href="/events" className="text-xs font-semibold text-[var(--liquid-blue)] hover:underline">
-              Lihat Semua
-            </Link>
           </div>
           
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-950 to-[#2e1065] aspect-[16/9] p-5 border border-indigo-500/30 shadow-inner group cursor-pointer">
-            <div className="absolute -top-4 -left-4 w-20 h-20 bg-blue-500/30 blur-2xl rounded-full group-hover:bg-blue-500/40 transition-colors" />
-            <div className="absolute -bottom-4 -right-4 w-28 h-28 bg-pink-500/30 blur-2xl rounded-full group-hover:bg-pink-500/40 transition-colors" />
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                <div className="flex items-center gap-1 text-cyan-300 text-[10px] font-bold tracking-wider mb-1">
-                  <Sparkles className="h-3 w-3" /> TOP UP
-                </div>
-                <h4 className="text-white font-black text-xl italic uppercase drop-shadow-md leading-tight mt-0.5">September<br/>Deals!</h4>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-white/10 p-4 group cursor-pointer">
+            <div className="absolute inset-0 bg-[url('/images/mlbb-logo.png')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
+            <div className="relative z-10 flex items-center gap-4">
+              <div className="h-12 w-12 rounded-xl bg-slate-900/60 shadow-lg border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                <img src="/images/mlbb-logo.png" alt="MLBB" className="h-full w-full object-cover p-2" />
               </div>
-              <div>
-                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-[10px] border-none text-white font-bold py-1 px-3 shadow-lg shadow-purple-500/20">
-                  Diskon hingga 20%
-                </Badge>
+              <div className="flex-1">
+                <h4 className="text-sm font-bold text-white">Mobile Legends</h4>
+                <p className="text-[10px] text-white/70 mt-0.5">Diamond ML hampir habis!</p>
               </div>
             </div>
-            
-            {/* Diamond graphic mock */}
-            <div className="absolute -bottom-2 -right-2 text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] opacity-90 group-hover:scale-110 transition-transform duration-500">
-              <Crown className="w-24 h-24 rotate-12 fill-cyan-400/20" strokeWidth={1} />
+            <Button size="sm" className="w-full mt-4 rounded-xl bg-[var(--liquid-blue)] hover:bg-[var(--liquid-blue)]/90 text-[hsl(var(--background))] font-bold relative z-10 shadow-lg shadow-cyan-500/20">
+              Top Up Sekarang
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Daily Engagement / Reward System */}
+      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+        <div className="glass-card rounded-3xl p-5 shadow-sm border border-[hsl(var(--border))] relative overflow-hidden group">
+          <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-purple-500/10 blur-2xl rounded-full pointer-events-none group-hover:bg-purple-500/20 transition-colors" />
+          
+          <div className="flex items-center justify-between mb-2 relative z-10">
+            <div className="flex items-center gap-1.5">
+              <CalendarCheck className="h-4 w-4 text-orange-500" />
+              <h3 className="font-bold text-sm">Daily Reward</h3>
+            </div>
+            <Badge variant="outline" className="text-[10px] bg-orange-500/10 text-orange-500 border-orange-500/20 rounded-full font-bold">Day 3 Streak</Badge>
+          </div>
+          
+          <p className="text-[11px] font-medium text-[hsl(var(--muted-foreground))] leading-relaxed mb-4 relative z-10">
+            Check-in hari ini untuk klaim Mystery Box spesial!
+          </p>
+          
+          <div className="flex gap-2 relative z-10">
+            <Button className="flex-1 rounded-xl bg-gradient-to-r from-orange-400 to-rose-500 hover:from-orange-500 hover:to-rose-600 text-white font-bold shadow-lg shadow-orange-500/20 border-none transition-transform hover:scale-[1.02]">
+              Klaim Reward
+            </Button>
+            <div className="h-10 w-10 shrink-0 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 flex items-center justify-center rotate-6 group-hover:rotate-12 transition-transform cursor-pointer">
+              <Gift className="h-5 w-5 text-rose-500" />
             </div>
           </div>
         </div>
       </motion.div>
+
+      {/* Event Terbaru Banner */}
+      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
+        <div className="rounded-3xl p-5 shadow-xl border border-[hsl(var(--border))] relative overflow-hidden bg-slate-900 group cursor-pointer">
+          {/* Animated Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-purple-600/40 to-cyan-500/40 opacity-80" />
+          
+          <div className="relative z-10">
+            <Badge className="bg-cyan-500 text-white font-bold text-[9px] uppercase tracking-wider mb-3 rounded-full shadow-lg shadow-cyan-500/30 border-none px-2 py-0.5">
+              Flash Sale
+            </Badge>
+            <h3 className="text-lg font-black text-white leading-tight mb-1">
+              PUBG Mobile<br />UC Diskon 20%
+            </h3>
+            <p className="text-xs text-white/80 font-medium mb-4">
+              Hanya hari ini!
+            </p>
+            <Button size="sm" variant="outline" className="rounded-xl border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white backdrop-blur-md font-bold text-xs h-8 px-4 w-fit">
+              Lihat Promo
+            </Button>
+          </div>
+          
+          {/* Floating Event Element */}
+          <div className="absolute -right-4 bottom-0 w-32 h-32 opacity-80 group-hover:scale-110 transition-transform duration-500">
+            <div className="absolute inset-0 bg-cyan-400 blur-2xl opacity-40 rounded-full" />
+            <Sparkles className="w-full h-full text-white drop-shadow-2xl fill-white/20 p-4" strokeWidth={1} />
+          </div>
+        </div>
+      </motion.div>
+      
     </div>
   );
 }
