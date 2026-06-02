@@ -17,10 +17,106 @@ const GAMES = [
   { id: "steam", name: "Steam Wallet", publisher: "Valve", platform: "PC", popular: false, icon: Coins, color: "#0D1B2A", bg: "bg-blue-200", image: "/images/steam.png" },
 ];
 
-export default function GamesPage() {
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+
+function GamesContent() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q")?.toLowerCase() || "";
+  
   const [filter, setFilter] = useState("All Platforms");
   const [sort, setSort] = useState("Popular");
 
+  const filteredGames = GAMES.filter(g => {
+    const matchesSearch = g.name.toLowerCase().includes(q) || g.publisher.toLowerCase().includes(q);
+    const matchesPlatform = filter === "All Platforms" || g.platform.includes(filter);
+    return matchesSearch && matchesPlatform;
+  });
+
+  const sortedGames = [...filteredGames].sort((a, b) => {
+    if (sort === "A-Z") return a.name.localeCompare(b.name);
+    if (sort === "Popular") return (a.popular === b.popular) ? 0 : a.popular ? -1 : 1;
+    return 0;
+  });
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 relative z-10">
+      
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[var(--color-teal)]/20 pb-8">
+        <div>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-heading text-4xl sm:text-5xl font-bold text-[var(--color-navy)] mb-2"
+          >
+            {q ? `Search: ${searchParams.get("q")}` : "All Games"}
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-lg text-[var(--color-teal)]/80"
+          >
+            {q ? `Found ${sortedGames.length} games matching your search.` : "Top up your favorite games instantly."}
+          </motion.p>
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center gap-4"
+        >
+          {/* Filters */}
+          <div className="relative">
+            <select 
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="appearance-none bg-white border border-[var(--color-teal)]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[var(--color-navy)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] cursor-pointer shadow-sm hover:border-[var(--color-teal)]/40 transition-colors"
+            >
+              <option>All Platforms</option>
+              <option>Mobile</option>
+              <option>PC</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-teal)] pointer-events-none" />
+          </div>
+
+          <div className="relative">
+            <select 
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="appearance-none bg-white border border-[var(--color-teal)]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[var(--color-navy)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] cursor-pointer shadow-sm hover:border-[var(--color-teal)]/40 transition-colors"
+            >
+              <option>Sort: Popular</option>
+              <option>A-Z</option>
+              <option>Newest</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-teal)] pointer-events-none" />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Games Grid */}
+      {sortedGames.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {sortedGames.map((game, idx) => (
+            <GameCard key={game.id} {...game} index={idx} />
+          ))}
+        </div>
+      ) : (
+        <div className="py-20 text-center">
+          <Gamepad2 className="h-16 w-16 mx-auto text-[var(--color-teal)]/20 mb-4" />
+          <h3 className="text-xl font-bold text-[var(--color-navy)] mb-2">No games found</h3>
+          <p className="text-[var(--color-navy)]/60">We couldn't find any games matching "{searchParams.get("q")}".</p>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+export default function GamesPage() {
   return (
     <div className="min-h-screen bg-[var(--color-cream)] texture-overlay py-12 relative overflow-hidden">
       
@@ -28,71 +124,13 @@ export default function GamesPage() {
       <div className="absolute left-4 top-20 bottom-20 w-8 border-l-2 border-dotted border-[var(--color-gold)]/40 hidden lg:block" />
       <div className="absolute right-4 top-20 bottom-20 w-8 border-r-2 border-dotted border-[var(--color-gold)]/40 hidden lg:block" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 relative z-10">
-        
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[var(--color-teal)]/20 pb-8">
-          <div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="font-heading text-4xl sm:text-5xl font-bold text-[var(--color-navy)] mb-2"
-            >
-              All Games
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-lg text-[var(--color-teal)]/80"
-            >
-              Top up your favorite games instantly.
-            </motion.p>
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-4"
-          >
-            {/* Filters */}
-            <div className="relative">
-              <select 
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="appearance-none bg-white border border-[var(--color-teal)]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[var(--color-navy)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] cursor-pointer shadow-sm hover:border-[var(--color-teal)]/40 transition-colors"
-              >
-                <option>All Platforms</option>
-                <option>Mobile</option>
-                <option>PC</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-teal)] pointer-events-none" />
-            </div>
-
-            <div className="relative">
-              <select 
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="appearance-none bg-white border border-[var(--color-teal)]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[var(--color-navy)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] cursor-pointer shadow-sm hover:border-[var(--color-teal)]/40 transition-colors"
-              >
-                <option>Sort: Popular</option>
-                <option>A-Z</option>
-                <option>Newest</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-teal)] pointer-events-none" />
-            </div>
-          </motion.div>
+      <Suspense fallback={
+        <div className="min-h-[50vh] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-teal)]"></div>
         </div>
-
-        {/* Games Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {GAMES.map((game, idx) => (
-            <GameCard key={game.id} {...game} index={idx} />
-          ))}
-        </div>
-
-      </div>
+      }>
+        <GamesContent />
+      </Suspense>
     </div>
   );
 }

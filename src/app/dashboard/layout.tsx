@@ -33,7 +33,7 @@ const sidebarLinks = [
   { label: "Membership", href: "/dashboard/membership", icon: Crown, badge: "Gold" },
   { label: "Voucher Saya", href: "/dashboard/vouchers", icon: Ticket },
   { label: "Game Favorit", href: "/dashboard/favorites", icon: Heart },
-  { label: "Affiliate", href: "/dashboard/affiliate", icon: Megaphone, badge: "NEW" },
+  // { label: "Affiliate", href: "/dashboard/affiliate", icon: Megaphone, badge: "NEW" },
   { label: "Pengaturan", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -227,14 +227,23 @@ export default function DashboardLayout({
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <div className="relative hidden md:flex items-center">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const q = formData.get("q")?.toString().trim();
+                if (q) window.location.href = `/games?q=${encodeURIComponent(q)}`;
+              }}
+              className="relative hidden md:flex items-center"
+            >
               <Search className="absolute left-4 h-4 w-4 text-[var(--color-teal)]/50" />
               <input 
                 type="text" 
+                name="q"
                 placeholder="Cari game, voucher, dll..." 
                 className="h-11 w-72 rounded-full bg-white border border-[#E8DCC7] pl-11 pr-4 text-sm font-medium outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] transition-all shadow-sm"
               />
-            </div>
+            </form>
             
             <Button variant="ghost" size="icon" className="rounded-full relative text-[var(--color-navy)] hover:bg-[#E8DCC7]/50 h-10 w-10">
               <Bell className="h-5 w-5" />
