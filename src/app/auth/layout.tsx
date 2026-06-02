@@ -1,6 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/layout/navbar";
 import { motion } from "framer-motion";
 
 export default function AuthLayout({
@@ -10,7 +9,6 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F0E2] relative overflow-hidden font-sans">
-      <Navbar />
       
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
