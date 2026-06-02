@@ -57,7 +57,7 @@ export default function DashboardLayout({
           <Link href="/" className="flex items-center gap-3 px-4 pt-4 group">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-white/10 shadow-sm transition-all group-hover:scale-105">
               <img 
-                src="/images/logo.png" 
+                src="/icons/logo.png" 
                 alt="MiqStore Logo" 
                 className="h-6 w-6 object-contain dark:invert transition-all" 
               />
