@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,7 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { POPULAR_GAMES, PAYMENT_METHODS } from "@/lib/constants";
 import { formatCurrency, cn } from "@/lib/utils";
-import { staggerContainer, staggerItem, fadeUp } from "@/lib/motion";
+import { useCheckoutStore } from "@/store/useCheckoutStore";
 
 /* ── Mock product items per game ── */
 interface ProductItem {
@@ -99,14 +99,9 @@ const paymentCategoryLabels: Record<string, string> = {
 };
 
 /* ─── Step Badge ─── */
-function StepBadge({ num, active }: { num: number; active: boolean }) {
+function StepBadge({ num }: { num: number }) {
   return (
-    <span className={cn(
-      "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-bold transition-all",
-      active
-        ? "bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] text-white shadow-lg shadow-purple-500/20"
-        : "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]"
-    )}>
+    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-navy)] text-white text-xs font-bold shadow-sm">
       {num}
     </span>
   );
@@ -117,16 +112,15 @@ export default function GameDetailPage() {
   const router = useRouter();
   const slug = params.slug as string;
 
+  const checkoutStore = useCheckoutStore();
+
   const game = POPULAR_GAMES.find((g) => g.slug === slug);
   const products = GAME_PRODUCTS[slug] || DEFAULT_PRODUCTS;
 
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
-  const [promoCode, setPromoCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [nickname, setNickname] = useState<string | null>(null);
-  const [isValidating, setIsValidating] = useState(false);
 
   const chosenProduct = products.find((p) => p.id === selectedProduct);
   const chosenPayment = PAYMENT_METHODS.find((p) => p.id === selectedPayment);
@@ -149,415 +143,221 @@ export default function GameDetailPage() {
     : 0;
   const total = chosenProduct ? chosenProduct.price + fee : 0;
 
-  const handleValidateId = () => {
-    const userId = fieldValues[game?.fields[0]?.key || "user_id"];
-    if (!userId) return;
-    setIsValidating(true);
-    setTimeout(() => {
-      setNickname("Player★" + userId.slice(-4));
-      setIsValidating(false);
-    }, 1200);
-  };
-
-  const handleSubmit = () => {
-    if (!chosenProduct || !selectedPayment) return;
-    setIsSubmitting(true);
-    setTimeout(() => {
-      router.push(`/invoice/INV-${Date.now().toString(36).toUpperCase()}`);
-    }, 1500);
-  };
-
   const allFieldsFilled = game?.fields.every((f) => fieldValues[f.key]?.trim()) ?? true;
   const canCheckout = allFieldsFilled && selectedProduct && selectedPayment;
 
+  const handleCheckout = () => {
+    if (!game || !canCheckout || !chosenProduct || !chosenPayment) return;
+    setIsSubmitting(true);
+    
+    checkoutStore.setGame({ id: game.id, name: game.name, image: game.image, publisher: game.publisher });
+    checkoutStore.setUserId(fieldValues[game.fields[0]?.key] || "");
+    checkoutStore.setZoneId(fieldValues[game.fields[1]?.key] || "");
+    checkoutStore.setSelectedProduct({ id: chosenProduct.id, name: chosenProduct.name, price: chosenProduct.price });
+    checkoutStore.setSelectedPayment({ id: chosenPayment.id, name: chosenPayment.name, logo: "", fee: fee });
+
+    setTimeout(() => {
+      router.push(`/checkout`);
+    }, 800);
+  };
+
   if (!game) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center">
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" className="text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/10 mx-auto mb-4">
-            <Gamepad2 className="h-8 w-8 text-red-400" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">Game tidak ditemukan</h2>
-          <Button variant="outline" className="mt-4" asChild>
-            <Link href="/games">Kembali ke daftar game</Link>
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-[var(--color-cream)] texture-overlay">
+        <div className="text-center relative z-10">
+          <Gamepad2 className="h-16 w-16 text-[var(--color-teal)]/20 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold font-heading text-[var(--color-navy)] mb-2">Game tidak ditemukan</h2>
+          <Button variant="outline" className="mt-4 border-[var(--color-teal)] text-[var(--color-teal)]" asChild>
+            <Link href="/games">Kembali ke katalog</Link>
           </Button>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-20 pb-32 lg:pb-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 pt-4 flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]"
-        >
-          <Link href="/games" className="hover:text-[var(--liquid-purple)] transition-colors flex items-center gap-1">
-            <ArrowLeft className="h-3.5 w-3.5" /> Games
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-[hsl(var(--foreground))] font-medium">{game.name}</span>
-        </motion.div>
+    <div className="min-h-screen bg-[var(--color-cream)] texture-overlay pb-32 lg:pb-16 font-sans">
+      
+      {/* ── Hero Banner (Retro Editorial Style) ── */}
+      <div className="w-full bg-[var(--color-navy)] relative overflow-hidden pt-20 pb-12 border-b-4 border-[var(--color-gold)]">
+        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+        
+        {/* Abstract Colorful Shapes representing game graphics */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[var(--color-teal)] opacity-50 blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-blue-500 opacity-30 blur-3xl translate-y-1/2 pointer-events-none" />
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-          {/* ── LEFT: Main Content ── */}
-          <div className="space-y-5">
-            {/* Game Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="glass-card rounded-2xl p-6 relative overflow-hidden"
-            >
-              {/* Background glow */}
-              <div
-                className="absolute -top-16 -right-16 h-40 w-40 rounded-full blur-3xl opacity-20 pointer-events-none"
-                style={{ background: game.color }}
-              />
-              <div className="relative flex items-center gap-4">
-                <div
-                  className="flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg backdrop-blur-sm"
-                  style={{
-                    background: `${game.color}18`,
-                    border: `1px solid ${game.color}25`,
-                    boxShadow: `0 8px 32px ${game.color}20`,
-                  }}
-                >
-                  <Gamepad2 className="h-8 w-8" style={{ color: game.color }} />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-extrabold">{game.name}</h1>
-                  <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                    {game.publisher} • Top Up Instan
-                  </p>
-                </div>
-              </div>
-              <div className="relative mt-4 flex flex-wrap gap-2">
-                <Badge variant="success" className="gap-1">
-                  <Zap className="h-3 w-3" /> Proses 1-5 detik
-                </Badge>
-                <Badge variant="secondary" className="gap-1">
-                  <ShieldCheck className="h-3 w-3" /> 100% Aman
-                </Badge>
-                <Badge variant="outline" className="gap-1">
-                  <Clock className="h-3 w-3" /> 24/7 Online
-                </Badge>
-              </div>
-            </motion.div>
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10 flex items-end gap-6 h-full mt-8">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl bg-white p-1 shadow-2xl shrink-0 -mb-16 border border-white relative overflow-hidden">
+             <div className="w-full h-full rounded-lg bg-[var(--color-teal)] flex items-center justify-center">
+               <Gamepad2 className="w-12 h-12 text-white" />
+             </div>
+          </div>
+          <div className="text-white pb-2 flex-1">
+            <h1 className="text-3xl sm:text-5xl font-extrabold font-heading tracking-tight mb-2">{game.name}</h1>
+            <div className="flex items-center gap-3 text-sm text-white/80 font-medium">
+              <span>{game.publisher}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gold)]" />
+              <span>Instan</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Step 1: Input User ID */}
+      {/* ── Main Layout ── */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 mt-20 relative z-10">
+        <div className="grid gap-8 lg:grid-cols-1">
+          
+          <div className="space-y-8">
+            
+            {/* Step 1: User ID */}
             {game.fields.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <StepBadge num={1} active={!allFieldsFilled || !nickname} />
-                      Masukkan Data Akun
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {game.fields.map((field) => (
-                        <div key={field.key} className="space-y-2">
-                          <Label htmlFor={field.key}>{field.label}</Label>
-                          {field.type === "select" ? (
-                            <Select
-                              id={field.key}
-                              value={fieldValues[field.key] || ""}
-                              onChange={(e) =>
-                                setFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))
-                              }
-                            >
-                              <option value="">{field.placeholder}</option>
-                              {field.options?.map((opt) => (
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                              ))}
-                            </Select>
-                          ) : (
-                            <Input
-                              id={field.key}
-                              type={field.type}
-                              placeholder={field.placeholder}
-                              value={fieldValues[field.key] || ""}
-                              onChange={(e) =>
-                                setFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))
-                              }
-                            />
-                          )}
-                        </div>
-                      ))}
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <StepBadge num={1} />
+                  <h2 className="text-lg font-bold font-heading text-[var(--color-navy)]">Detail Akun</h2>
+                </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {game.fields.map((field) => (
+                    <div key={field.key} className="space-y-2">
+                      <Label htmlFor={field.key} className="text-xs font-bold text-[var(--color-teal)] uppercase tracking-wider">{field.label}</Label>
+                      <Input
+                        id={field.key}
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={fieldValues[field.key] || ""}
+                        onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                        className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--color-teal)] focus:ring-[var(--color-teal)] rounded-xl"
+                      />
                     </div>
-
-                    <div className="flex items-center gap-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleValidateId}
-                        disabled={!fieldValues[game.fields[0]?.key] || isValidating}
-                        className="gap-1"
-                      >
-                        {isValidating ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                        )}
-                        Cek Akun
-                      </Button>
-                      <AnimatePresence>
-                        {nickname && (
-                          <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="text-sm text-green-400 font-medium flex items-center gap-1"
-                          >
-                            <Check className="h-3.5 w-3.5" /> {nickname}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </CardContent>
-                </Card>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs text-gray-500">Pastikan User ID dan Zone ID Anda sudah benar. Kesalahan input sepenuhnya menjadi tanggung jawab pembeli.</p>
               </motion.div>
             )}
 
-            {/* Step 2: Choose Product — Quick Nominal Buttons */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <StepBadge num={game.fields.length > 0 ? 2 : 1} active={!selectedProduct} />
-                    Pilih Nominal
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {products.map((product) => (
-                      <button
-                        key={product.id}
-                        onClick={() => setSelectedProduct(product.id)}
-                        className={cn(
-                          "relative flex flex-col items-center gap-1 rounded-xl border-2 p-3 text-center transition-all duration-300 cursor-pointer",
-                          selectedProduct === product.id
-                            ? "border-[var(--liquid-purple)] bg-[var(--liquid-purple)]/8 shadow-sm shadow-purple-500/15"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[rgba(255,255,255,0.1)] hover:bg-[hsl(var(--muted))]"
-                        )}
-                        id={`product-${product.id}`}
-                      >
-                        {product.popular && (
-                          <Badge variant="glow" className="absolute -top-2 right-1 text-[9px] px-1.5 py-0 gap-0.5">
-                            <Sparkles className="h-2.5 w-2.5" /> HOT
-                          </Badge>
-                        )}
-                        <span className="text-sm font-bold">{product.name}</span>
-                        <span className="text-xs font-semibold text-[var(--liquid-purple)]">
-                          {formatCurrency(product.price)}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-[10px] text-[hsl(var(--muted-foreground))] line-through">
-                            {formatCurrency(product.originalPrice)}
-                          </span>
-                        )}
-                        {selectedProduct === product.id && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--liquid-purple)]"
-                          >
-                            <Check className="h-3 w-3 text-white" />
-                          </motion.div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Step 2: Choose Product */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <StepBadge num={game.fields.length > 0 ? 2 : 1} />
+                <h2 className="text-lg font-bold font-heading text-[var(--color-navy)]">Pilih Produk</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                {products.map((product) => (
+                  <button
+                    key={product.id}
+                    onClick={() => setSelectedProduct(product.id)}
+                    className={cn(
+                      "relative flex flex-col items-start gap-1 rounded-xl border-2 p-4 text-left transition-all duration-200 cursor-pointer overflow-hidden",
+                      selectedProduct === product.id
+                        ? "border-[var(--color-teal)] bg-[var(--color-teal)]/5 shadow-md transform scale-[1.02]"
+                        : "border-gray-100 bg-white hover:border-[var(--color-teal)]/30 hover:bg-gray-50"
+                    )}
+                  >
+                    {product.popular && (
+                      <div className="absolute top-0 right-0 bg-[var(--color-gold)] text-[var(--color-navy)] text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
+                        HOT
+                      </div>
+                    )}
+                    <span className="text-sm font-bold text-[var(--color-navy)] leading-tight mb-1 pr-4">{product.name}</span>
+                    <span className="text-xs font-bold text-[var(--color-teal)] mt-auto">
+                      {formatCurrency(product.price)}
+                    </span>
+                    {selectedProduct === product.id && (
+                      <motion.div layoutId="product-check" className="absolute bottom-2 right-2 text-[var(--color-teal)]">
+                        <CheckCircle2 className="h-5 w-5 fill-[var(--color-teal)] text-white" />
+                      </motion.div>
+                    )}
+                  </button>
+                ))}
+              </div>
             </motion.div>
 
             {/* Step 3: Payment Method */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <StepBadge num={game.fields.length > 0 ? 3 : 2} active={!selectedPayment} />
-                    Pilih Pembayaran
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {Object.entries(paymentGroups).map(([category, methods]) => (
-                    <div key={category}>
-                      <p className="mb-2 text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider">
-                        {paymentCategoryLabels[category] || category}
-                      </p>
-                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                        {methods.map((pm) => (
-                          <button
-                            key={pm.id}
-                            onClick={() => setSelectedPayment(pm.id)}
-                            className={cn(
-                              "flex items-center gap-2 rounded-xl border-2 p-3 transition-all duration-300 cursor-pointer",
-                              selectedPayment === pm.id
-                                ? "border-[var(--liquid-purple)] bg-[var(--liquid-purple)]/8"
-                                : "border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[rgba(255,255,255,0.1)]"
-                            )}
-                            id={`payment-${pm.id}`}
-                          >
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(var(--muted))] text-xs font-bold shrink-0">
-                              {pm.name.slice(0, 2)}
-                            </div>
-                            <div className="text-left flex-1 min-w-0">
-                              <p className="text-xs font-semibold truncate">{pm.name}</p>
-                              <p className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                                {pm.fee === 0 ? "Tanpa biaya" : pm.feeType === "flat" ? `+${formatCurrency(pm.fee)}` : `+${pm.fee}%`}
-                              </p>
-                            </div>
-                            {selectedPayment === pm.id && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--liquid-purple)] shrink-0"
-                              >
-                                <Check className="h-3 w-3 text-white" />
-                              </motion.div>
-                            )}
-                          </button>
-                        ))}
-                      </div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <StepBadge num={game.fields.length > 0 ? 3 : 2} />
+                <h2 className="text-lg font-bold font-heading text-[var(--color-navy)]">Pilih Pembayaran</h2>
+              </div>
+              <div className="space-y-6">
+                {Object.entries(paymentGroups).map(([category, methods]) => (
+                  <div key={category}>
+                    <p className="mb-3 text-xs font-bold text-[var(--color-teal)] uppercase tracking-wider">
+                      {paymentCategoryLabels[category] || category}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {methods.map((pm) => (
+                        <button
+                          key={pm.id}
+                          onClick={() => setSelectedPayment(pm.id)}
+                          className={cn(
+                            "flex items-center gap-3 rounded-xl border-2 p-3 transition-all duration-200 cursor-pointer",
+                            selectedPayment === pm.id
+                              ? "border-[var(--color-teal)] bg-[var(--color-teal)]/5 shadow-md transform scale-[1.02]"
+                              : "border-gray-100 bg-white hover:border-[var(--color-teal)]/30 hover:bg-gray-50"
+                          )}
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-xs font-bold text-[var(--color-navy)] shrink-0">
+                            {pm.name.slice(0, 2)}
+                          </div>
+                          <div className="text-left flex-1 min-w-0">
+                            <p className="text-sm font-bold text-[var(--color-navy)] truncate">{pm.name}</p>
+                            <p className="text-[10px] text-gray-500 font-medium">
+                              {pm.fee === 0 ? "Tanpa biaya admin" : pm.feeType === "flat" ? `+${formatCurrency(pm.fee)}` : `+${pm.fee}%`}
+                            </p>
+                          </div>
+                          {selectedPayment === pm.id && (
+                            <motion.div layoutId="payment-check" className="shrink-0 text-[var(--color-teal)]">
+                              <CheckCircle2 className="h-5 w-5 fill-[var(--color-teal)] text-white" />
+                            </motion.div>
+                          )}
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
+                  </div>
+                ))}
+              </div>
             </motion.div>
+
           </div>
-
-          {/* ── RIGHT: Order Summary (Sticky) ── */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle className="text-base">Ringkasan Pesanan</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Game */}
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0"
-                      style={{ background: `${game.color}18` }}
-                    >
-                      <Gamepad2 className="h-5 w-5" style={{ color: game.color }} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{game.name}</p>
-                      {nickname && <p className="text-xs text-green-400">{nickname}</p>}
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Selected Product */}
-                  {chosenProduct ? (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-[hsl(var(--muted-foreground))]">{chosenProduct.name}</span>
-                      <span className="font-semibold tabular-nums">{formatCurrency(chosenProduct.price)}</span>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-[hsl(var(--muted-foreground))] italic">Belum memilih nominal</p>
-                  )}
-
-                  {/* Payment Fee */}
-                  <AnimatePresence>
-                    {chosenPayment && fee > 0 && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex items-center justify-between text-sm">
-                        <span className="text-[hsl(var(--muted-foreground))]">Biaya layanan</span>
-                        <span className="tabular-nums">{formatCurrency(fee)}</span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Promo Code */}
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Kode promo"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                      className="text-xs"
-                    />
-                    <Button variant="outline" size="sm" disabled={!promoCode} className="gap-1">
-                      <Tag className="h-3 w-3" /> Pakai
-                    </Button>
-                  </div>
-
-                  <Separator />
-
-                  {/* Total */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold">Total</span>
-                    <motion.span
-                      key={total}
-                      initial={{ scale: 1.05 }}
-                      animate={{ scale: 1 }}
-                      className="text-lg font-extrabold gradient-text tabular-nums"
-                    >
-                      {total > 0 ? formatCurrency(total) : "-"}
-                    </motion.span>
-                  </div>
-
-                  {/* Submit */}
-                  <Button
-                    className="w-full gap-2"
-                    size="lg"
-                    disabled={!canCheckout || isSubmitting}
-                    onClick={handleSubmit}
-                    id="checkout-btn"
-                  >
-                    {isSubmitting ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</>
-                    ) : (
-                      <><Sparkles className="h-4 w-4" /> Beli Sekarang</>
-                    )}
-                  </Button>
-
-                  {/* Trust badges */}
-                  <div className="flex items-center justify-center gap-4 pt-1">
-                    <div className="flex items-center gap-1 text-[10px] text-[hsl(var(--muted-foreground))]">
-                      <ShieldCheck className="h-3 w-3 text-green-400" /> SSL Secure
-                    </div>
-                    <div className="flex items-center gap-1 text-[10px] text-[hsl(var(--muted-foreground))]">
-                      <Zap className="h-3 w-3 text-[var(--liquid-amber)]" /> Instan
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Mobile Sticky Bottom */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 glass-strong p-4 lg:hidden" style={{ paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}>
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <span className="text-xs text-[hsl(var(--muted-foreground))]">Total Bayar</span>
-              {chosenProduct && <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{chosenProduct.name}</p>}
-            </div>
-            <span className="text-lg font-bold gradient-text tabular-nums">
-              {total > 0 ? formatCurrency(total) : "-"}
-            </span>
-          </div>
-          <Button
-            className="w-full gap-2"
-            size="lg"
-            disabled={!canCheckout || isSubmitting}
-            onClick={handleSubmit}
-          >
-            {isSubmitting ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</>
-            ) : (
-              <><Sparkles className="h-4 w-4" /> Beli Sekarang</>
-            )}
-          </Button>
         </div>
       </div>
+
+      {/* ── Sticky Mobile/Desktop CTA Bottom Bar ── */}
+      <AnimatePresence>
+        {canCheckout && (
+          <motion.div 
+            initial={{ y: 100 }} 
+            animate={{ y: 0 }} 
+            exit={{ y: 100 }}
+            className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-t border-gray-200 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]"
+            style={{ paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}
+          >
+            <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="hidden sm:block">
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Pembayaran</p>
+                <p className="text-xl font-extrabold text-[var(--color-navy)]">{formatCurrency(total)}</p>
+              </div>
+              <div className="flex items-center justify-between sm:hidden">
+                <span className="text-sm font-bold text-[var(--color-navy)]">{chosenProduct?.name}</span>
+                <span className="text-lg font-extrabold text-[var(--color-navy)]">{formatCurrency(total)}</span>
+              </div>
+              <Button
+                size="lg"
+                onClick={handleCheckout}
+                disabled={isSubmitting}
+                className="w-full sm:w-auto px-12 h-12 rounded-xl bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold text-base transition-all shadow-lg shadow-[var(--color-navy)]/20"
+              >
+                {isSubmitting ? (
+                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Mengalihkan...</>
+                ) : (
+                  "Beli Sekarang"
+                )}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

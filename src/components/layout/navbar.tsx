@@ -229,22 +229,28 @@ export function Navbar() {
               </div>
 
               <nav className="flex flex-col gap-2 flex-1">
-                {NAV_LINKS.map((link) => {
-                  const isActive = pathname.startsWith(link.href);
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors",
-                        isActive ? "bg-[var(--color-navy)] text-white" : "text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-4 px-4">Menu Lainnya</div>
+                <Link
+                  href="/help"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  Pusat Bantuan
+                </Link>
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  Tentang Kami
+                </Link>
+                <Link
+                  href="/terms"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  Syarat & Ketentuan
+                </Link>
               </nav>
 
               <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-3">

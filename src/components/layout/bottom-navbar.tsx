@@ -24,17 +24,21 @@ const tabs = [
 export function BottomNavbar() {
   const pathname = usePathname();
 
-  // Hide on admin and dashboard pages
-  if (pathname.startsWith("/admin") || pathname.startsWith("/dashboard")) return null;
+  // Hide on admin and dashboard pages (except when the user is explicitly on a dashboard subpage handled by bottom nav)
+  // Wait, if it's hidden on dashboard, they can't see the bottom nav on transactions/favorites/account!
+  // Let's modify the hide logic so it shows on specific mobile dashboard pages.
+  const isHidden = pathname.startsWith("/admin") || pathname.startsWith("/auth");
+  
+  if (isHidden) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
-      {/* Glass backdrop */}
+      {/* Floating Glass backdrop */}
       <div
-        className="mx-auto max-w-md px-3"
-        style={{ paddingBottom: "env(safe-area-inset-bottom, 8px)" }}
+        className="mx-auto max-w-md px-4 pb-4"
+        style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
       >
-        <div className="bg-[hsl(var(--card))] border-t-4 border-[hsl(var(--border))] rounded-none mb-2 px-2 py-1.5 flex items-center justify-around">
+        <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-[24px] px-2 py-2 flex items-center justify-around">
           {tabs.map((tab) => {
             const isActive =
               tab.href === "/"
@@ -46,35 +50,35 @@ export function BottomNavbar() {
                 key={tab.href}
                 href={tab.href}
                 className={cn(
-                  "relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors",
+                  "relative flex flex-col items-center gap-1 px-3 py-2 rounded-2xl transition-all duration-300",
                   isActive
-                    ? "text-[var(--liquid-purple)]"
-                    : "text-[hsl(var(--muted-foreground))]"
+                    ? "text-[var(--color-navy)]"
+                    : "text-gray-400 hover:text-gray-600"
                 )}
               >
                 {/* Active background */}
                 {isActive && (
                   <motion.div
-                    layoutId="bottom-nav-active"
-                    className="absolute inset-0 rounded-xl bg-[var(--liquid-purple)]/8"
+                    layoutId="bottom-nav-active-bg"
+                    className="absolute inset-0 rounded-2xl bg-[var(--color-teal)]/10"
                     transition={spring.soft}
                   />
                 )}
 
                 {/* Icon */}
                 <motion.div
-                  animate={isActive ? { y: -1, scale: 1.05 } : { y: 0, scale: 1 }}
+                  animate={isActive ? { y: -2, scale: 1.1 } : { y: 0, scale: 1 }}
                   transition={spring.snappy}
                   className="relative z-10"
                 >
-                  <tab.icon className="h-5 w-5" strokeWidth={isActive ? 2.2 : 1.8} />
+                  <tab.icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
                 </motion.div>
 
                 {/* Label */}
                 <span
                   className={cn(
                     "text-[10px] font-medium relative z-10 transition-colors",
-                    isActive && "font-semibold"
+                    isActive && "font-bold text-[var(--color-teal)]"
                   )}
                 >
                   {tab.label}
@@ -83,8 +87,8 @@ export function BottomNavbar() {
                 {/* Active dot */}
                 {isActive && (
                   <motion.div
-                    layoutId="bottom-nav-dot"
-                    className="absolute -top-0.5 h-[3px] w-3 rounded-none border-2 border-[hsl(var(--border))] bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)]"
+                    layoutId="bottom-nav-active-dot"
+                    className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[var(--color-gold)] shadow-[0_0_8px_var(--color-gold)]"
                     transition={spring.soft}
                   />
                 )}
