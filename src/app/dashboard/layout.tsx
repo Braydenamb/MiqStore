@@ -26,7 +26,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/constants";
 
-const sidebarLinks = [
+type SidebarLink = {
+  label: string;
+  href: string;
+  icon: any;
+  badge?: string;
+};
+
+const sidebarLinks: SidebarLink[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Riwayat Transaksi", href: "/dashboard/transactions", icon: Receipt },
   { label: "Profil", href: "/dashboard/profile", icon: User },
