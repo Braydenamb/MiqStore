@@ -80,7 +80,10 @@ export function DashboardTables({ recentTransactions, walletHistory }: Dashboard
           
           {recentTransactions.length > 0 ? (
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-2">
-              {recentTransactions.map((tx: any) => (
+              {recentTransactions.map((tx: any) => {
+                const StatusIcon = statusMap[tx.status]?.icon;
+                
+                return (
                 <div key={tx.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-[hsl(var(--muted))] transition-colors border border-transparent hover:border-[hsl(var(--border))] group">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
@@ -88,7 +91,7 @@ export function DashboardTables({ recentTransactions, walletHistory }: Dashboard
                     </div>
                     <div>
                       <p className="text-sm font-semibold flex items-center gap-2">
-                        {statusMap[tx.status]?.icon && <statusMap[tx.status].icon className={`h-3.5 w-3.5 text-${statusMap[tx.status].variant === 'success' ? 'green' : statusMap[tx.status].variant === 'warning' ? 'yellow' : 'red'}-500`} />}
+                        {StatusIcon && <StatusIcon className={`h-3.5 w-3.5 text-${statusMap[tx.status].variant === 'success' ? 'green' : statusMap[tx.status].variant === 'warning' ? 'yellow' : 'red'}-500`} />}
                         Top Up {tx.game}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
@@ -106,7 +109,8 @@ export function DashboardTables({ recentTransactions, walletHistory }: Dashboard
                     </Badge>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-slate-900/40 dark:bg-slate-900/60 rounded-2xl border border-[hsl(var(--border))] border-dashed backdrop-blur-md">

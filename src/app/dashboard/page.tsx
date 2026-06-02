@@ -8,7 +8,6 @@ import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { DashboardTables } from "@/components/dashboard/dashboard-tables";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { QuickActions } from "@/components/dashboard/quick-actions";
-import { AiInsights } from "@/components/dashboard/ai-insights";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -50,9 +49,6 @@ export default function DashboardPage() {
             totalSpent={data?.stats?.totalSpent}
             rewardPoints={data?.stats?.rewardPoints}
           />
-
-          {/* AI-Powered Insights & Recommendations */}
-          <AiInsights />
 
           {/* Tables Row (includes Membership Upgrade Banner) */}
           <DashboardTables 

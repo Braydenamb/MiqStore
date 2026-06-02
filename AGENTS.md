@@ -37,6 +37,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Common Errors to Avoid
 - **Path Duplication (`src/src/`)**: Pay strict attention to file paths when creating or modifying files. NEVER accidentally create nested directories like `src/src/middleware.ts` instead of `src/middleware.ts`.
 - **Middleware & Proxy Conflicts**: Next.js will throw a build error if both `middleware.ts` and `proxy.ts` exist. Only use one (or combine their logic appropriately) to avoid the `Both middleware file and proxy file are detected` build crash.
+- **JSX Dynamic Component Names**: When rendering components dynamically from an object map (e.g., icons), ALWAYS extract the component reference to an uppercase variable before rendering. Never use lowercase property access directly in JSX as it will crash the Turbopack build. Example: `const Icon = map[key].icon; <Icon />` (Correct) vs `<map[key].icon />` (Incorrect).
 
 ## Agent Workflow (Always)
 - **Use Context7**: Query Context7 for any library documentation or API usage (e.g., Next.js 15, Tailwind v4, Prisma) before guessing or assuming based on old training data.
