@@ -34,7 +34,7 @@ export function BottomNavbar() {
         className="mx-auto max-w-md px-3"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 8px)" }}
       >
-        <div className="glass-strong rounded-2xl mb-2 px-2 py-1.5 flex items-center justify-around">
+        <div className="bg-[hsl(var(--card))] border-t-4 border-[hsl(var(--border))] rounded-none mb-2 px-2 py-1.5 flex items-center justify-around">
           {tabs.map((tab) => {
             const isActive =
               tab.href === "/"
@@ -84,7 +84,7 @@ export function BottomNavbar() {
                 {isActive && (
                   <motion.div
                     layoutId="bottom-nav-dot"
-                    className="absolute -top-0.5 h-[3px] w-3 rounded-full bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)]"
+                    className="absolute -top-0.5 h-[3px] w-3 rounded-none border-2 border-[hsl(var(--border))] bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)]"
                     transition={spring.soft}
                   />
                 )}

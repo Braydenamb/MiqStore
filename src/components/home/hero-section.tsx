@@ -2,121 +2,69 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Search, ArrowRight, Zap, Shield, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import dynamic from "next/dynamic";
-
-const Spline = dynamic(() => import("@splinetool/react-spline"), {
-  ssr: false,
-});
 
 const features = [
-  { icon: Zap, label: "Proses Instan", desc: "1-5 detik", color: "var(--liquid-amber)" },
-  { icon: Shield, label: "100% Aman", desc: "Terenkripsi", color: "var(--liquid-blue)" },
-  { icon: Clock, label: "24/7 Online", desc: "Non-stop", color: "var(--liquid-cyan)" },
+  { icon: Zap, label: "Proses Instan", desc: "1-5 detik", color: "var(--foreground)" },
+  { icon: Shield, label: "100% Aman", desc: "Terenkripsi", color: "var(--foreground)" },
+  { icon: Clock, label: "24/7 Online", desc: "Non-stop", color: "var(--foreground)" },
 ];
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
+  
   return (
     <section
       ref={containerRef}
-      className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-[hsl(var(--background))]"
+      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[hsl(var(--background))] border-b-2 border-[hsl(var(--border))]"
       id="hero-section"
     >
-      {/* Spline 3D Background - TEMPORARILY DISABLED FOR DEBUGGING */}
-      <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
-        <div className="w-full h-full bg-gradient-to-br from-indigo-900/20 via-purple-900/20 to-black/40" />
-        {/* Liquid Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background))]/10 via-[hsl(var(--background))]/40 to-[hsl(var(--background))] backdrop-blur-[1px] pointer-events-none" />
-      </motion.div>
-
-      {/* Floating Holographic Cards */}
-      <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block perspective-1000">
-        {[
-          { icon: "💎", delay: 0, x: "10%", y: "20%", rotate: -12, scale: 1.1 },
-          { icon: "⚡", delay: 0.2, x: "85%", y: "15%", rotate: 15, scale: 0.9 },
-          { icon: "🎯", delay: 0.4, x: "80%", y: "70%", rotate: -8, scale: 1.2 },
-          { icon: "🎮", delay: 0.6, x: "15%", y: "65%", rotate: 10, scale: 1 },
-        ].map((card, i) => (
-          <motion.div
-            key={i}
-            className="absolute glass-card border border-[hsl(var(--border))]/50 rounded-2xl p-4 flex items-center justify-center bg-[hsl(var(--background))]/40 backdrop-blur-md shadow-[0_0_30px_rgba(192,132,252,0.15)]"
-            style={{ left: card.x, top: card.y }}
-            initial={{ opacity: 0, scale: 0, rotateX: 45, rotateY: 45 }}
-            animate={{ opacity: 1, scale: card.scale, rotateX: 0, rotateY: card.rotate }}
-            transition={{
-              type: "spring",
-              damping: 20,
-              stiffness: 100,
-              delay: card.delay,
-            }}
-          >
-            <motion.div
-              animate={{ y: [0, -15, 0] }}
-              transition={{
-                duration: 4 + i,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="text-4xl filter drop-shadow-lg"
-            >
-              {card.icon}
-            </motion.div>
-          </motion.div>
-        ))}
+      {/* Background Decor (Brutalist Blocks) */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex justify-between items-start opacity-10 dark:opacity-20">
+        <div className="w-64 h-64 bg-[hsl(var(--foreground))] border-4 border-[hsl(var(--background))] translate-x-[-20%] translate-y-[20%] rotate-12"></div>
+        <div className="w-96 h-96 bg-[hsl(var(--foreground))] border-4 border-[hsl(var(--background))] translate-x-[20%] translate-y-[40%] -rotate-6"></div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8 mt-16">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8 mt-16 pb-20">
         {/* Flash Sale Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.4 }}
           className="flex justify-center"
         >
-          <Badge
-            variant="outline"
-            className="mb-8 px-5 py-2 text-sm gap-2 animate-pulse border-[var(--liquid-purple)]/50 bg-[var(--liquid-purple)]/10 text-[var(--liquid-purple)] backdrop-blur-md"
-          >
+          <div className="mb-8 px-5 py-2 text-sm font-bold border-2 border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] uppercase tracking-widest shadow-[var(--brutal-shadow-sm)] flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
-            Liquid Cyber Pastel Era
-          </Badge>
+            Neo-Brutalist Era
+          </div>
         </motion.div>
 
         {/* Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl leading-[1.1] filter drop-shadow-sm"
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="text-5xl font-black tracking-tighter sm:text-7xl lg:text-8xl leading-[1.1] uppercase drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)] dark:drop-shadow-[4px_4px_0px_rgba(255,255,255,0.2)]"
         >
           <span className="block text-[hsl(var(--foreground))]">
             Top Up Game
           </span>
-          <span className="block mt-2 bg-gradient-to-r from-[#b184fc] via-[#84b5fc] to-[#fc84c5] bg-clip-text text-transparent animate-gradient">
-            Tercepat & Termurah
+          <span className="block mt-2 text-[hsl(var(--background))] bg-[hsl(var(--foreground))] inline-block px-4 py-1 border-4 border-[hsl(var(--background))] transform -rotate-2 shadow-[8px_8px_0px_rgba(0,0,0,0.5)] dark:shadow-[8px_8px_0px_rgba(255,255,255,0.5)]">
+            Tercepat
           </span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-[hsl(var(--muted-foreground))] leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="mx-auto mt-10 max-w-2xl text-lg sm:text-xl font-bold text-[hsl(var(--foreground))] leading-relaxed border-2 border-[hsl(var(--border))] p-4 bg-[hsl(var(--background))] shadow-[var(--brutal-shadow-sm)]"
         >
           Masuk ke dimensi baru top-up digital. Beli diamond, UC, dan voucher dengan 
           kecepatan instan, keamanan berlapis, dan harga paling masuk akal.
@@ -126,34 +74,36 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto mt-10 max-w-xl"
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="mx-auto mt-12 max-w-2xl"
         >
-          <div className="group relative flex items-center rounded-2xl p-1.5 bg-[hsl(var(--background))]/60 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all hover:border-[var(--liquid-purple)]/50 hover:shadow-[0_8px_30px_rgba(177,132,252,0.2)]">
-            <Search className="absolute left-5 h-5 w-5 text-[hsl(var(--muted-foreground))] transition-colors group-hover:text-[var(--liquid-purple)]" />
-            <Input
-              placeholder="Cari game, voucher..."
-              className="flex-1 h-12 border-0 bg-transparent pl-12 text-lg focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[hsl(var(--muted-foreground))]/70"
-            />
+          <div className="flex flex-col sm:flex-row items-center border-4 border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-[var(--brutal-shadow)]">
+            <div className="flex-1 flex items-center px-4 w-full sm:w-auto">
+              <Search className="h-6 w-6 text-[hsl(var(--foreground))]" />
+              <Input
+                placeholder="CARI GAME, VOUCHER..."
+                className="flex-1 h-14 border-0 bg-transparent text-xl font-bold uppercase focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[hsl(var(--foreground))]/50 rounded-none"
+              />
+            </div>
             <Button
               size="lg"
-              className="ml-2 shrink-0 rounded-xl gap-2 bg-gradient-to-r from-[#b184fc] to-[#84b5fc] text-white hover:opacity-90 shadow-[0_0_20px_rgba(177,132,252,0.4)]"
+              className="w-full sm:w-auto h-14 rounded-none border-t-4 sm:border-t-0 sm:border-l-4 border-[hsl(var(--border))] bg-[hsl(var(--primary))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] text-lg font-black uppercase tracking-wider"
             >
-              Cari Sekarang
-              <ArrowRight className="h-4 w-4" />
+              Cari
+              <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
           </div>
 
           {/* Popular Tags */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            <span className="text-sm text-[hsl(var(--muted-foreground))] mr-1">
-              Trending:
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <span className="text-sm font-bold uppercase text-[hsl(var(--foreground))] mr-2 bg-[hsl(var(--muted))] px-2 py-1 border-2 border-[hsl(var(--border))]">
+              Trending
             </span>
             {["Mobile Legends", "Free Fire", "Valorant"].map((tag) => (
               <Link
                 key={tag}
                 href={`/games/${tag.toLowerCase().replace(/\s+/g, "-")}`}
-                className="rounded-full border border-[hsl(var(--border))] px-4 py-1.5 text-sm text-[hsl(var(--muted-foreground))] transition-all hover:border-[var(--liquid-purple)] hover:text-[var(--liquid-purple)] hover:bg-[rgba(192,132,252,0.1)] hover:shadow-[0_0_15px_rgba(192,132,252,0.2)]"
+                className="border-2 border-[hsl(var(--border))] px-4 py-1.5 text-sm font-bold uppercase text-[hsl(var(--foreground))] bg-[hsl(var(--background))] transition-transform hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
               >
                 {tag}
               </Link>
@@ -165,36 +115,26 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 flex flex-wrap items-center justify-center gap-4 sm:gap-6"
+          transition={{ duration: 0.4, delay: 0.4 }}
+          className="mt-16 flex flex-wrap items-center justify-center gap-6"
         >
           {features.map((feature, idx) => (
-            <motion.div
+            <div
               key={feature.label}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="flex items-center gap-3 bg-[hsl(var(--background))]/50 backdrop-blur-lg border border-[hsl(var(--border))]/50 rounded-2xl px-5 py-3 shadow-lg"
+              className="flex items-center gap-4 bg-[hsl(var(--background))] border-4 border-[hsl(var(--border))] p-4 shadow-[var(--brutal-shadow-sm)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[var(--brutal-shadow)] transition-all"
             >
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl"
-                style={{
-                  backgroundColor: `color-mix(in srgb, ${feature.color} 15%, transparent)`,
-                  boxShadow: `0 0 15px color-mix(in srgb, ${feature.color} 30%, transparent)`,
-                }}
-              >
-                <feature.icon
-                  className="h-5 w-5"
-                  style={{ color: feature.color }}
-                />
+              <div className="flex h-12 w-12 items-center justify-center border-2 border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
+                <feature.icon className="h-6 w-6" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-bold text-[hsl(var(--foreground))]">
+                <p className="text-lg font-black uppercase text-[hsl(var(--foreground))]">
                   {feature.label}
                 </p>
-                <p className="text-xs text-[hsl(var(--muted-foreground))] font-medium">
+                <p className="text-sm font-bold uppercase text-[hsl(var(--foreground))]/70">
                   {feature.desc}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
       </div>

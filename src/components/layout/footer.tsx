@@ -92,10 +92,10 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[hsl(var(--primary))]">
                 <Gamepad2 className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold gradient-text">{APP_NAME}</span>
+              <span className="text-xl font-bold text-[hsl(var(--foreground))]">{APP_NAME}</span>
             </Link>
             <p className="mt-2 max-w-sm text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">
               Platform top up game, voucher digital, dan pembayaran online

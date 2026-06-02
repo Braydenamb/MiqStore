@@ -1,124 +1,45 @@
 "use client";
 
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
-import { ArrowRight, Sparkles, Gift, Shield, Zap } from "lucide-react";
+import { ArrowRight, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fadeUp, staggerContainer, staggerItem, viewportConfig } from "@/lib/motion";
-import { Meteors } from "@/components/ui/meteors";
-
-const benefits = [
-  { icon: Zap, label: "Proses 1-5 detik" },
-  { icon: Shield, label: "Transaksi aman" },
-  { icon: Gift, label: "Cashback setiap beli" },
-];
 
 export function CTASection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, viewportConfig);
-
   return (
-    <section ref={ref} className="py-16 sm:py-24" id="cta-section">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[hsl(var(--background))] border-y-4 border-[hsl(var(--border))]" id="cta-section">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="relative overflow-hidden rounded-3xl p-8 sm:p-12 md:p-16 text-center"
-          style={{
-            background: `linear-gradient(135deg, 
-              rgba(192,132,252,0.15) 0%, 
-              rgba(125,211,252,0.1) 50%, 
-              rgba(103,232,249,0.12) 100%
-            )`,
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="border-8 border-[hsl(var(--border))] bg-[hsl(var(--card))] p-10 sm:p-16 shadow-[12px_12px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_rgba(255,255,255,1)] relative overflow-hidden"
         >
-          {/* Aurora background */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-            <div className="orb orb-purple h-72 w-72 -top-32 -right-32 animate-glow-pulse" />
-            <div className="orb orb-blue h-56 w-56 -bottom-28 -left-28 animate-glow-pulse" style={{ animationDelay: "3s" }} />
-            <div className="orb orb-cyan h-40 w-40 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-glow-pulse" style={{ animationDelay: "1.5s" }} />
-            <div className="absolute inset-0 bg-grid opacity-10" />
-            <Meteors number={20} />
-          </div>
+          {/* Background pattern */}
+          <div className="absolute inset-0 pattern-dots-sm opacity-10 pointer-events-none"></div>
 
-          {/* Content */}
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="relative z-10"
-          >
-            <motion.div
-              variants={staggerItem}
-              className="inline-flex items-center gap-1.5 rounded-full glass px-4 py-1.5 text-sm font-medium mb-6"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-[var(--liquid-purple)]" />
-              Mulai Top Up Sekarang
-            </motion.div>
-
-            <motion.h2
-              variants={staggerItem}
-              className="text-3xl font-extrabold sm:text-4xl md:text-5xl tracking-tight"
-            >
-              Siap Top Up Game
-              <br />
-              <span className="gradient-text">Favoritmu?</span>
-            </motion.h2>
-
-            <motion.p
-              variants={staggerItem}
-              className="mx-auto mt-5 max-w-xl text-base text-[hsl(var(--muted-foreground))] leading-relaxed"
-            >
-              Daftar sekarang dan nikmati harga spesial, promo eksklusif, dan
-              cashback untuk setiap transaksi pertama kamu!
-            </motion.p>
-
-            {/* Benefits */}
-            <motion.div
-              variants={staggerItem}
-              className="mt-8 flex flex-wrap items-center justify-center gap-4"
-            >
-              {benefits.map((benefit) => (
-                <div
-                  key={benefit.label}
-                  className="flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]"
-                >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg glass">
-                    <benefit.icon className="h-3.5 w-3.5 text-[var(--liquid-cyan)]" />
-                  </div>
-                  {benefit.label}
-                </div>
-              ))}
-            </motion.div>
-
-            {/* Buttons */}
-            <motion.div
-              variants={staggerItem}
-              className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
-            >
-              <Button
-                size="xl"
-                asChild
-                className="gap-1.5 shadow-lg shadow-purple-500/20"
-              >
+          <div className="relative z-10">
+            <div className="inline-flex items-center justify-center h-20 w-20 border-4 border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] mb-8 shadow-[var(--brutal-shadow-sm)] rotate-12">
+              <Rocket className="h-10 w-10" />
+            </div>
+            
+            <h2 className="text-4xl sm:text-6xl font-black uppercase text-[hsl(var(--foreground))] mb-6 tracking-tighter">
+              SIAP UNTUK <span className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))] px-2 inline-block -rotate-2">MABAR?</span>
+            </h2>
+            
+            <p className="text-lg sm:text-xl font-bold uppercase text-[hsl(var(--foreground))]/80 mb-10 max-w-2xl mx-auto border-y-4 border-[hsl(var(--border))] py-4">
+              Daftar sekarang dan nikmati kemudahan top-up dengan harga termurah di seluruh galaksi.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" className="w-full sm:w-auto h-16 px-8 rounded-none border-4 border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] text-xl font-black uppercase tracking-widest shadow-[var(--brutal-shadow)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none" asChild>
                 <Link href="/auth/register">
-                  <Sparkles className="h-4 w-4" />
-                  Daftar Gratis
-                  <ArrowRight className="h-4 w-4" />
+                  Daftar Sekarang
+                  <ArrowRight className="h-6 w-6 ml-2" />
                 </Link>
               </Button>
-              <Button
-                size="xl"
-                variant="glass"
-                asChild
-              >
-                <Link href="/games">Mulai TopUp</Link>
-              </Button>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

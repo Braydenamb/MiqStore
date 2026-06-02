@@ -3,93 +3,63 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
-import { CATEGORIES } from "@/lib/constants";
-import { Spotlight } from "@/components/ui/spotlight";
-import { cn } from "@/lib/utils";
-import {
-  fadeUp,
-  staggerContainer,
-  staggerItem,
-  viewportConfig,
-} from "@/lib/motion";
+import { Grid, Smartphone, Monitor, Ticket, Coins } from "lucide-react";
+import { fadeUp } from "@/lib/motion";
+
+const categories = [
+  { id: "mobile", name: "Mobile Games", icon: Smartphone, count: 42 },
+  { id: "pc", name: "PC Games", icon: Monitor, count: 28 },
+  { id: "voucher", name: "Voucher", icon: Ticket, count: 15 },
+  { id: "crypto", name: "E-Wallet", icon: Coins, count: 8 },
+];
 
 export function CategorySection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, viewportConfig);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section
-      ref={ref}
-      className="py-16 sm:py-24 relative overflow-hidden"
-      id="category-section"
-    >
-      {/* Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="var(--liquid-purple)" />
-        <div className="orb orb-cyan h-60 w-60 top-1/4 -right-30 opacity-15" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+    <section ref={ref} className="py-16 sm:py-24 bg-[hsl(var(--background))] border-b-4 border-[hsl(var(--border))]" id="category-section">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           className="text-center mb-12"
         >
-          <h2 className="text-2xl font-extrabold text-[hsl(var(--foreground))] sm:text-3xl tracking-tight">
-            Semua <span className="gradient-text">Kebutuhan Digital</span>
+          <div className="inline-flex items-center gap-2 border-2 border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 py-1 text-sm font-black uppercase text-[hsl(var(--foreground))] mb-4 shadow-[var(--brutal-shadow-sm)]">
+            <Grid className="h-4 w-4" />
+            Kategori
+          </div>
+          <h2 className="text-4xl font-black uppercase text-[hsl(var(--foreground))] sm:text-5xl tracking-tighter">
+            Jelajahi <span className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))] px-2 inline-block -rotate-1 border-4 border-[hsl(var(--background))] shadow-[4px_4px_0px_#000] dark:shadow-[4px_4px_0px_#fff]">Katalog</span>
           </h2>
-          <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))] max-w-lg mx-auto">
-            Dari top up game sampai bayar tagihan, semua bisa dilakukan di satu tempat
-          </p>
         </motion.div>
 
-        {/* Category Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4"
-        >
-          {CATEGORIES.map((category) => (
-            <motion.div key={category.id} variants={staggerItem}>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
+          {categories.map((category, idx) => (
+            <motion.div
+              key={category.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ delay: idx * 0.1 }}
+            >
               <Link
-                href={`/${category.slug}`}
-                className="group relative flex flex-col items-center gap-3 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-center transition-all duration-500 hover:border-[rgba(255,255,255,0.1)] hover:-translate-y-1"
-                id={`category-${category.slug}`}
+                href={`/categories/${category.id}`}
+                className="group block border-4 border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-center shadow-[var(--brutal-shadow)] transition-all hover:-translate-y-2 hover:-translate-x-2 hover:shadow-[var(--brutal-shadow-lg)]"
               >
-                {/* Icon Container */}
-                <div
-                  className={cn(
-                    "flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
-                    category.gradient
-                  )}
-                >
-                  <category.icon className="h-6 w-6 text-white" />
+                <div className="mx-auto flex h-16 w-16 items-center justify-center border-4 border-[hsl(var(--border))] bg-[hsl(var(--background))] mb-4 group-hover:bg-[hsl(var(--primary))] group-hover:text-[hsl(var(--primary-foreground))] transition-colors">
+                  <category.icon className="h-8 w-8" />
                 </div>
-
-                {/* Hover glow */}
-                <div
-                  className="absolute -inset-0.5 rounded-2xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-8 bg-gradient-to-br"
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, var(--liquid-purple), var(--liquid-blue))`,
-                  }}
-                />
-
-                {/* Text */}
-                <div className="relative">
-                  <h3 className="text-sm font-bold text-[hsl(var(--foreground))] group-hover:text-[var(--liquid-purple)] transition-colors duration-300">
-                    {category.name}
-                  </h3>
-                  <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))] line-clamp-2">
-                    {category.description}
-                  </p>
-                </div>
+                <h3 className="text-lg font-black uppercase text-[hsl(var(--foreground))]">
+                  {category.name}
+                </h3>
+                <p className="mt-2 inline-block border-2 border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-2 py-0.5 text-xs font-bold uppercase">
+                  {category.count} Item
+                </p>
               </Link>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

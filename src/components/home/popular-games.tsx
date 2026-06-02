@@ -20,7 +20,7 @@ export function PopularGames() {
   const isInView = useInView(ref, viewportConfig);
 
   return (
-    <section ref={ref} className="py-16 sm:py-24" id="popular-games">
+    <section ref={ref} className="py-16 sm:py-24 bg-[hsl(var(--background))]" id="popular-games">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -30,106 +30,65 @@ export function PopularGames() {
           className="flex items-end justify-between mb-10"
         >
           <div>
-            <Badge variant="glow" className="mb-3 gap-1">
+            <div className="mb-3 inline-flex items-center gap-1 border-2 border-[hsl(var(--border))] bg-[hsl(var(--primary))] px-3 py-1 text-xs font-bold uppercase text-[hsl(var(--primary-foreground))] shadow-[var(--brutal-shadow-sm)]">
               <TrendingUp className="h-3 w-3" />
               Paling Populer
-            </Badge>
-            <h2 className="text-2xl font-extrabold text-[hsl(var(--foreground))] sm:text-3xl tracking-tight">
-              Top Up Game{" "}
-              <span className="gradient-text">Favorit</span>
+            </div>
+            <h2 className="text-3xl font-black uppercase text-[hsl(var(--foreground))] sm:text-5xl tracking-tighter">
+              Top Up Game <span className="text-[hsl(var(--background))] bg-[hsl(var(--foreground))] inline-block px-2 border-4 border-[hsl(var(--background))] shadow-[4px_4px_0px_rgba(0,0,0,0.5)] dark:shadow-[4px_4px_0px_rgba(255,255,255,0.5)] transform -rotate-2">Favorit</span>
             </h2>
-            <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">
-              Pilih game favoritmu dan top up sekarang
-            </p>
           </div>
-          <Button variant="ghost" className="hidden sm:flex group gap-1" asChild>
+          <Button variant="outline" className="hidden sm:flex group gap-1 border-2 border-[hsl(var(--border))] rounded-none shadow-[var(--brutal-shadow-sm)] font-bold uppercase hover:-translate-y-1 hover:shadow-[var(--brutal-shadow)] transition-all" asChild>
             <Link href="/games">
               Lihat Semua
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </motion.div>
 
-        {/* Games Grid — Liquid Cards */}
+        {/* Games Grid — Brutalist Cards */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-4"
+          className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6"
         >
           {POPULAR_GAMES.map((game) => (
             <motion.div key={game.id} variants={staggerItem}>
               <Link
                 href={`/games/${game.slug}`}
-                className="group relative block overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] transition-all duration-500 hover:border-[rgba(255,255,255,0.1)] hover:-translate-y-1"
+                className="group relative block overflow-hidden border-4 border-[hsl(var(--border))] bg-[hsl(var(--card))] transition-all duration-200 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[var(--brutal-shadow-lg)]"
                 id={`game-card-${game.slug}`}
               >
                 {/* Image Area */}
                 <div
-                  className="relative aspect-[4/5] w-full overflow-hidden"
-                  style={{
-                    background: `linear-gradient(160deg, ${game.color}15 0%, ${game.color}30 50%, ${game.color}10 100%)`,
-                  }}
+                  className="relative aspect-[4/5] w-full border-b-4 border-[hsl(var(--border))] flex items-center justify-center bg-[hsl(var(--muted))] pattern-dots-sm"
                 >
-                  {/* Gradient bottom fade */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--card))] via-transparent to-transparent" />
-
-                  {/* Game Icon — Liquid Glass */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div
-                      className="relative flex h-20 w-20 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
-                      style={{
-                        background: `rgba(255,255,255,0.06)`,
-                        border: `1px solid rgba(255,255,255,0.08)`,
-                        boxShadow: `0 8px 32px ${game.color}25, inset 0 1px 0 rgba(255,255,255,0.1)`,
-                      }}
-                    >
-                      <Gamepad2
-                        className="h-9 w-9 transition-colors duration-300"
-                        style={{ color: game.color }}
-                      />
-                      {/* Glow behind icon */}
-                      <div
-                        className="absolute inset-0 rounded-2xl opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-60"
-                        style={{ background: game.color }}
-                      />
-                    </div>
-                  </div>
+                  <Gamepad2 className="h-16 w-16 text-[hsl(var(--foreground))] transition-transform group-hover:scale-110" />
 
                   {/* Popular badge */}
                   {game.popular && (
                     <div className="absolute left-2 top-2">
-                      <Badge
-                        variant="glow"
-                        className="text-[10px] px-2 py-0.5 backdrop-blur-md"
-                      >
-                        🔥 Populer
-                      </Badge>
+                      <div className="border-2 border-[hsl(var(--border))] bg-[hsl(var(--primary))] px-2 py-0.5 text-[10px] font-black uppercase text-[hsl(var(--primary-foreground))] shadow-[var(--brutal-shadow-sm)]">
+                        POPULER
+                      </div>
                     </div>
                   )}
-
-                  {/* Shine sweep on hover */}
-                  <div
-                    className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none"
-                    style={{
-                      background: `linear-gradient(135deg, transparent 30%, ${game.color}08 50%, transparent 70%)`,
-                    }}
-                  />
                 </div>
 
                 {/* Game Info */}
-                <div className="p-3 sm:p-4">
-                  <h3 className="text-sm font-bold text-[hsl(var(--foreground))] line-clamp-1 transition-colors duration-300 group-hover:text-[var(--liquid-purple)]">
+                <div className="p-4 bg-[hsl(var(--background))]">
+                  <h3 className="text-base font-black uppercase text-[hsl(var(--foreground))] line-clamp-1 transition-colors">
                     {game.name}
                   </h3>
-                  <p className="mt-0.5 text-xs text-[hsl(var(--muted-foreground))]">
+                  <p className="mt-1 text-xs font-bold uppercase text-[hsl(var(--foreground))]/60">
                     {game.publisher}
                   </p>
-                  <div className="mt-2.5 flex items-center justify-between">
-                    <Badge variant="outline" className="text-[10px] capitalize">
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="border-2 border-[hsl(var(--border))] px-2 py-0.5 text-[10px] font-black uppercase bg-[hsl(var(--muted))] text-[hsl(var(--foreground))]">
                       {game.category}
-                    </Badge>
-                    <span className="text-[11px] font-medium text-[var(--liquid-purple)] opacity-0 translate-x-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                    </div>
+                    <span className="text-[11px] font-black uppercase text-[hsl(var(--foreground))] bg-[hsl(var(--muted))] px-2 py-1 border-2 border-[hsl(var(--border))] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 shadow-[2px_2px_0px_#000] dark:shadow-[2px_2px_0px_#fff]">
                       Top Up →
                     </span>
                   </div>
@@ -141,7 +100,7 @@ export function PopularGames() {
 
         {/* Mobile CTA */}
         <div className="mt-8 flex justify-center sm:hidden">
-          <Button variant="outline" asChild className="rounded-xl gap-1">
+          <Button variant="outline" asChild className="rounded-none border-2 border-[hsl(var(--border))] shadow-[var(--brutal-shadow-sm)] font-bold uppercase gap-1">
             <Link href="/games">
               Lihat Semua Game
               <ArrowRight className="h-4 w-4" />

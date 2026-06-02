@@ -97,7 +97,7 @@ export default function RootLayout({
           </div>
           <Toaster
             position="top-right"
-            theme="dark"
+            theme="system"
             richColors
             closeButton
             toastOptions={{

@@ -64,9 +64,9 @@ export function Navbar() {
         >
           <div
             className={cn(
-              "flex items-center justify-between rounded-2xl px-4 sm:px-5 transition-all duration-500",
+              "flex items-center justify-between rounded-none px-4 sm:px-5 transition-all duration-500",
               isScrolled
-                ? "glass-strong py-2.5 shadow-lg shadow-black/10"
+                ? "bg-[hsl(var(--card))] border-2 border-[hsl(var(--border))] shadow-[var(--brutal-shadow)] py-2.5 shadow-lg shadow-black/10"
                 : "bg-transparent py-2"
             )}
           >
@@ -76,11 +76,11 @@ export function Navbar() {
               className="flex items-center gap-2.5 group"
               id="nav-logo"
             >
-              <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/30 transition-all duration-300">
+              <div className="relative flex h-8 w-8 items-center justify-center rounded-none bg-gradient-to-br from-[hsl(var(--background))] to-[hsl(var(--background))] shadow-lg var(--brutal-shadow-sm) group-hover:shadow-purple-500/30 transition-all duration-300">
                 <Gamepad2 className="h-4 w-4 text-white" />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--liquid-purple)] to-[var(--liquid-blue)] opacity-0 blur-xl group-hover:opacity-40 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-none bg-gradient-to-br from-[hsl(var(--background))] to-[hsl(var(--background))] opacity-0 blur-xl group-hover:opacity-40 transition-opacity duration-500" />
               </div>
-              <span className="text-lg font-bold tracking-tight gradient-text">
+              <span className="text-lg font-bold tracking-tight text-[hsl(var(--foreground))] drop-shadow-[2px_2px_0px_#888]">
                 {APP_NAME}
               </span>
             </Link>
@@ -94,7 +94,7 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "relative px-3.5 py-2 text-sm font-medium transition-colors rounded-lg group",
+                      "relative px-3.5 py-2 text-sm font-medium transition-colors rounded-none group",
                       isActive
                         ? "text-[hsl(var(--foreground))]"
                         : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
@@ -104,7 +104,7 @@ export function Navbar() {
                     {/* Active indicator — gradient underline */}
                     <span
                       className={cn(
-                        "absolute bottom-0.5 left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-gradient-to-r from-[var(--liquid-purple)] to-[var(--liquid-blue)] transition-all duration-300",
+                        "absolute bottom-0.5 left-1/2 h-[2px] -translate-x-1/2 rounded-none bg-gradient-to-r from-[hsl(var(--background))] to-[hsl(var(--background))] transition-all duration-300",
                         isActive ? "w-3/4" : "w-0 group-hover:w-1/2"
                       )}
                     />
@@ -112,7 +112,7 @@ export function Navbar() {
                     {isActive && (
                       <motion.span
                         layoutId="nav-active"
-                        className="absolute inset-0 rounded-lg bg-[hsl(var(--muted))] -z-10"
+                        className="absolute inset-0 rounded-none bg-[hsl(var(--muted))] -z-10"
                         transition={spring.soft}
                       />
                     )}
@@ -157,8 +157,8 @@ export function Navbar() {
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
-                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[var(--liquid-pink)]">
-                  <span className="absolute inset-0 rounded-full bg-[var(--liquid-pink)] animate-ping opacity-50" />
+                <span className="absolute right-1 top-1 h-2 w-2 rounded-none bg-[var(--liquid-pink)]">
+                  <span className="absolute inset-0 rounded-none bg-[var(--liquid-pink)] animate-ping opacity-50" />
                 </span>
               </Button>
 
@@ -236,7 +236,7 @@ export function Navbar() {
               <div className="flex flex-col h-full">
                 {/* Mobile Header */}
                 <div className="flex items-center justify-between border-b border-[hsl(var(--border))] p-4">
-                  <span className="text-lg font-bold gradient-text">
+                  <span className="text-lg font-bold text-[hsl(var(--foreground))] drop-shadow-[2px_2px_0px_#888]">
                     {APP_NAME}
                   </span>
                   <Button
@@ -265,7 +265,7 @@ export function Navbar() {
                           href={link.href}
                           onClick={() => setMobileNavOpen(false)}
                           className={cn(
-                            "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors",
+                            "flex items-center gap-3 rounded-none px-3 py-3 text-sm font-medium transition-colors",
                             isActive
                               ? "bg-[hsl(var(--muted))] text-[hsl(var(--foreground))]"
                               : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
@@ -273,7 +273,7 @@ export function Navbar() {
                         >
                           {link.label}
                           {isActive && (
-                            <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[var(--liquid-purple)]" />
+                            <span className="ml-auto h-1.5 w-1.5 rounded-none bg-[var(--liquid-purple)]" />
                           )}
                         </Link>
                       </motion.div>
