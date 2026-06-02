@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Gamepad2, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
@@ -55,11 +56,23 @@ export function HeroSection() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
             >
-              <Button size="lg" className="bg-teal hover:bg-[var(--color-navy)] rounded-full h-14 px-8 text-lg shadow-lg shadow-[#073B4C]/20 transition-all hover:-translate-y-1">
+              <Button 
+                size="lg" 
+                className="bg-teal hover:bg-[var(--color-navy)] rounded-full h-14 px-8 text-lg shadow-lg shadow-[#073B4C]/20 transition-all hover:-translate-y-1"
+                onClick={() => toast.success("Memulai Top Up", { description: "Mengarahkan ke halaman Top Up..." })}
+              >
                 Top Up Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg border-[var(--color-teal)] text-[var(--color-teal)] hover:bg-[var(--color-teal)]/5 transition-all">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="rounded-full h-14 px-8 text-lg border-[var(--color-teal)] text-[var(--color-teal)] hover:bg-[var(--color-teal)]/5 transition-all"
+                onClick={() => {
+                  toast("Menjelajahi Game", { description: "Mengarahkan ke katalog game..." });
+                  window.location.href = "/games";
+                }}
+              >
                 Browse Games
               </Button>
             </motion.div>

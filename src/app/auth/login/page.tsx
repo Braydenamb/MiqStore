@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { AuthCard } from "@/components/auth/auth-card";
 import { AuthInput } from "@/components/auth/auth-input";
 import { Button } from "@/components/ui/button";
@@ -31,11 +32,21 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError("Email atau password salah");
+        toast.error("Gagal masuk", {
+          description: "Periksa kembali email dan password Anda.",
+        });
       } else {
+        toast.success("Berhasil masuk!", {
+          description: "Selamat datang kembali di MiqStore.",
+        });
         router.push("/dashboard");
       }
     } catch (err: any) {
-      setError("Terjadi kesalahan sistem. Silakan coba lagi.");
+      const errorMsg = "Terjadi kesalahan sistem. Silakan coba lagi.";
+      setError(errorMsg);
+      toast.error("Terjadi Kesalahan", {
+        description: errorMsg,
+      });
     } finally {
       setIsLoading(false);
     }

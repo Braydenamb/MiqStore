@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { AuthCard } from "@/components/auth/auth-card";
 import { AuthInput } from "@/components/auth/auth-input";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,9 @@ export default function RegisterPage() {
     setError("");
 
     if (form.password !== form.confirmPassword) {
-      setError("Password dan Konfirmasi Password tidak cocok.");
+      const errorMsg = "Password dan Konfirmasi Password tidak cocok.";
+      setError(errorMsg);
+      toast.error("Gagal mendaftar", { description: errorMsg });
       setIsLoading(false);
       return;
     }
@@ -49,6 +52,10 @@ export default function RegisterPage() {
         throw new Error(data.message || "Gagal mendaftar");
       }
 
+      toast.success("Akun berhasil dibuat!", {
+        description: "Menyiapkan dashboard untuk Anda...",
+      });
+
       // Auto-login after successful registration
       const result = await signIn("credentials", {
         email: form.email,
@@ -63,6 +70,9 @@ export default function RegisterPage() {
       }
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan sistem. Silakan coba lagi.");
+      toast.error("Pendaftaran Gagal", {
+        description: err.message || "Terjadi kesalahan sistem.",
+      });
     } finally {
       setIsLoading(false);
     }

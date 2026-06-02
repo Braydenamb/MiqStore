@@ -146,11 +146,24 @@ export default function TransactionsPage() {
                 );
               })
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Search className="h-8 w-8 text-[hsl(var(--muted-foreground))] mb-3" />
-                <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                  Tidak ada transaksi ditemukan
+              <div className="flex flex-col items-center justify-center py-20 text-center px-4">
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 bg-[var(--color-gold)]/20 blur-2xl rounded-full" />
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-navy)]/5 border border-[var(--color-navy)]/10">
+                    <Search className="h-10 w-10 text-[var(--color-navy)]/30" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold text-[var(--color-navy)] mb-2">
+                  Tidak Ada Transaksi
+                </h3>
+                <p className="text-sm text-[hsl(var(--muted-foreground))] max-w-sm mb-6 leading-relaxed">
+                  {search ? `Tidak ada transaksi yang cocok dengan pencarian "${search}". Coba gunakan kata kunci lain.` : "Sepertinya kamu belum pernah melakukan transaksi apa pun. Ayo mulai top up pertamamu sekarang!"}
                 </p>
+                {!search && (
+                  <Button className="bg-[var(--color-teal)] hover:bg-[var(--color-navy)] text-white rounded-full px-8 h-12 shadow-lg shadow-[var(--color-teal)]/20 transition-all">
+                    Mulai Belanja
+                  </Button>
+                )}
               </div>
             )}
           </CardContent>
