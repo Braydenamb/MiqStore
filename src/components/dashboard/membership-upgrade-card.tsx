@@ -4,7 +4,21 @@ import { motion } from "framer-motion";
 import { Crown, Gem, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function MembershipUpgradeCard() {
+const MEMBERSHIP_TIERS = {
+  BRONZE: { name: "Bronze", next: "Silver", pointsReq: 1000, discount: 5, color: "text-[#CD7F32]" },
+  SILVER: { name: "Silver", next: "Gold", pointsReq: 2500, discount: 10, color: "text-slate-400" },
+  GOLD: { name: "Gold", next: "Diamond", pointsReq: 5000, discount: 15, color: "text-[var(--color-gold)]" },
+  DIAMOND: { name: "Diamond", next: "Max", pointsReq: 10000, discount: 20, color: "text-[var(--color-teal)]" }
+};
+
+export function MembershipUpgradeCard({ rewardPoints = 0, membership = "BRONZE" }: { rewardPoints?: number, membership?: string }) {
+  const currentTier = MEMBERSHIP_TIERS[membership as keyof typeof MEMBERSHIP_TIERS] || MEMBERSHIP_TIERS.BRONZE;
+  const nextTierName = currentTier.next;
+  const nextTierReq = currentTier.pointsReq;
+  
+  const pointsNeeded = Math.max(0, nextTierReq - rewardPoints);
+  const progressPercent = Math.min(100, (rewardPoints / nextTierReq) * 100);
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -20,34 +34,47 @@ export function MembershipUpgradeCard() {
         
         {/* Left Side Content */}
         <div className="flex-1 flex flex-col items-start gap-4">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-gold)]/20 text-[var(--color-gold)] font-bold text-xs border border-[var(--color-gold)]/30">
+          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-gold)]/20 ${currentTier.color} font-bold text-xs border border-[var(--color-gold)]/30`}>
             <Crown className="h-3.5 w-3.5" />
-            <span>Gold Member</span>
+            <span>{currentTier.name} Member</span>
           </div>
 
           <div className="space-y-1.5">
             <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-[var(--color-navy)] leading-tight">
-              Upgrade ke <span className="text-[var(--color-teal)]">Diamond</span> untuk <br className="hidden sm:block" />
-              diskon 15%!
+              {nextTierName !== "Max" ? (
+                <>
+                  Upgrade ke <span className="text-[var(--color-teal)]">{nextTierName}</span> untuk <br className="hidden sm:block" />
+                  diskon {currentTier.discount}%!
+                </>
+              ) : (
+                <>
+                  Kamu sudah mencapai <span className="text-[var(--color-teal)]">Diamond</span>! <br className="hidden sm:block" />
+                  Nikmati diskon maksimal.
+                </>
+              )}
             </h3>
-            <p className="text-sm font-medium text-[var(--color-navy)]/60">
-              Butuh 1.750 poin lagi untuk naik level
-            </p>
+            {nextTierName !== "Max" && (
+              <p className="text-sm font-medium text-[var(--color-navy)]/60">
+                Butuh {pointsNeeded.toLocaleString("id-ID")} poin lagi untuk naik level
+              </p>
+            )}
           </div>
 
-          <div className="w-full max-w-md mt-2 space-y-2">
-            <div className="h-2.5 w-full rounded-full bg-[#E8DCC7] overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: "65%" }}
-                transition={{ duration: 1, delay: 0.5 }}
-                className="h-full rounded-full bg-[var(--color-teal)]" 
-              />
+          {nextTierName !== "Max" && (
+            <div className="w-full max-w-md mt-2 space-y-2">
+              <div className="h-2.5 w-full rounded-full bg-[#E8DCC7] overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progressPercent}%` }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                  className="h-full rounded-full bg-[var(--color-teal)]" 
+                />
+              </div>
+              <div className="flex justify-between text-xs font-bold text-[var(--color-navy)]/50">
+                <span>{rewardPoints.toLocaleString("id-ID")} / {nextTierReq.toLocaleString("id-ID")} poin</span>
+              </div>
             </div>
-            <div className="flex justify-between text-xs font-bold text-[var(--color-navy)]/50">
-              <span>3.250 / 5.000 poin</span>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Middle/Right Actions */}

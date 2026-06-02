@@ -18,7 +18,9 @@ const mockTransactions: Transaction[] = [
   { id: "TRX-003", game: "Valorant", product: "1125 VP", amount: 120000, status: "PENDING", date: "24 Mei 2026, 16:45" },
 ];
 
-export function RecentTransactions({ transactions = mockTransactions }: { transactions?: Transaction[] }) {
+export function RecentTransactions({ transactions }: { transactions?: Transaction[] }) {
+  const displayTransactions = transactions && transactions.length > 0 ? transactions : mockTransactions;
+
   return (
     <div className="bg-[#FFF8EC] border border-[#E8DCC7] rounded-[24px] p-6 sm:p-8 shadow-sm">
       <div className="flex items-center justify-between mb-6">
@@ -32,7 +34,7 @@ export function RecentTransactions({ transactions = mockTransactions }: { transa
       </div>
 
       <div className="flex flex-col gap-3">
-        {transactions.map((trx) => (
+        {displayTransactions.map((trx) => (
           <div key={trx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#E8DCC7]/60 hover:border-[#E8DCC7] transition-colors group">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[var(--color-teal)]/20 to-[var(--color-navy)]/10 flex items-center justify-center font-bold text-[var(--color-navy)] shadow-sm group-hover:scale-105 transition-transform">

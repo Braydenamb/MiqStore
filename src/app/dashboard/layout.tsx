@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard,
   Receipt,
@@ -45,6 +46,13 @@ const topNavLinks = [
   // { label: "PPOB", href: "/ppob" },
 ];
 
+const MEMBERSHIP_TIERS = {
+  BRONZE: { name: "Bronze", next: "Silver", pointsReq: 1000, color: "text-[#CD7F32]" },
+  SILVER: { name: "Silver", next: "Gold", pointsReq: 2500, color: "text-slate-400" },
+  GOLD: { name: "Gold", next: "Diamond", pointsReq: 5000, color: "text-[var(--color-gold)]" },
+  DIAMOND: { name: "Diamond", next: "Max", pointsReq: 10000, color: "text-[var(--color-teal)]" }
+};
+
 export default function DashboardLayout({
   children,
 }: {
@@ -52,6 +60,23 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
+
+  const { data: statsData } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/dashboard/stats");
+      if (!res.ok) throw new Error("Failed to fetch stats");
+      return res.json();
+    },
+    enabled: !!session?.user,
+  });
+
+  const membership = statsData?.stats?.membership || "BRONZE";
+  const rewardPoints = statsData?.stats?.rewardPoints || 0;
+  
+  const currentTier = MEMBERSHIP_TIERS[membership as keyof typeof MEMBERSHIP_TIERS] || MEMBERSHIP_TIERS.BRONZE;
+  const nextTierReq = currentTier.pointsReq;
+  const progressPercent = Math.min(100, (rewardPoints / nextTierReq) * 100);
 
   return (
     <div className="flex h-screen bg-[#F6EFE2] texture-overlay overflow-hidden text-[var(--color-navy)]">
@@ -79,20 +104,22 @@ export default function DashboardLayout({
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-[var(--color-navy)] truncate">{session?.user?.name || "Miq User"}</p>
                 <div className="flex items-center gap-1 mt-0.5">
-                  <Crown className="h-3.5 w-3.5 text-[var(--color-gold)]" />
-                  <span className="text-xs text-[var(--color-gold)] font-bold">Gold Member</span>
+                  <Crown className={cn("h-3.5 w-3.5", currentTier.color)} />
+                  <span className={cn("text-xs font-bold", currentTier.color)}>{currentTier.name} Member</span>
                 </div>
               </div>
             </div>
             {/* XP Bar */}
-            <div className="mt-4 pt-3 border-t border-[#E8DCC7]">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[10px] font-bold text-[var(--color-teal)]/70">XP 3.250 / 5.000</span>
+            {currentTier.next !== "Max" && (
+              <div className="mt-4 pt-3 border-t border-[#E8DCC7]">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-bold text-[var(--color-teal)]/70">XP {rewardPoints.toLocaleString("id-ID")} / {nextTierReq.toLocaleString("id-ID")}</span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-[var(--color-teal)]/10 overflow-hidden">
+                  <div className="h-full rounded-full bg-[var(--color-teal)]" style={{ width: `${progressPercent}%` }} />
+                </div>
               </div>
-              <div className="h-2 w-full rounded-full bg-[var(--color-teal)]/10 overflow-hidden">
-                <div className="h-full rounded-full bg-[var(--color-teal)] w-[65%]" />
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Nav Links */}

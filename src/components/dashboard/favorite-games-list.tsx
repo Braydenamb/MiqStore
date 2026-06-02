@@ -5,7 +5,14 @@ import { Heart, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const FAVORITE_GAMES = [
+interface Game {
+  id: string;
+  name: string;
+  publisher: string;
+  color: string;
+}
+
+const FAVORITE_GAMES: Game[] = [
   {
     id: "mlbb",
     name: "Mobile Legends",
@@ -32,7 +39,9 @@ const FAVORITE_GAMES = [
   },
 ];
 
-export function FavoriteGamesList() {
+export function FavoriteGamesList({ games }: { games?: Game[] }) {
+  const displayGames = games && games.length > 0 ? games : FAVORITE_GAMES;
+
   return (
     <div className="bg-[#FFF8EC] border border-[#E8DCC7] rounded-[24px] p-6 sm:p-8 shadow-sm">
       <div className="flex items-center justify-between mb-6">
@@ -46,7 +55,7 @@ export function FavoriteGamesList() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {FAVORITE_GAMES.map((game, i) => (
+        {displayGames.map((game, i) => (
           <motion.div
             key={game.id}
             initial={{ opacity: 0, y: 10 }}

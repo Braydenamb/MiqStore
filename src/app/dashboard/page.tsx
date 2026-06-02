@@ -40,12 +40,15 @@ export default function DashboardPage() {
       />
 
       {/* Membership Upgrade Banner */}
-      <MembershipUpgradeCard />
+      <MembershipUpgradeCard 
+        rewardPoints={data?.stats?.rewardPoints}
+        membership={data?.stats?.membership}
+      />
 
       {/* Bottom Grid: Transactions & Favorite Games */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <RecentTransactions transactions={data?.recentTransactions} />
-        <FavoriteGamesList />
+        <FavoriteGamesList games={data?.favoriteGames} />
       </div>
     </div>
   );

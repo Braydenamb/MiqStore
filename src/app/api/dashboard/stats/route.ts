@@ -20,7 +20,7 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { rewardPoints: true },
+      select: { rewardPoints: true, membership: true },
     });
 
     const wallet = await prisma.wallet.findUnique({
@@ -44,7 +44,7 @@ export async function GET() {
       invoiceId: tx.invoiceId,
       game: tx.product?.name || "Unknown Product",
       product: tx.productItem?.name || "Unknown Item",
-      price: tx.total,
+      amount: tx.total,
       status: tx.status,
       date: new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(tx.createdAt)
     }));
@@ -64,15 +64,34 @@ export async function GET() {
       status: 'success'
     }));
 
+    // 4. Favorite Games
+    const favoriteGamesRecords = await prisma.favoriteGame.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+      include: {
+        product: { select: { id: true, name: true, publisher: true, color: true } }
+      }
+    });
+    
+    const formattedFavoriteGames = favoriteGamesRecords.map(fg => ({
+      id: fg.product.id,
+      name: fg.product.name,
+      publisher: fg.product.publisher || "Unknown",
+      color: fg.product.color || "from-blue-500 to-indigo-600",
+    }));
+
     return NextResponse.json({
       stats: {
         totalTransactions: aggregations._count.id || 0,
         totalSpent: aggregations._sum.total || 0,
         rewardPoints: user?.rewardPoints || 0,
+        membership: user?.membership || "BRONZE",
         walletBalance: wallet?.balance || 0,
       },
       recentTransactions: formattedRecent,
       walletHistory: formattedWalletHistory,
+      favoriteGames: formattedFavoriteGames,
     });
   } catch (error) {
     console.error("[DASHBOARD_STATS]", error);
