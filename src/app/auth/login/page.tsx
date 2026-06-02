@@ -1,43 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
-import { motion } from "framer-motion";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Gamepad2,
-  ArrowRight,
-  Globe,
-  MessageCircle,
-} from "lucide-react";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { AuthCard } from "@/components/auth/auth-card";
+import { AuthInput } from "@/components/auth/auth-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { APP_NAME } from "@/lib/constants";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const { status } = useSession();
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push(callbackUrl);
-    }
-  }, [status, router, callbackUrl]);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,172 +23,130 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await signIn("credentials", {
+      const result = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
         redirect: false,
-        email,
-        password,
       });
 
-      if (res?.error) {
+      if (result?.error) {
         setError("Email atau password salah");
       } else {
-        router.push(callbackUrl);
+        router.push("/dashboard");
       }
-    } catch (err) {
-      setError("Terjadi kesalahan sistem");
+    } catch (err: any) {
+      setError("Terjadi kesalahan sistem. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-20 pb-16 px-4">
-      {/* Background Effects */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute top-1/3 left-1/4 h-[400px] w-[400px] rounded-full bg-purple-600/10 blur-[120px]" />
-        <div className="absolute bottom-1/3 right-1/4 h-[300px] w-[300px] rounded-full bg-cyan-500/8 blur-[100px]" />
-        <div className="absolute inset-0 bg-grid opacity-20" />
-      </div>
+    <AuthCard
+      title="Selamat Datang Kembali!"
+      subtitle="Masuk ke akunmu untuk mulai top up"
+      footerText="Belum punya akun?"
+      footerLinkText="Daftar Sekarang"
+      footerLinkHref="/auth/register"
+    >
+      <div className="space-y-6">
+        {/* Social Login */}
+        <Button 
+          variant="outline" 
+          className="w-full gap-3 h-12 rounded-xl border-white/50 bg-white/40 hover:bg-white/80 hover:border-white transition-all premium-shadow font-bold text-[var(--color-navy)]"
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              fill="#4285F4"
+            />
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34A853"
+            />
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#EA4335"
+            />
+          </svg>
+          Continue with Google
+        </Button>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 shadow-lg shadow-purple-500/25">
-              <Gamepad2 className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-2xl font-bold gradient-text">{APP_NAME}</span>
-          </Link>
-          <h1 className="mt-6 text-2xl font-extrabold text-[hsl(var(--foreground))]">
-            Selamat Datang Kembali
-          </h1>
-          <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">
-            Masuk ke akunmu untuk mulai top up
-          </p>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-[var(--color-navy)]/10" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-transparent px-2 text-[var(--color-navy)]/40 font-bold">atau</span>
+          </div>
         </div>
 
-        {/* Card */}
-        <div className="glass rounded-2xl p-6 sm:p-8">
-          {/* OAuth Buttons */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="gap-2" id="login-google" onClick={() => signIn("google", { callbackUrl })}>
-              <Globe className="h-4 w-4" />
-              Google
-            </Button>
-            <Button variant="outline" className="gap-2" id="login-discord" onClick={() => signIn("discord", { callbackUrl })}>
-              <MessageCircle className="h-4 w-4" />
-              Discord
-            </Button>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 text-sm font-bold text-red-500 bg-red-500/10 rounded-xl border border-red-500/20 text-center animate-in fade-in zoom-in-95">
+              {error}
+            </div>
+          )}
+
+          <AuthInput
+            label="Email"
+            id="email"
+            type="email"
+            placeholder="nama@email.com"
+            icon={<Mail className="h-4 w-4" />}
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            required
+          />
+
+          <div className="space-y-1">
+            <AuthInput
+              label="Password"
+              id="password"
+              type="password"
+              placeholder="Masukkan password"
+              icon={<Lock className="h-4 w-4" />}
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+            />
+            <div className="flex justify-between items-center px-1 pt-1">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  className="w-3.5 h-3.5 rounded-sm border-[var(--color-navy)]/30 text-[var(--color-teal)] focus:ring-[var(--color-teal)] transition-colors group-hover:border-[var(--color-teal)] accent-[var(--color-teal)]" 
+                />
+                <span className="text-[11px] font-bold text-[var(--color-navy)]/60 group-hover:text-[var(--color-navy)] transition-colors">
+                  Ingat saya
+                </span>
+              </label>
+              <a href="#" className="text-[11px] font-bold text-[var(--color-teal)] hover:text-[var(--color-gold)] transition-colors">
+                Lupa password?
+              </a>
+            </div>
           </div>
 
-          <div className="relative my-6">
-            <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[hsl(var(--background))] px-3 text-xs text-[hsl(var(--muted-foreground))]">
-              atau
-            </span>
-          </div>
-
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 text-sm text-red-500 bg-red-500/10 rounded-lg border border-red-500/20">
-                {error}
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="login-email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
-                <Input
-                  id="login-email"
-                  type="email"
-                  placeholder="nama@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="login-password">Password</Label>
-                <Link
-                  href="/auth/forgot-password"
-                  className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
-                >
-                  Lupa password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
-                <Input
-                  id="login-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Masukkan password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Remember Me */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="remember-me"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 rounded border-[hsl(var(--border))] bg-[hsl(var(--background))] accent-purple-600"
-              />
-              <Label htmlFor="remember-me" className="text-sm font-normal cursor-pointer">
-                Ingat saya
-              </Label>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              size="lg"
-              disabled={isLoading}
-              id="login-submit"
-            >
-              {isLoading ? "Memproses..." : "Masuk"}
-              {!isLoading && <ArrowRight className="ml-1 h-4 w-4" />}
-            </Button>
-          </form>
-        </div>
-
-        {/* Register Link */}
-        <p className="mt-6 text-center text-sm text-[hsl(var(--muted-foreground))]">
-          Belum punya akun?{" "}
-          <Link
-            href="/auth/register"
-            className="font-semibold text-purple-400 hover:text-purple-300 transition-colors"
+          <Button 
+            type="submit" 
+            disabled={isLoading}
+            className="w-full h-12 rounded-xl bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold text-[15px] transition-colors shadow-lg shadow-[var(--color-navy)]/20 mt-2"
           >
-            Daftar Sekarang
-          </Link>
-        </p>
-      </motion.div>
-    </div>
+            {isLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <>
+                Masuk <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </form>
+      </div>
+    </AuthCard>
   );
 }
