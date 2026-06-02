@@ -32,7 +32,7 @@ const sidebarLinks = [
   { label: "Profil", href: "/dashboard/profile", icon: User },
   { label: "Membership", href: "/dashboard/membership", icon: Crown, badge: "Gold" },
   { label: "Voucher Saya", href: "/dashboard/vouchers", icon: Ticket },
-  { label: "Game Favorit", href: "/dashboard/favorites", icon: Heart },
+  // { label: "Game Favorit", href: "/dashboard/favorites", icon: Heart },
   // { label: "Affiliate", href: "/dashboard/affiliate", icon: Megaphone, badge: "NEW" },
   { label: "Pengaturan", href: "/dashboard/settings", icon: Settings },
 ];
