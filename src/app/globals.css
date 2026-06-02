@@ -1,223 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
 @import "tailwindcss";
 
-/* ============================================
-   MiqStore Design System v3
-   Retro Two-Tone Stylish (Neo-Brutalist)
-   ============================================ */
-
-/* ---------- THEME TOKENS ---------- */
 @theme {
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Playfair Display', serif;
 }
 
 :root {
-  /* Primary - Black */
-  --primary: 0 0% 0%;
-  --primary-foreground: 48 20% 96%;
-
-  /* Secondary - Also black */
-  --secondary: 0 0% 0%;
-  --secondary-foreground: 48 20% 96%;
-
-  /* Accent - Black */
-  --accent: 0 0% 0%;
-  --accent-foreground: 48 20% 96%;
-
-  /* Background & Surface - Retro Cream */
-  --background: 48 30% 96%; /* #F6F4EB */
-  --foreground: 0 0% 0%; /* #000000 */
-  --card: 48 30% 96%;
-  --card-foreground: 0 0% 0%;
-  --popover: 48 30% 96%;
-  --popover-foreground: 0 0% 0%;
-
-  /* Muted */
-  --muted: 0 0% 90%;
-  --muted-foreground: 0 0% 30%;
-
-  /* Border & Input */
-  --border: 0 0% 0%;
-  --input: 0 0% 0%;
-  --ring: 0 0% 0%;
-
-  /* Status Colors (Optional, but keeping two-tone feel) */
-  --success: 0 0% 0%;
-  --success-foreground: 48 20% 96%;
-  --warning: 0 0% 0%;
-  --warning-foreground: 48 20% 96%;
-  --destructive: 0 0% 0%;
-  --destructive-foreground: 48 20% 96%;
-  --info: 0 0% 0%;
-  --info-foreground: 48 20% 96%;
-
-  /* Radius - Sharp */
-  --radius: 0px;
-
-  /* Sidebar */
-  --sidebar: 48 30% 96%;
-  --sidebar-foreground: 0 0% 0%;
-  --sidebar-border: 0 0% 0%;
-  --sidebar-accent: 0 0% 0%;
-
-  /* Brutalist Shadows */
-  --brutal-shadow: 4px 4px 0px 0px #000000;
-  --brutal-shadow-sm: 2px 2px 0px 0px #000000;
-  --brutal-shadow-lg: 8px 8px 0px 0px #000000;
-}
-
-[data-theme="dark"],
-.dark {
-  /* Invert for dark mode */
-  --background: 0 0% 0%;
-  --foreground: 48 30% 96%;
-  --card: 0 0% 0%;
-  --card-foreground: 48 30% 96%;
-  --popover: 0 0% 0%;
-  --popover-foreground: 48 30% 96%;
-  --primary: 48 30% 96%;
-  --primary-foreground: 0 0% 0%;
-  --secondary: 48 30% 96%;
-  --secondary-foreground: 0 0% 0%;
-  --accent: 48 30% 96%;
-  --accent-foreground: 0 0% 0%;
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 70%;
-  --border: 48 30% 96%;
-  --input: 48 30% 96%;
-  --ring: 48 30% 96%;
+  /* Core Palette */
+  --color-cream: #F5EEDC;
+  --color-teal: #073B4C;
+  --color-navy: #0B1D34;
+  --color-gold: #F7C873;
   
-  --brutal-shadow: 4px 4px 0px 0px hsl(48 30% 96%);
-  --brutal-shadow-sm: 2px 2px 0px 0px hsl(48 30% 96%);
-  --brutal-shadow-lg: 8px 8px 0px 0px hsl(48 30% 96%);
+  /* Theme Variables */
+  --background: 44 45% 91%; /* #F5EEDC in HSL */
+  --foreground: 212 65% 12%; /* Navy */
+  
+  --primary: 195 83% 16%; /* Dark Teal #073B4C */
+  --primary-foreground: 44 45% 91%;
+  
+  --secondary: 212 65% 12%; /* Deep Navy #0B1D34 */
+  --secondary-foreground: 44 45% 91%;
+  
+  --accent: 40 90% 71%; /* Gold #F7C873 */
+  --accent-foreground: 212 65% 12%;
+  
+  --card: 0 0% 100%; /* White */
+  --card-foreground: 212 65% 12%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 212 65% 12%;
+  
+  --muted: 44 20% 85%;
+  --muted-foreground: 212 20% 40%;
+  
+  --border: 44 20% 80%;
+  --input: 44 20% 80%;
+  --ring: 195 83% 16%;
+  
+  --radius: 1.25rem; /* 20px */
 }
 
-/* ---------- BASE STYLES ---------- */
+/* Base Styles */
 * {
   border-color: hsl(var(--border));
-  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  color-scheme: light dark;
+  font-family: var(--font-sans);
 }
 
 body {
-  background: hsl(var(--background));
+  background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-weight: 500;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: 
-    linear-gradient(hsl(var(--border) / 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--border) / 0.1) 1px, transparent 1px);
-  background-size: 32px 32px;
 }
 
-/* ---------- SCROLLBAR ---------- */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-  border-left: 2px solid hsl(var(--border));
-}
-::-webkit-scrollbar-track {
-  background: hsl(var(--background));
-}
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary));
-  border: 2px solid hsl(var(--background));
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
 }
 
-/* ---------- SELECTION ---------- */
-::selection {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+/* Vintage Texture Overlay for Cream Background */
+.texture-overlay {
+  position: relative;
 }
 
-/* ---------- BRUTALIST COMPONENTS ---------- */
-
-.brutal-card {
-  background: hsl(var(--card));
-  border: 2px solid hsl(var(--border));
-  box-shadow: var(--brutal-shadow);
-  transition: transform 0.1s, box-shadow 0.1s;
+.texture-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.25;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 0;
 }
 
-.brutal-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--brutal-shadow-lg);
+/* Premium Card Shadow */
+.premium-shadow {
+  box-shadow: 0 10px 40px -10px rgba(11, 29, 52, 0.08),
+              0 2px 10px -2px rgba(11, 29, 52, 0.04);
 }
 
-.brutal-btn {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  border: 2px solid hsl(var(--border));
-  box-shadow: var(--brutal-shadow-sm);
-  transition: transform 0.1s, box-shadow 0.1s;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.5rem 1rem;
+/* Reusable Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.brutal-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--brutal-shadow);
+.bg-teal {
+  background-color: var(--color-teal);
+  color: var(--color-cream);
 }
 
-.brutal-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: none;
+.bg-navy {
+  background-color: var(--color-navy);
+  color: var(--color-cream);
 }
 
-.brutal-input {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  border: 2px solid hsl(var(--border));
-  box-shadow: var(--brutal-shadow-sm);
-  padding: 0.5rem 1rem;
-  font-family: inherit;
+.text-gold {
+  color: var(--color-gold);
 }
 
-.brutal-input:focus {
-  outline: none;
-  box-shadow: none;
-  transform: translate(2px, 2px);
+.bg-gold {
+  background-color: var(--color-gold);
+  color: var(--color-navy);
 }
 
-/* Overriding old liquid classes to not break layout completely */
-.glass, .glass-strong, .glass-card {
-  background: hsl(var(--card));
-  border: 2px solid hsl(var(--border));
-  box-shadow: var(--brutal-shadow);
+/* Controller Float Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
 }
 
-.liquid-btn {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  border: 2px solid hsl(var(--border));
-  box-shadow: var(--brutal-shadow-sm);
-  text-transform: uppercase;
-  font-weight: 700;
-  transition: all 0.1s;
-}
-.liquid-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--brutal-shadow);
-}
-.liquid-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: none;
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
-.gradient-text, .gradient-text-accent, .gradient-text-warm {
-  background: none;
-  -webkit-text-fill-color: hsl(var(--foreground));
-  color: hsl(var(--foreground));
-  text-shadow: 2px 2px 0px hsl(var(--muted-foreground) / 0.5);
+/* Star Sparkles */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Mobile Nav spacing */
 .pb-mobile-nav {
   padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
 }

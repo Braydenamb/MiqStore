@@ -1,23 +1,17 @@
 import { HeroSection } from "@/components/home/hero-section";
-import { PromoBanner } from "@/components/home/promo-banner";
+import { FeatureStrip } from "@/components/home/feature-strip";
 import { PopularGames } from "@/components/home/popular-games";
-import { CategorySection } from "@/components/home/category-section";
+import { PromoBanner } from "@/components/home/promo-banner";
 import { StatsSection } from "@/components/home/stats-section";
-import { TestimonialSection } from "@/components/home/testimonial-section";
-import { FAQSection } from "@/components/home/faq-section";
-import { CTASection } from "@/components/home/cta-section";
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <PromoBanner />
+      <FeatureStrip />
       <PopularGames />
-      <CategorySection />
+      <PromoBanner />
       <StatsSection />
-      <TestimonialSection />
-      <FAQSection />
-      <CTASection />
     </>
   );
 }

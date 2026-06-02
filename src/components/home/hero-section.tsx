@@ -1,142 +1,126 @@
 "use client";
 
-import { useRef } from "react";
-import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Search, ArrowRight, Zap, Shield, Clock, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Zap, Gamepad2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-
-const features = [
-  { icon: Zap, label: "Proses Instan", desc: "1-5 detik", color: "var(--foreground)" },
-  { icon: Shield, label: "100% Aman", desc: "Terenkripsi", color: "var(--foreground)" },
-  { icon: Clock, label: "24/7 Online", desc: "Non-stop", color: "var(--foreground)" },
-];
 
 export function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[hsl(var(--background))] border-b-2 border-[hsl(var(--border))]"
-      id="hero-section"
-    >
-      {/* Background Decor (Brutalist Blocks) */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex justify-between items-start opacity-10 dark:opacity-20">
-        <div className="w-64 h-64 bg-[hsl(var(--foreground))] border-4 border-[hsl(var(--background))] translate-x-[-20%] translate-y-[20%] rotate-12"></div>
-        <div className="w-96 h-96 bg-[hsl(var(--foreground))] border-4 border-[hsl(var(--background))] translate-x-[20%] translate-y-[40%] -rotate-6"></div>
+    <section className="relative min-h-[90vh] overflow-hidden bg-[hsl(var(--background))] texture-overlay flex items-center pt-20 pb-16">
+      
+      {/* Background Decor */}
+      <div className="absolute right-0 top-0 w-1/2 h-full opacity-30 pointer-events-none z-0">
+        <div className="absolute right-[-20%] top-[-10%] w-[800px] h-[800px] rounded-full bg-[var(--color-navy)] blur-[120px]" />
+        <div className="absolute right-[10%] top-[20%] w-[500px] h-[500px] rounded-full bg-[var(--color-teal)] blur-[100px]" />
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8 mt-16 pb-20">
-        {/* Flash Sale Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex justify-center"
-        >
-          <div className="mb-8 px-5 py-2 text-sm font-bold border-2 border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] uppercase tracking-widest shadow-[var(--brutal-shadow-sm)] flex items-center gap-2">
-            <Sparkles className="h-4 w-4" />
-            Neo-Brutalist Era
-          </div>
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="text-5xl font-black tracking-tighter sm:text-7xl lg:text-8xl leading-[1.1] uppercase drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)] dark:drop-shadow-[4px_4px_0px_rgba(255,255,255,0.2)]"
-        >
-          <span className="block text-[hsl(var(--foreground))]">
-            Top Up Game
-          </span>
-          <span className="block mt-2 text-[hsl(var(--background))] bg-[hsl(var(--foreground))] inline-block px-4 py-1 border-4 border-[hsl(var(--background))] transform -rotate-2 shadow-[8px_8px_0px_rgba(0,0,0,0.5)] dark:shadow-[8px_8px_0px_rgba(255,255,255,0.5)]">
-            Tercepat
-          </span>
-        </motion.h1>
-
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          className="mx-auto mt-10 max-w-2xl text-lg sm:text-xl font-bold text-[hsl(var(--foreground))] leading-relaxed border-2 border-[hsl(var(--border))] p-4 bg-[hsl(var(--background))] shadow-[var(--brutal-shadow-sm)]"
-        >
-          Masuk ke dimensi baru top-up digital. Beli diamond, UC, dan voucher dengan 
-          kecepatan instan, keamanan berlapis, dan harga paling masuk akal.
-        </motion.p>
-
-        {/* Search Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mx-auto mt-12 max-w-2xl"
-        >
-          <div className="flex flex-col sm:flex-row items-center border-4 border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-[var(--brutal-shadow)]">
-            <div className="flex-1 flex items-center px-4 w-full sm:w-auto">
-              <Search className="h-6 w-6 text-[hsl(var(--foreground))]" />
-              <Input
-                placeholder="CARI GAME, VOUCHER..."
-                className="flex-1 h-14 border-0 bg-transparent text-xl font-bold uppercase focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[hsl(var(--foreground))]/50 rounded-none"
-              />
-            </div>
-            <Button
-              size="lg"
-              className="w-full sm:w-auto h-14 rounded-none border-t-4 sm:border-t-0 sm:border-l-4 border-[hsl(var(--border))] bg-[hsl(var(--primary))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] text-lg font-black uppercase tracking-wider"
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+          
+          {/* Left Content */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 rounded-full bg-white/50 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] backdrop-blur-md border border-white/50 shadow-sm mb-6"
             >
-              Cari
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          </div>
+              <Zap className="h-4 w-4 text-[var(--color-gold)] fill-[var(--color-gold)]" />
+              New Look. Same Speed.
+            </motion.div>
 
-          {/* Popular Tags */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <span className="text-sm font-bold uppercase text-[hsl(var(--foreground))] mr-2 bg-[hsl(var(--muted))] px-2 py-1 border-2 border-[hsl(var(--border))]">
-              Trending
-            </span>
-            {["Mobile Legends", "Free Fire", "Valorant"].map((tag) => (
-              <Link
-                key={tag}
-                href={`/games/${tag.toLowerCase().replace(/\s+/g, "-")}`}
-                className="border-2 border-[hsl(var(--border))] px-4 py-1.5 text-sm font-bold uppercase text-[hsl(var(--foreground))] bg-[hsl(var(--background))] transition-transform hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Feature Pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          className="mt-16 flex flex-wrap items-center justify-center gap-6"
-        >
-          {features.map((feature, idx) => (
-            <div
-              key={feature.label}
-              className="flex items-center gap-4 bg-[hsl(var(--background))] border-4 border-[hsl(var(--border))] p-4 shadow-[var(--brutal-shadow-sm)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[var(--brutal-shadow)] transition-all"
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--color-navy)] leading-[1.1]"
             >
-              <div className="flex h-12 w-12 items-center justify-center border-2 border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
-                <feature.icon className="h-6 w-6" />
+              Top Up.<br />
+              <span className="text-[var(--color-teal)]">Play.</span><br />
+              Done Right.
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-6 text-lg text-gray-600 max-w-lg"
+            >
+              Instant game top ups, memberships, and vouchers delivered in seconds.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+            >
+              <Button size="lg" className="bg-teal hover:bg-[var(--color-navy)] rounded-full h-14 px-8 text-lg shadow-lg shadow-[#073B4C]/20 transition-all hover:-translate-y-1">
+                Top Up Now
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg border-[var(--color-teal)] text-[var(--color-teal)] hover:bg-[var(--color-teal)]/5 transition-all">
+                Browse Games
+              </Button>
+            </motion.div>
+          </div>
+
+          {/* Right Visuals */}
+          <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
+            
+            {/* Cosmic blue streak (CSS implementation) */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[var(--color-teal)] to-[var(--color-navy)] opacity-20 rounded-[100px] rotate-12 blur-3xl animate-pulse" />
+            
+            {/* Twinkling stars */}
+            <div className="absolute top-[20%] left-[20%] w-2 h-2 rounded-full bg-[var(--color-gold)] animate-twinkle shadow-[0_0_10px_var(--color-gold)]" />
+            <div className="absolute top-[70%] right-[30%] w-1.5 h-1.5 rounded-full bg-white animate-twinkle shadow-[0_0_8px_white]" style={{ animationDelay: '1s' }} />
+            <div className="absolute bottom-[20%] left-[40%] w-3 h-3 rounded-full bg-[var(--color-teal)] animate-twinkle shadow-[0_0_12px_var(--color-teal)]" style={{ animationDelay: '2s' }} />
+            
+            {/* Realistic White Controller (Abstract Placeholder built with SVG) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center"
+            >
+              {/* Abstract 3D-ish Controller Shape */}
+              <div className="absolute w-[360px] h-[220px] bg-white rounded-[100px] shadow-[0_30px_60px_rgba(11,29,52,0.15),inset_0_-10px_20px_rgba(0,0,0,0.05),inset_0_10px_20px_rgba(255,255,255,1)] flex items-center justify-between px-10">
+                {/* D-Pad Area */}
+                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center shadow-inner relative">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
+                     <Gamepad2 className="h-6 w-6 text-gray-400" />
+                  </div>
+                </div>
+                {/* Buttons Area */}
+                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center shadow-inner relative gap-2">
+                  <div className="absolute top-2 w-6 h-6 rounded-full bg-[var(--color-teal)] shadow-sm" />
+                  <div className="absolute bottom-2 w-6 h-6 rounded-full bg-[var(--color-navy)] shadow-sm" />
+                  <div className="absolute left-2 w-6 h-6 rounded-full bg-[var(--color-gold)] shadow-sm" />
+                  <div className="absolute right-2 w-6 h-6 rounded-full bg-gray-300 shadow-sm" />
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-lg font-black uppercase text-[hsl(var(--foreground))]">
-                  {feature.label}
-                </p>
-                <p className="text-sm font-bold uppercase text-[hsl(var(--foreground))]/70">
-                  {feature.desc}
-                </p>
+            </motion.div>
+
+            {/* Floating Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="absolute bottom-[10%] right-[10%] z-20"
+            >
+              <div className="glass-panel px-6 py-4 rounded-2xl premium-shadow flex items-center gap-4 bg-white/90">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-gold)]/20 text-[var(--color-navy)]">
+                  <ShieldCheck className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="font-heading font-bold text-[var(--color-navy)] leading-tight">Instant Delivery</p>
+                  <p className="text-sm font-medium text-gray-500">100% Secure</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </motion.div>
+            </motion.div>
+            
+          </div>
+        </div>
       </div>
     </section>
   );
