@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Newspaper } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { HOME_NEWS_BANNERS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 
@@ -51,10 +52,13 @@ export function NewsCarousel() {
             >
               <Link href={banners[currentIndex].link} className="block w-full h-full relative cursor-pointer">
                 {/* Image */}
-                <img 
+                <Image 
                   src={banners[currentIndex].image} 
                   alt={banners[currentIndex].alt} 
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+                  priority
+                  className="object-cover"
                 />
                 
                 {/* Overlays */}
