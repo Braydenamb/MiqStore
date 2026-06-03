@@ -451,30 +451,46 @@ export default function GameDetailPage() {
                   ))}
                 </Accordion>
               </div>
+
+              {/* Dummy Recent Orders (Desktop) */}
+              <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
+                <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
+                  <div className="animate-pulse">
+                    <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
+                    <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+                  </div>
+                </div>
+              </div>
+
             </div>
             
-            {/* FAQ Mobile */}
-            <div className="lg:hidden bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-              <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
-                <HelpCircle className="h-4 w-4" /> Cara Top Up
-              </h3>
-              <ol className="list-decimal pl-4 space-y-2 text-xs text-gray-600">
-                <li>Masukkan Detail Akun (User ID / Zone ID).</li>
-                <li>Pilih jumlah diamond atau item yang diinginkan.</li>
-                <li>Pilih metode pembayaran yang tersedia.</li>
-                <li>Klik tombol Bayar Sekarang untuk checkout.</li>
-                <li>Selesaikan pembayaran dan diamond otomatis masuk.</li>
-              </ol>
-            </div>
+            {/* Mobile Extra Sections */}
+            <div className="lg:hidden space-y-6">
+              {/* FAQ Mobile */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+                <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
+                  <HelpCircle className="h-4 w-4" /> Cara Top Up
+                </h3>
+                <ol className="list-decimal pl-4 space-y-2 text-xs text-gray-600">
+                  <li>Masukkan Detail Akun (User ID / Zone ID).</li>
+                  <li>Pilih jumlah diamond atau item yang diinginkan.</li>
+                  <li>Pilih metode pembayaran yang tersedia.</li>
+                  <li>Klik tombol Bayar Sekarang untuk checkout.</li>
+                  <li>Selesaikan pembayaran dan diamond otomatis masuk.</li>
+                </ol>
+              </div>
 
-            {/* Dummy Recent Orders */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
-              <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
-                <div className="animate-pulse">
-                  <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
-                  <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+              {/* Dummy Recent Orders (Mobile) */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
+                <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
+                  <div className="animate-pulse">
+                    <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
+                    <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+                  </div>
                 </div>
               </div>
             </div>
