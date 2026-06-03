@@ -25,3 +25,7 @@ Modern agents perform best with structured roadmaps rather than vague instructio
 - **Phase 5:** Add tests.
 - **Phase 6:** Prepare Vercel deployment.
 - **Phase 7:** Generate documentation.
+
+## 5. Environment Variables Privacy
+**Do NOT read the `.env` file directly.**
+You must never attempt to view or read the `.env` file using any tools (e.g., `view_file`, `cat`, etc.). You should assume the `.env` file exists and contains the correct values based on the `.env.example` file. When you need to link environment variables to the project, simply write the code to reference `process.env.VARIABLE_NAME` and trust that the runtime environment will provide the values.
