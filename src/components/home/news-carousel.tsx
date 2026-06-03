@@ -35,43 +35,7 @@ export function NewsCarousel() {
   return (
     <section className="relative w-full py-8 overflow-hidden bg-white/50 border-y border-[var(--color-teal)]/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Header Block */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-teal)]/10 flex items-center justify-center">
-              <Newspaper className="h-5 w-5 text-[var(--color-teal)]" />
-            </div>
-            <div>
-              <h2 className="font-heading text-xl sm:text-2xl font-bold text-[var(--color-navy)] leading-tight">
-                Berita & Update
-              </h2>
-              <p className="text-xs sm:text-sm text-[var(--color-teal)]/80 font-medium">
-                Info terbaru seputar dunia game.
-              </p>
-            </div>
-          </div>
-          
-          {/* Controls Desktop */}
-          <div className="hidden sm:flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handlePrev}
-              className="rounded-full border-[var(--color-teal)]/20 text-[var(--color-teal)] hover:bg-[var(--color-teal)]/10"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleNext}
-              className="rounded-full border-[var(--color-teal)]/20 text-[var(--color-teal)] hover:bg-[var(--color-teal)]/10"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+
 
         {/* Carousel Area */}
         <div className="relative w-full aspect-[21/9] sm:aspect-[3/1] lg:aspect-[4/1] bg-gray-100 rounded-2xl sm:rounded-[24px] overflow-hidden shadow-lg border border-[var(--color-teal)]/10 group">
@@ -110,23 +74,23 @@ export function NewsCarousel() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Controls Mobile (Hover / Visible on small screens) */}
-          <div className="absolute inset-y-0 left-2 right-2 flex items-center justify-between sm:hidden opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Controls Mobile & Desktop */}
+          <div className="absolute inset-y-0 left-2 right-2 sm:left-4 sm:right-4 flex items-center justify-between z-30 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Button 
               variant="secondary" 
               size="icon" 
               onClick={handlePrev}
-              className="rounded-full w-8 h-8 bg-black/30 backdrop-blur text-white border-white/20 hover:bg-black/50"
+              className="pointer-events-auto rounded-full w-8 h-8 sm:w-10 sm:h-10 bg-black/30 backdrop-blur text-white border-white/20 hover:bg-black/50 shadow-lg"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <Button 
               variant="secondary" 
               size="icon" 
               onClick={handleNext}
-              className="rounded-full w-8 h-8 bg-black/30 backdrop-blur text-white border-white/20 hover:bg-black/50"
+              className="pointer-events-auto rounded-full w-8 h-8 sm:w-10 sm:h-10 bg-black/30 backdrop-blur text-white border-white/20 hover:bg-black/50 shadow-lg"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           </div>
 
