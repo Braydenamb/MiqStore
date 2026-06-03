@@ -203,15 +203,15 @@ export default function GameDetailPage() {
     <div className="min-h-screen bg-[var(--color-cream)] texture-overlay text-[var(--color-navy)] pb-32 lg:pb-16 font-sans">
       
       {/* ── Hero Banner (Retro Modern Style) ── */}
-      <div className="w-full relative overflow-hidden pt-24 pb-16 lg:pt-32 lg:pb-24 bg-[var(--color-navy)]">
+      <div className="w-full relative overflow-hidden pt-24 pb-16 lg:pt-32 lg:pb-24 bg-black">
         {/* Background Banner with Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 blur-[2px] scale-105 mix-blend-overlay"
-          style={{ backgroundImage: `url(${game.banner})` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 blur-[8px] scale-110"
+          style={{ backgroundImage: `url('${game.banner}')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-navy)] via-[var(--color-navy)]/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-navy)] via-transparent to-[var(--color-navy)]/50" />
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-overlay pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-cream)] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay pointer-events-none z-10" />
         
         {/* Colorful Abstract Accents */}
         <div className="absolute top-0 right-1/4 w-[300px] h-[300px] rounded-full bg-[var(--color-teal)]/30 blur-[100px] pointer-events-none" />
