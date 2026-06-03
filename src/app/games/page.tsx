@@ -88,7 +88,7 @@ function GamesContent() {
 
       {/* Games Grid */}
       {sortedGames.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
           {sortedGames.map((game, idx) => (
             <GameCard key={game.id} {...game} index={idx} />
           ))}
@@ -118,7 +118,7 @@ function GamesSkeleton() {
           <div className="h-10 w-32 bg-gray-200/50 rounded-full animate-pulse" />
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="rounded-[20px] bg-white/50 border border-white p-4 h-[280px] flex flex-col relative overflow-hidden animate-pulse">
             <div className="absolute inset-0 bg-gradient-to-tr from-gray-100 to-transparent" />

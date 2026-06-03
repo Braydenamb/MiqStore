@@ -239,7 +239,7 @@ export default function GameDetailPage() {
 
       {/* ── Main Layout (2 Columns on Desktop) ── */}
       <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-8 relative z-20">
-        <div className="grid gap-8 lg:grid-cols-12 items-start">
+        <div className="grid gap-8 lg:grid-cols-12 relative">
           
           {/* Left Column (Forms) */}
           <div className="lg:col-span-8 space-y-6">

@@ -7,11 +7,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const popularGames = [
-  { id: "mlbb", slug: "mobile-legends", name: "Mobile Legends", category: "MOBA", price: "Rp 1.500", icon: Sword, color: "#073B4C", bg: "bg-blue-100", image: "/images/Mobile_legends(1).jpg" },
-  { id: "pubgm", slug: "pubg-mobile", name: "PUBG Mobile", category: "Battle Royale", price: "Rp 10.000", icon: Crosshair, color: "#0B1D34", bg: "bg-orange-100", image: "/images/pubgm.jpg" },
-  { id: "ff", slug: "free-fire", name: "Free Fire", category: "Battle Royale", price: "Rp 5.000", icon: Shield, color: "#F7C873", bg: "bg-red-100", image: "/images/Free_Fire.webp" },
-  { id: "valo", slug: "valorant", name: "Valorant", category: "FPS", price: "Rp 15.000", icon: Zap, color: "#073B4C", bg: "bg-red-50", image: "/images/Valorant_(1).jpg" },
-  { id: "genshin", slug: "genshin-impact", name: "Genshin Impact", category: "RPG", price: "Rp 16.000", icon: Gamepad2, color: "#0B1D34", bg: "bg-purple-100", image: "/images/genshin-impact-(1).jpg" },
+  { id: "mlbb", slug: "mobile-legends", name: "Mobile Legends", category: "MOBA", price: "Rp 1.500", icon: Sword, color: "#073B4C", bg: "bg-blue-100", image: "/images/mobile-legends.jpg" },
+  { id: "pubgm", slug: "pubg-mobile", name: "PUBG Mobile", category: "Battle Royale", price: "Rp 10.000", icon: Crosshair, color: "#0B1D34", bg: "bg-orange-100", image: "/images/pubg-mobile.jpg" },
+  { id: "ff", slug: "free-fire", name: "Free Fire", category: "Battle Royale", price: "Rp 5.000", icon: Shield, color: "#F7C873", bg: "bg-red-100", image: "/images/free-fire.webp" },
+  { id: "valo", slug: "valorant", name: "Valorant", category: "FPS", price: "Rp 15.000", icon: Zap, color: "#073B4C", bg: "bg-red-50", image: "/images/valorant.jpg" },
+  { id: "genshin", slug: "genshin-impact", name: "Genshin Impact", category: "RPG", price: "Rp 16.000", icon: Gamepad2, color: "#0B1D34", bg: "bg-purple-100", image: "/images/genshin-impact.jpg" },
 ];
 
 export function PopularGames() {
