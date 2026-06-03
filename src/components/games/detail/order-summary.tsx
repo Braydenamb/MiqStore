@@ -1,0 +1,177 @@
+import { Info, HelpCircle, History, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { formatCurrency } from "@/lib/utils";
+import { GameField, FAQ_ITEMS, ProductItem, PaymentMethod } from "@/lib/constants";
+
+interface OrderSummaryProps {
+  game: { name: string; fields: GameField[] };
+  chosenProduct: ProductItem | undefined;
+  chosenPayment: PaymentMethod | undefined;
+  fieldValues: Record<string, string>;
+  fee: number;
+  total: number;
+  canCheckout: boolean;
+  isSubmitting: boolean;
+  onCheckout: () => void;
+}
+
+export function OrderSummary({
+  game,
+  chosenProduct,
+  chosenPayment,
+  fieldValues,
+  fee,
+  total,
+  canCheckout,
+  isSubmitting,
+  onCheckout,
+}: OrderSummaryProps) {
+  return (
+    <div className="lg:col-span-4 space-y-6">
+      {/* Sticky Order Summary (Desktop Only) */}
+      <div className="hidden lg:block sticky top-24">
+        <div className="bg-white rounded-2xl border border-[var(--color-teal)]/20 p-6 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[var(--color-teal)] to-transparent opacity-50" />
+          
+          <h3 className="text-lg font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
+            <Info className="h-5 w-5 text-[var(--color-teal)]" /> Ringkasan Pesanan
+          </h3>
+
+          <div className="space-y-4">
+            {/* Game & Item */}
+            <div className="flex justify-between items-start">
+              <span className="text-sm text-gray-500">Produk</span>
+              <div className="text-right">
+                <p className="text-sm font-bold text-[var(--color-navy)]">{game.name}</p>
+                <p className="text-xs text-[var(--color-teal)] font-medium">{chosenProduct?.name || "-"}</p>
+              </div>
+            </div>
+            
+            <Separator className="bg-gray-100" />
+            
+            {/* ID */}
+            {game.fields.length > 0 && (
+              <div className="flex justify-between items-start">
+                <span className="text-sm text-gray-500">Detail Akun</span>
+                <div className="text-right">
+                  <p className="text-sm font-mono text-[var(--color-navy)] max-w-[150px] truncate">
+                    {fieldValues[game.fields[0]?.key] || "-"}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <Separator className="bg-gray-100" />
+
+            {/* Payment */}
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500">Pembayaran</span>
+              <span className="text-sm font-bold text-[var(--color-navy)]">
+                {chosenPayment?.name || "-"}
+              </span>
+            </div>
+
+            {/* Price Breakdown */}
+            <div className="bg-gray-50 rounded-xl p-3 space-y-2 border border-gray-100 mt-4">
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-500">Harga</span>
+                <span className="text-[var(--color-navy)] font-medium">{chosenProduct ? formatCurrency(chosenProduct.price) : "-"}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-500">Biaya Admin</span>
+                <span className="text-[var(--color-navy)] font-medium">{chosenPayment ? formatCurrency(fee) : "-"}</span>
+              </div>
+              <Separator className="bg-gray-200 my-2" />
+              <div className="flex justify-between items-end">
+                <span className="text-sm font-bold text-[var(--color-navy)]">Total</span>
+                <span className="text-xl font-extrabold text-[var(--color-teal)]">
+                  {chosenProduct ? formatCurrency(total) : "-"}
+                </span>
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              onClick={onCheckout}
+              disabled={isSubmitting || !canCheckout}
+              className="w-full h-12 rounded-xl bg-[var(--color-teal)] hover:bg-[var(--color-teal)]/90 text-white font-bold text-base transition-all disabled:opacity-50 mt-4 shadow-lg shadow-[var(--color-teal)]/20"
+            >
+              {isSubmitting ? (
+                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Memproses...</>
+              ) : (
+                "Bayar Sekarang"
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {/* FAQ Section (Desktop) */}
+        <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+          <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
+            <HelpCircle className="h-4 w-4" /> Bantuan Top Up
+          </h3>
+          <Accordion type="single" collapsible className="space-y-2">
+            {FAQ_ITEMS.slice(0, 3).map((faq, i) => (
+              <AccordionItem value={`faq-${i}`} key={i} className="border-none">
+                <AccordionTrigger className="hover:no-underline py-2 text-xs font-semibold text-left text-[var(--color-navy)]/70 hover:text-[var(--color-navy)]">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-[11px] text-gray-500 leading-relaxed pb-2">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+
+        {/* Dummy Recent Orders (Desktop) */}
+        <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
+          <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
+            <div className="animate-pulse">
+              <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
+              <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Mobile Extra Sections */}
+      <div className="lg:hidden space-y-6">
+        {/* FAQ Mobile */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+          <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
+            <HelpCircle className="h-4 w-4" /> Cara Top Up
+          </h3>
+          <ol className="list-decimal pl-4 space-y-2 text-xs text-gray-600">
+            <li>Masukkan Detail Akun (User ID / Zone ID).</li>
+            <li>Pilih jumlah diamond atau item yang diinginkan.</li>
+            <li>Pilih metode pembayaran yang tersedia.</li>
+            <li>Klik tombol Bayar Sekarang untuk checkout.</li>
+            <li>Selesaikan pembayaran dan diamond otomatis masuk.</li>
+          </ol>
+        </div>
+
+        {/* Dummy Recent Orders (Mobile) */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
+          <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
+            <div className="animate-pulse">
+              <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
+              <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -454,3 +454,63 @@ export const PROMO_BANNERS: PromoBanner[] = [
     badge: "CASHBACK",
   },
 ];
+
+/* ---------- Products ---------- */
+export interface ProductItem {
+  id: string;
+  name: string;
+  amount: number;
+  price: number;
+  originalPrice?: number;
+  popular?: boolean;
+}
+
+export const GAME_PRODUCTS: Record<string, ProductItem[]> = {
+  "mobile-legends": [
+    { id: "ml-86", name: "86 Diamonds", amount: 86, price: 18500 },
+    { id: "ml-172", name: "172 Diamonds", amount: 172, price: 36000 },
+    { id: "ml-257", name: "257 Diamonds", amount: 257, price: 52000 },
+    { id: "ml-344", name: "344 Diamonds", amount: 344, price: 68000, popular: true },
+    { id: "ml-429", name: "429 Diamonds", amount: 429, price: 84000 },
+    { id: "ml-514", name: "514 Diamonds", amount: 514, price: 99000 },
+    { id: "ml-706", name: "706 Diamonds", amount: 706, price: 135000, popular: true },
+    { id: "ml-878", name: "878 Diamonds", amount: 878, price: 168000 },
+    { id: "ml-1050", name: "1050 Diamonds", amount: 1050, price: 199000 },
+    { id: "ml-2010", name: "2010 Diamonds", amount: 2010, price: 375000 },
+    { id: "ml-4805", name: "4805 Diamonds", amount: 4805, price: 850000 },
+    { id: "ml-starlight", name: "Starlight Member", amount: 1, price: 149000, originalPrice: 159000 },
+  ],
+  "free-fire": [
+    { id: "ff-70", name: "70 Diamonds", amount: 70, price: 14000 },
+    { id: "ff-140", name: "140 Diamonds", amount: 140, price: 27000 },
+    { id: "ff-355", name: "355 Diamonds", amount: 355, price: 65000, popular: true },
+    { id: "ff-720", name: "720 Diamonds", amount: 720, price: 130000 },
+    { id: "ff-1450", name: "1450 Diamonds", amount: 1450, price: 255000 },
+    { id: "ff-membership", name: "Weekly Membership", amount: 1, price: 29000 },
+  ],
+  "genshin-impact": [
+    { id: "gi-60", name: "60 Genesis Crystals", amount: 60, price: 16000 },
+    { id: "gi-300", name: "300+30 Genesis Crystals", amount: 330, price: 79000 },
+    { id: "gi-980", name: "980+110 Genesis Crystals", amount: 1090, price: 249000, popular: true },
+    { id: "gi-1980", name: "1980+260 Genesis Crystals", amount: 2240, price: 479000 },
+    { id: "gi-3280", name: "3280+600 Genesis Crystals", amount: 3880, price: 799000 },
+    { id: "gi-6480", name: "6480+1600 Genesis Crystals", amount: 8080, price: 1599000 },
+    { id: "gi-blessing", name: "Blessing of the Welkin Moon", amount: 1, price: 79000, popular: true },
+  ],
+  "valorant": [
+    { id: "vl-125", name: "125 VP", amount: 125, price: 15000 },
+    { id: "vl-420", name: "420 VP", amount: 420, price: 49000 },
+    { id: "vl-700", name: "700 VP", amount: 700, price: 79000, popular: true },
+    { id: "vl-1375", name: "1375 VP", amount: 1375, price: 149000 },
+    { id: "vl-2400", name: "2400 VP", amount: 2400, price: 249000 },
+    { id: "vl-4000", name: "4000 VP", amount: 4000, price: 399000 },
+    { id: "vl-8150", name: "8150 VP", amount: 8150, price: 799000 },
+  ],
+};
+
+export const DEFAULT_PRODUCTS: ProductItem[] = [
+  { id: "def-1", name: "Paket 1", amount: 100, price: 15000 },
+  { id: "def-2", name: "Paket 2", amount: 300, price: 45000 },
+  { id: "def-3", name: "Paket 3", amount: 500, price: 75000, popular: true },
+  { id: "def-4", name: "Paket 4", amount: 1000, price: 150000 },
+];
