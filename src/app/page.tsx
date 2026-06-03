@@ -3,6 +3,7 @@ import { FeatureStrip } from "@/components/home/feature-strip";
 import { PopularGames } from "@/components/home/popular-games";
 import { PromoBanner } from "@/components/home/promo-banner";
 import { StatsSection } from "@/components/home/stats-section";
+import { NewsCarousel } from "@/components/home/news-carousel";
 
 export default async function HomePage() {
   // Simulasi pemanggilan API/Database Backend (misal: fetch daftar promo dari database)
@@ -12,6 +13,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
+      <NewsCarousel />
       <FeatureStrip />
       <PopularGames />
       <PromoBanner />

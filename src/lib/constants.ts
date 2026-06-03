@@ -455,6 +455,42 @@ export const PROMO_BANNERS: PromoBanner[] = [
   },
 ];
 
+/* ---------- News Banners (Unlimited Horizontal Scroll) ---------- */
+export interface NewsBanner {
+  id: string;
+  image: string;
+  alt: string;
+  link: string;
+}
+
+// Data ini disimulasikan bisa diatur via admin page
+export const HOME_NEWS_BANNERS: NewsBanner[] = [
+  {
+    id: "news-1",
+    image: "/images/mobile-legends.jpg",
+    alt: "Update Season Mobile Legends",
+    link: "/games/mobile-legends",
+  },
+  {
+    id: "news-2",
+    image: "/images/pubg-mobile.jpg",
+    alt: "PUBG Mobile Royale Pass Baru",
+    link: "/games/pubg-mobile",
+  },
+  {
+    id: "news-3",
+    image: "/images/valorant.jpg",
+    alt: "Valorant Bundle Night Market",
+    link: "/games/valorant",
+  },
+  {
+    id: "news-4",
+    image: "/images/genshin-impact.jpg",
+    alt: "Genshin Impact Patch Update",
+    link: "/games/genshin-impact",
+  },
+];
+
 /* ---------- Products ---------- */
 export interface ProductItem {
   id: string;
