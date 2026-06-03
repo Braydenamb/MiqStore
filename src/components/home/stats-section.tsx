@@ -26,10 +26,10 @@ export function StatsSection() {
               transition={{ delay: idx * 0.1, duration: 0.5 }}
               className="flex flex-col items-center text-center px-4"
             >
-              <div className="font-heading text-3xl sm:text-4xl font-bold text-white mb-2">
+              <div className="text-h1 text-white mb-2">
                 {stat.value}
               </div>
-              <div className="text-sm font-medium text-[var(--color-gold)] uppercase tracking-wider">
+              <div className="text-caption text-[var(--color-gold)]">
                 {stat.label}
               </div>
             </motion.div>

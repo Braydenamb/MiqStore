@@ -23,12 +23,12 @@ export function PromoBanner() {
             
             {/* Left Content */}
             <div className="max-w-xl text-center md:text-left">
-              <h2 className="font-heading text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight">
+              <h2 className="text-h1 text-white mb-6">
                 Your Games. <br />
                 <span className="text-[var(--color-gold)]">Your Way.</span>
               </h2>
               
-              <ul className="space-y-4 mb-8 text-white/90 text-left mx-auto md:mx-0 max-w-sm">
+              <ul className="text-body-large space-y-4 mb-8 text-white/90 text-left mx-auto md:mx-0 max-w-sm">
                 <li className="flex items-center gap-3 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-[var(--color-gold)]" />
                   Fast Delivery

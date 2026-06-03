@@ -34,7 +34,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--color-navy)] leading-[1.1]"
+              className="text-display"
             >
               Top Up.<br />
               <span className="text-[var(--color-teal)]">Play.</span><br />
@@ -45,7 +45,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-6 text-lg text-gray-600 max-w-lg"
+              className="mt-6 text-body-large max-w-lg"
             >
               Instant game top ups, memberships, and vouchers delivered in seconds.
             </motion.p>

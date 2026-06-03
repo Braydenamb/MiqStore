@@ -28,10 +28,10 @@ export function FeatureStrip() {
                 <feature.icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-heading font-semibold text-[hsl(var(--foreground))] text-lg leading-tight">
+                <h3 className="text-h3 text-base sm:text-lg mb-1">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">
+                <p className="text-body text-xs sm:text-sm">
                   {feature.subtitle}
                 </p>
               </div>

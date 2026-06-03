@@ -60,6 +60,37 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@layer components {
+  /* Premium Typography Scale */
+  .text-display {
+    @apply font-heading text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-[var(--color-navy)] dark:text-white;
+  }
+  
+  .text-h1 {
+    @apply font-heading text-4xl sm:text-5xl font-bold tracking-tight leading-tight text-[var(--color-navy)] dark:text-white;
+  }
+  
+  .text-h2 {
+    @apply font-heading text-2xl sm:text-3xl font-bold tracking-tight leading-snug text-[var(--color-navy)] dark:text-[var(--color-cream)];
+  }
+  
+  .text-h3 {
+    @apply font-heading text-lg sm:text-xl font-bold tracking-tight leading-snug text-[var(--color-navy)] dark:text-[var(--color-cream)];
+  }
+  
+  .text-body {
+    @apply font-sans text-base leading-relaxed text-gray-600 dark:text-gray-300;
+  }
+  
+  .text-body-large {
+    @apply font-sans text-lg leading-relaxed text-gray-600 dark:text-gray-300;
+  }
+  
+  .text-caption {
+    @apply font-sans text-xs sm:text-sm font-medium tracking-wide text-gray-500 uppercase;
+  }
+}
+
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-heading);
 }

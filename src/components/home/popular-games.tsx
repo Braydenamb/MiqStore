@@ -21,10 +21,10 @@ export function PopularGames() {
         
         <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-4">
           <div>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[hsl(var(--foreground))] tracking-tight">
+            <h2 className="text-h1">
               Popular Top Ups
             </h2>
-            <p className="mt-2 text-[hsl(var(--muted-foreground))]">
+            <p className="mt-2 text-body-large">
               Find the best deals for your favorite games.
             </p>
           </div>
@@ -57,9 +57,9 @@ export function PopularGames() {
               
               {/* Details */}
               <div className="flex-1 flex flex-col z-10 relative">
-                <span className="text-xs font-semibold text-[var(--color-gold)] mb-1 uppercase tracking-wider">{game.category}</span>
-                <h3 className="font-heading font-bold text-[hsl(var(--foreground))] text-lg mb-1 line-clamp-1">{game.name}</h3>
-                <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">Starts at {game.price}</p>
+                <span className="text-caption text-[var(--color-gold)] mb-1">{game.category}</span>
+                <h3 className="text-h3 mb-1 line-clamp-1">{game.name}</h3>
+                <p className="text-body text-sm mb-4">Starts at {game.price}</p>
                 
                 <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-cream)] text-[var(--color-teal)] group-hover:bg-[var(--color-teal)] group-hover:text-white transition-colors ml-auto shadow-sm">
                   <ArrowRight className="h-4 w-4" />
