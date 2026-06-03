@@ -12,8 +12,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection />
       <NewsCarousel />
+      <HeroSection />
       <FeatureStrip />
       <PopularGames />
       <PromoBanner />
