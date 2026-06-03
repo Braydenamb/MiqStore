@@ -8,11 +8,13 @@ import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import "./globals.css";
 
-/*
- * Font Strategy: Using system font stack defined in globals.css.
- * When deploying with network access, swap to next/font/google:
- *   import { Inter, Outfit } from "next/font/google";
- */
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -87,7 +89,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className="min-h-screen bg-[hsl(var(--background))] font-sans antialiased">
+      <body className={`${inter.variable} min-h-screen bg-[hsl(var(--background))] font-sans antialiased`}>
         <Providers>
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
