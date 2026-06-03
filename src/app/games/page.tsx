@@ -5,18 +5,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, Gamepad2, Sword, Shield, Crosshair, Zap, Coins } from "lucide-react";
 import { GameCard } from "@/components/games/game-card";
 
-// Placeholder data since we are avoiding external assets
-const GAMES = [
-  { id: "mlbb", name: "Mobile Legends", publisher: "Moonton", platform: "Mobile", popular: true, icon: Sword, color: "#083B4C", bg: "bg-blue-100", image: "/images/Mobile_legends(1).jpg" },
-  { id: "ff", name: "Free Fire", publisher: "Garena", platform: "Mobile", popular: true, icon: Shield, color: "#D4A44A", bg: "bg-orange-100", image: "/images/Free_Fire.webp" },
-  { id: "pubgm", name: "PUBG Mobile", publisher: "Tencent", platform: "Mobile", popular: true, icon: Crosshair, color: "#0D1B2A", bg: "bg-gray-200", image: "/images/pubgm.jpg" },
-  { id: "valo", name: "Valorant", publisher: "Riot Games", platform: "PC", popular: true, icon: Zap, color: "#083B4C", bg: "bg-red-100", image: "/images/Valorant_(1).jpg" },
-  { id: "genshin", name: "Genshin Impact", publisher: "HoYoverse", platform: "Mobile/PC", popular: true, icon: Gamepad2, color: "#0D1B2A", bg: "bg-purple-100", image: "/images/genshin-impact-(1).jpg" },
-  { id: "hsr", name: "Honkai Star Rail", publisher: "HoYoverse", platform: "Mobile/PC", popular: false, icon: Gamepad2, color: "#083B4C", bg: "bg-indigo-100", image: "/images/Honkai_star_rail.png" },
-  { id: "roblox", name: "Roblox", publisher: "Roblox Corp", platform: "Mobile/PC", popular: false, icon: Gamepad2, color: "#D4A44A", bg: "bg-slate-200", image: "/images/roblox.jpg" },
-  { id: "steam", name: "Steam Wallet", publisher: "Valve", platform: "PC", popular: false, icon: Coins, color: "#0D1B2A", bg: "bg-blue-200", image: "/images/steam.png" },
-];
-
+import { POPULAR_GAMES } from "@/lib/constants";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -27,9 +16,9 @@ function GamesContent() {
   const [filter, setFilter] = useState("All Platforms");
   const [sort, setSort] = useState("Popular");
 
-  const filteredGames = GAMES.filter(g => {
+  const filteredGames = POPULAR_GAMES.filter(g => {
     const matchesSearch = g.name.toLowerCase().includes(q) || g.publisher.toLowerCase().includes(q);
-    const matchesPlatform = filter === "All Platforms" || g.platform.includes(filter);
+    const matchesPlatform = filter === "All Platforms" || g.category.toLowerCase().includes(filter.toLowerCase());
     return matchesSearch && matchesPlatform;
   });
 

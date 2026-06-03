@@ -5,26 +5,30 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft,
-  CheckCircle2,
   Gamepad2,
-  ShieldCheck,
-  Zap,
+  CheckCircle2,
   ChevronRight,
   Loader2,
-  Check,
-  Sparkles,
+  ShieldCheck,
+  Zap,
+  Info,
   Clock,
-  Tag,
+  HelpCircle,
+  History,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
-import { POPULAR_GAMES, PAYMENT_METHODS } from "@/lib/constants";
+import { Badge } from "@/components/ui/badge";
+import { POPULAR_GAMES, PAYMENT_METHODS, FAQ_ITEMS } from "@/lib/constants";
 import { formatCurrency, cn } from "@/lib/utils";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
 
@@ -86,8 +90,6 @@ const DEFAULT_PRODUCTS: ProductItem[] = [
   { id: "def-2", name: "Paket 2", amount: 300, price: 45000 },
   { id: "def-3", name: "Paket 3", amount: 500, price: 75000, popular: true },
   { id: "def-4", name: "Paket 4", amount: 1000, price: 150000 },
-  { id: "def-5", name: "Paket 5", amount: 2500, price: 350000 },
-  { id: "def-6", name: "Paket 6", amount: 5000, price: 650000 },
 ];
 
 const paymentCategoryLabels: Record<string, string> = {
@@ -99,11 +101,14 @@ const paymentCategoryLabels: Record<string, string> = {
 };
 
 /* ─── Step Badge ─── */
-function StepBadge({ num }: { num: number }) {
+function StepBadge({ num, title }: { num: number; title: string }) {
   return (
-    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-navy)] text-white text-xs font-bold shadow-sm">
-      {num}
-    </span>
+    <div className="flex items-center gap-3 mb-5 border-b border-white/5 pb-3">
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-teal)]/20 border border-[var(--color-teal)]/30 text-[var(--color-teal)] text-sm font-bold shadow-[0_0_15px_rgba(45,212,191,0.15)]">
+        {num}
+      </span>
+      <h2 className="text-xl font-bold font-heading text-white tracking-wide">{title}</h2>
+    </div>
   );
 }
 
@@ -121,6 +126,25 @@ export default function GameDetailPage() {
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+    const saved = localStorage.getItem(`miq_saved_id_${slug}`);
+    if (saved) {
+      try {
+        setFieldValues(JSON.parse(saved));
+      } catch (e) {}
+    }
+  }, [slug]);
+
+  const handleFieldChange = (key: string, value: string) => {
+    // Only allow numbers
+    const numericValue = value.replace(/[^0-9]/g, "");
+    const newValues = { ...fieldValues, [key]: numericValue };
+    setFieldValues(newValues);
+    localStorage.setItem(`miq_saved_id_${slug}`, JSON.stringify(newValues));
+  };
 
   const chosenProduct = products.find((p) => p.id === selectedProduct);
   const chosenPayment = PAYMENT_METHODS.find((p) => p.id === selectedPayment);
@@ -143,7 +167,7 @@ export default function GameDetailPage() {
     : 0;
   const total = chosenProduct ? chosenProduct.price + fee : 0;
 
-  const allFieldsFilled = game?.fields.every((f) => fieldValues[f.key]?.trim()) ?? true;
+  const allFieldsFilled = game?.fields.every((f) => fieldValues[f.key]?.trim().length > 3) ?? true;
   const canCheckout = allFieldsFilled && selectedProduct && selectedPayment;
 
   const handleCheckout = () => {
@@ -158,16 +182,16 @@ export default function GameDetailPage() {
 
     setTimeout(() => {
       router.push(`/checkout`);
-    }, 800);
+    }, 600);
   };
 
   if (!game) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-[var(--color-cream)] texture-overlay">
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-[#09090b] texture-overlay text-white">
         <div className="text-center relative z-10">
-          <Gamepad2 className="h-16 w-16 text-[var(--color-teal)]/20 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold font-heading text-[var(--color-navy)] mb-2">Game tidak ditemukan</h2>
-          <Button variant="outline" className="mt-4 border-[var(--color-teal)] text-[var(--color-teal)]" asChild>
+          <Gamepad2 className="h-16 w-16 text-[var(--color-teal)]/40 mx-auto mb-4 animate-pulse" />
+          <h2 className="text-2xl font-bold font-heading mb-2">Game tidak ditemukan</h2>
+          <Button variant="outline" className="mt-4 border-[var(--color-teal)] text-[var(--color-teal)] bg-transparent hover:bg-[var(--color-teal)]/10" asChild>
             <Link href="/games">Kembali ke katalog</Link>
           </Button>
         </div>
@@ -176,95 +200,104 @@ export default function GameDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-cream)] texture-overlay pb-32 lg:pb-16 font-sans">
+    <div className="min-h-screen bg-[#09090b] text-white pb-32 lg:pb-16 font-sans">
       
-      {/* ── Hero Banner (Retro Editorial Style) ── */}
-      <div className="w-full bg-[var(--color-navy)] relative overflow-hidden pt-20 pb-12 border-b-4 border-[var(--color-gold)]">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+      {/* ── Hero Banner (Dark Gaming Style) ── */}
+      <div className="w-full relative overflow-hidden pt-24 pb-16 lg:pt-32 lg:pb-24">
+        {/* Background Banner with Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 blur-[2px] scale-105"
+          style={{ backgroundImage: `url(${game.banner})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-transparent to-[#09090b]/50" />
         
-        {/* Abstract Colorful Shapes representing game graphics */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[var(--color-teal)] opacity-50 blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-blue-500 opacity-30 blur-3xl translate-y-1/2 pointer-events-none" />
+        {/* Subtle Neon Accents */}
+        <div className="absolute top-0 right-1/4 w-[300px] h-[300px] rounded-full bg-[var(--color-teal)]/20 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] rounded-full bg-blue-600/10 blur-[100px] pointer-events-none" />
 
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10 flex items-end gap-6 h-full mt-8">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl bg-white p-1 shadow-2xl shrink-0 -mb-16 border border-white relative overflow-hidden">
-             <div className="w-full h-full rounded-lg bg-[var(--color-teal)] flex items-center justify-center">
-               <Gamepad2 className="w-12 h-12 text-white" />
-             </div>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10 flex flex-col md:flex-row md:items-end gap-6 md:gap-8">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-2xl bg-[#18181b]/80 p-1 shadow-2xl shrink-0 border border-white/10 relative overflow-hidden backdrop-blur-md">
+             <div 
+               className="w-full h-full rounded-xl bg-cover bg-center"
+               style={{ backgroundImage: `url(${game.image})` }}
+             />
           </div>
-          <div className="text-white pb-2 flex-1">
-            <h1 className="text-3xl sm:text-5xl font-extrabold font-heading tracking-tight mb-2">{game.name}</h1>
-            <div className="flex items-center gap-3 text-sm text-white/80 font-medium">
-              <span>{game.publisher}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gold)]" />
-              <span>Instan</span>
+          <div className="pb-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-heading tracking-tight mb-2 md:mb-3 drop-shadow-lg text-white">
+              {game.name}
+            </h1>
+            <div className="flex flex-wrap items-center gap-3 md:gap-4 text-sm font-medium text-white/80">
+              <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-[var(--color-teal)]" /> {game.publisher}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
+              <span className="flex items-center gap-1.5"><Zap className="h-4 w-4 text-yellow-400" /> Proses 1-5 Menit</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Main Layout ── */}
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 mt-20 relative z-10">
-        <div className="grid gap-8 lg:grid-cols-1">
+      {/* ── Main Layout (2 Columns on Desktop) ── */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-8 relative z-20">
+        <div className="grid gap-8 lg:grid-cols-12 items-start">
           
-          <div className="space-y-8">
+          {/* Left Column (Forms) */}
+          <div className="lg:col-span-8 space-y-6">
             
             {/* Step 1: User ID */}
             {game.fields.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <StepBadge num={1} />
-                  <h2 className="text-lg font-bold font-heading text-[var(--color-navy)]">Detail Akun</h2>
-                </div>
-                <div className="grid gap-5 sm:grid-cols-2">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#18181b]/80 backdrop-blur-md rounded-2xl border border-white/5 p-5 sm:p-7 shadow-lg">
+                <StepBadge num={1} title="Masukkan Detail Akun" />
+                <div className="grid gap-4 sm:grid-cols-2">
                   {game.fields.map((field) => (
                     <div key={field.key} className="space-y-2">
-                      <Label htmlFor={field.key} className="text-xs font-bold text-[var(--color-teal)] uppercase tracking-wider">{field.label}</Label>
+                      <Label htmlFor={field.key} className="text-xs font-bold text-white/60 uppercase tracking-wider">{field.label}</Label>
                       <Input
                         id={field.key}
-                        type={field.type}
+                        type="text"
+                        inputMode="numeric"
                         placeholder={field.placeholder}
                         value={fieldValues[field.key] || ""}
-                        onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                        className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--color-teal)] focus:ring-[var(--color-teal)] rounded-xl"
+                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                        className="h-12 bg-black/40 border-white/10 text-white placeholder:text-white/30 focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] rounded-xl transition-all font-mono"
                       />
                     </div>
                   ))}
                 </div>
-                <p className="mt-4 text-xs text-gray-500">Pastikan User ID dan Zone ID Anda sudah benar. Kesalahan input sepenuhnya menjadi tanggung jawab pembeli.</p>
+                {isHydrated && Object.values(fieldValues).some(v => v) && (
+                  <p className="mt-3 text-xs text-[var(--color-teal)] flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" /> Data tersimpan otomatis
+                  </p>
+                )}
               </motion.div>
             )}
 
             {/* Step 2: Choose Product */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <StepBadge num={game.fields.length > 0 ? 2 : 1} />
-                <h2 className="text-lg font-bold font-heading text-[var(--color-navy)]">Pilih Produk</h2>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#18181b]/80 backdrop-blur-md rounded-2xl border border-white/5 p-5 sm:p-7 shadow-lg">
+              <StepBadge num={game.fields.length > 0 ? 2 : 1} title="Pilih Nominal" />
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3">
                 {products.map((product) => (
                   <button
                     key={product.id}
                     onClick={() => setSelectedProduct(product.id)}
                     className={cn(
-                      "relative flex flex-col items-start gap-1 rounded-xl border-2 p-4 text-left transition-all duration-200 cursor-pointer overflow-hidden",
+                      "relative flex flex-col items-start gap-1 rounded-xl border p-4 text-left transition-all duration-200 cursor-pointer overflow-hidden",
                       selectedProduct === product.id
-                        ? "border-[var(--color-teal)] bg-[var(--color-teal)]/5 shadow-md transform scale-[1.02]"
-                        : "border-gray-100 bg-white hover:border-[var(--color-teal)]/30 hover:bg-gray-50"
+                        ? "border-[var(--color-teal)] bg-[var(--color-teal)]/10 shadow-[0_0_20px_rgba(45,212,191,0.15)] transform scale-[1.02]"
+                        : "border-white/10 bg-black/40 hover:border-white/30 hover:bg-black/60 hover:-translate-y-0.5"
                     )}
                   >
                     {product.popular && (
-                      <div className="absolute top-0 right-0 bg-[var(--color-gold)] text-[var(--color-navy)] text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
+                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[var(--color-gold)] to-yellow-500 text-[#09090b] text-[9px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm">
                         HOT
                       </div>
                     )}
-                    <span className="text-sm font-bold text-[var(--color-navy)] leading-tight mb-1 pr-4">{product.name}</span>
-                    <span className="text-xs font-bold text-[var(--color-teal)] mt-auto">
+                    <span className="text-sm font-bold text-white leading-tight mb-1 pr-4">{product.name}</span>
+                    <span className="text-xs font-bold text-[var(--color-teal)] mt-auto drop-shadow-sm">
                       {formatCurrency(product.price)}
                     </span>
                     {selectedProduct === product.id && (
-                      <motion.div layoutId="product-check" className="absolute bottom-2 right-2 text-[var(--color-teal)]">
-                        <CheckCircle2 className="h-5 w-5 fill-[var(--color-teal)] text-white" />
+                      <motion.div layoutId="product-check" className="absolute bottom-2 right-2">
+                        <CheckCircle2 className="h-5 w-5 text-[var(--color-teal)] drop-shadow-md" />
                       </motion.div>
                     )}
                   </button>
@@ -273,89 +306,214 @@ export default function GameDetailPage() {
             </motion.div>
 
             {/* Step 3: Payment Method */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <StepBadge num={game.fields.length > 0 ? 3 : 2} />
-                <h2 className="text-lg font-bold font-heading text-[var(--color-navy)]">Pilih Pembayaran</h2>
-              </div>
-              <div className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#18181b]/80 backdrop-blur-md rounded-2xl border border-white/5 p-5 sm:p-7 shadow-lg">
+              <StepBadge num={game.fields.length > 0 ? 3 : 2} title="Metode Pembayaran" />
+              <Accordion type="single" collapsible defaultValue="e-wallet" className="space-y-3">
                 {Object.entries(paymentGroups).map(([category, methods]) => (
-                  <div key={category}>
-                    <p className="mb-3 text-xs font-bold text-[var(--color-teal)] uppercase tracking-wider">
+                  <AccordionItem value={category} key={category} className="border border-white/10 bg-black/40 rounded-xl px-2 overflow-hidden data-[state=open]:border-[var(--color-teal)]/30 transition-colors">
+                    <AccordionTrigger className="hover:no-underline py-4 px-3 text-sm font-bold uppercase tracking-wider text-white/80 data-[state=open]:text-[var(--color-teal)]">
                       {paymentCategoryLabels[category] || category}
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                      {methods.map((pm) => (
-                        <button
-                          key={pm.id}
-                          onClick={() => setSelectedPayment(pm.id)}
-                          className={cn(
-                            "flex items-center gap-3 rounded-xl border-2 p-3 transition-all duration-200 cursor-pointer",
-                            selectedPayment === pm.id
-                              ? "border-[var(--color-teal)] bg-[var(--color-teal)]/5 shadow-md transform scale-[1.02]"
-                              : "border-gray-100 bg-white hover:border-[var(--color-teal)]/30 hover:bg-gray-50"
-                          )}
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-xs font-bold text-[var(--color-navy)] shrink-0">
-                            {pm.name.slice(0, 2)}
-                          </div>
-                          <div className="text-left flex-1 min-w-0">
-                            <p className="text-sm font-bold text-[var(--color-navy)] truncate">{pm.name}</p>
-                            <p className="text-[10px] text-gray-500 font-medium">
-                              {pm.fee === 0 ? "Tanpa biaya admin" : pm.feeType === "flat" ? `+${formatCurrency(pm.fee)}` : `+${pm.fee}%`}
-                            </p>
-                          </div>
-                          {selectedPayment === pm.id && (
-                            <motion.div layoutId="payment-check" className="shrink-0 text-[var(--color-teal)]">
-                              <CheckCircle2 className="h-5 w-5 fill-[var(--color-teal)] text-white" />
-                            </motion.div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-1 pb-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                        {methods.map((pm) => (
+                          <button
+                            key={pm.id}
+                            onClick={() => setSelectedPayment(pm.id)}
+                            className={cn(
+                              "flex items-center gap-3 rounded-xl border p-3 transition-all duration-200 cursor-pointer",
+                              selectedPayment === pm.id
+                                ? "border-[var(--color-teal)] bg-[var(--color-teal)]/10 shadow-[0_0_15px_rgba(45,212,191,0.1)] transform scale-[1.01]"
+                                : "border-white/5 bg-black/20 hover:border-white/20 hover:bg-black/40"
+                            )}
+                          >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-xs font-bold text-white shrink-0">
+                              {pm.name.slice(0, 2)}
+                            </div>
+                            <div className="text-left flex-1 min-w-0">
+                              <p className="text-sm font-bold text-white truncate">{pm.name}</p>
+                              <p className="text-[10px] text-white/50 font-medium mt-0.5">
+                                {pm.fee === 0 ? "Bebas Biaya Admin" : pm.feeType === "flat" ? `+${formatCurrency(pm.fee)}` : `+${pm.fee}%`}
+                              </p>
+                            </div>
+                            {selectedPayment === pm.id && (
+                              <motion.div layoutId="payment-check" className="shrink-0 text-[var(--color-teal)]">
+                                <CheckCircle2 className="h-5 w-5" />
+                              </motion.div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             </motion.div>
 
           </div>
+
+          {/* Right Column (Sidebar Summary Desktop + Extra Sections) */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Sticky Order Summary (Desktop Only) */}
+            <div className="hidden lg:block sticky top-24">
+              <div className="bg-[#18181b]/90 backdrop-blur-xl rounded-2xl border border-[var(--color-teal)]/20 p-6 shadow-[0_0_30px_rgba(45,212,191,0.05)] relative overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[var(--color-teal)] to-transparent opacity-50" />
+                
+                <h3 className="text-lg font-bold font-heading mb-4 flex items-center gap-2">
+                  <Info className="h-5 w-5 text-[var(--color-teal)]" /> Ringkasan Pesanan
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Game & Item */}
+                  <div className="flex justify-between items-start">
+                    <span className="text-sm text-white/60">Produk</span>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-white">{game.name}</p>
+                      <p className="text-xs text-[var(--color-teal)] font-medium">{chosenProduct?.name || "-"}</p>
+                    </div>
+                  </div>
+                  
+                  <Separator className="bg-white/10" />
+                  
+                  {/* ID */}
+                  {game.fields.length > 0 && (
+                    <div className="flex justify-between items-start">
+                      <span className="text-sm text-white/60">Detail Akun</span>
+                      <div className="text-right">
+                        <p className="text-sm font-mono text-white max-w-[150px] truncate">
+                          {fieldValues[game.fields[0]?.key] || "-"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <Separator className="bg-white/10" />
+
+                  {/* Payment */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-white/60">Pembayaran</span>
+                    <span className="text-sm font-bold text-white">
+                      {chosenPayment?.name || "-"}
+                    </span>
+                  </div>
+
+                  {/* Price Breakdown */}
+                  <div className="bg-black/40 rounded-xl p-3 space-y-2 border border-white/5 mt-4">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-white/60">Harga</span>
+                      <span>{chosenProduct ? formatCurrency(chosenProduct.price) : "-"}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-white/60">Biaya Admin</span>
+                      <span>{chosenPayment ? formatCurrency(fee) : "-"}</span>
+                    </div>
+                    <Separator className="bg-white/10 my-2" />
+                    <div className="flex justify-between items-end">
+                      <span className="text-sm font-bold text-white">Total</span>
+                      <span className="text-xl font-extrabold text-[var(--color-teal)]">
+                        {chosenProduct ? formatCurrency(total) : "-"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    onClick={handleCheckout}
+                    disabled={isSubmitting || !canCheckout}
+                    className="w-full h-12 rounded-xl bg-[var(--color-teal)] hover:bg-[var(--color-teal)]/90 text-[#09090b] font-bold text-base transition-all disabled:opacity-50 mt-4"
+                  >
+                    {isSubmitting ? (
+                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Memproses...</>
+                    ) : (
+                      "Bayar Sekarang"
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* FAQ Section (Desktop) */}
+              <div className="mt-6 bg-[#18181b]/60 backdrop-blur-md rounded-2xl border border-white/5 p-6">
+                <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-white/80">
+                  <HelpCircle className="h-4 w-4" /> Bantuan Top Up
+                </h3>
+                <Accordion type="single" collapsible className="space-y-2">
+                  {FAQ_ITEMS.slice(0, 3).map((faq, i) => (
+                    <AccordionItem value={`faq-${i}`} key={i} className="border-none">
+                      <AccordionTrigger className="hover:no-underline py-2 text-xs font-semibold text-left text-white/70 hover:text-white">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-[11px] text-white/50 leading-relaxed pb-2">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </div>
+            
+            {/* FAQ Mobile */}
+            <div className="lg:hidden bg-[#18181b]/60 backdrop-blur-md rounded-2xl border border-white/5 p-5">
+              <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-white/80">
+                <HelpCircle className="h-4 w-4" /> Cara Top Up
+              </h3>
+              <ol className="list-decimal pl-4 space-y-2 text-xs text-white/60">
+                <li>Masukkan Detail Akun (User ID / Zone ID).</li>
+                <li>Pilih jumlah diamond atau item yang diinginkan.</li>
+                <li>Pilih metode pembayaran yang tersedia.</li>
+                <li>Klik tombol Bayar Sekarang untuk checkout.</li>
+                <li>Selesaikan pembayaran dan diamond otomatis masuk.</li>
+              </ol>
+            </div>
+
+            {/* Dummy Recent Orders */}
+            <div className="bg-gradient-to-br from-[#18181b] to-black rounded-2xl border border-white/5 p-4 flex items-center gap-3 overflow-hidden">
+              <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-white/50 font-medium mb-0.5">Transaksi Terakhir</p>
+                <div className="animate-pulse">
+                  <p className="text-sm font-bold text-white truncate">0812****889 top up 1050 Diamonds</p>
+                  <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
 
-      {/* ── Sticky Mobile/Desktop CTA Bottom Bar ── */}
+      {/* ── Sticky Mobile CTA Bottom Bar ── */}
       <AnimatePresence>
-        {canCheckout && (
-          <motion.div 
-            initial={{ y: 100 }} 
-            animate={{ y: 0 }} 
-            exit={{ y: 100 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-t border-gray-200 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]"
-            style={{ paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}
-          >
-            <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="hidden sm:block">
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Pembayaran</p>
-                <p className="text-xl font-extrabold text-[var(--color-navy)]">{formatCurrency(total)}</p>
+        <motion.div 
+          initial={{ y: 100 }} 
+          animate={{ y: 0 }} 
+          className="fixed bottom-0 left-0 right-0 z-50 bg-[#09090b]/90 backdrop-blur-xl border-t border-white/10 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]"
+          style={{ paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}
+        >
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider mb-0.5">Total Harga</p>
+              <div className="flex items-end gap-2">
+                <p className="text-xl font-extrabold text-[var(--color-teal)] truncate">
+                  {chosenProduct ? formatCurrency(total) : "Rp 0"}
+                </p>
               </div>
-              <div className="flex items-center justify-between sm:hidden">
-                <span className="text-sm font-bold text-[var(--color-navy)]">{chosenProduct?.name}</span>
-                <span className="text-lg font-extrabold text-[var(--color-navy)]">{formatCurrency(total)}</span>
-              </div>
-              <Button
-                size="lg"
-                onClick={handleCheckout}
-                disabled={isSubmitting}
-                className="w-full sm:w-auto px-12 h-12 rounded-xl bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold text-base transition-all shadow-lg shadow-[var(--color-navy)]/20"
-              >
-                {isSubmitting ? (
-                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Mengalihkan...</>
-                ) : (
-                  "Beli Sekarang"
-                )}
-              </Button>
             </div>
-          </motion.div>
-        )}
+            <Button
+              size="lg"
+              onClick={handleCheckout}
+              disabled={isSubmitting || !canCheckout}
+              className="shrink-0 w-[140px] h-12 rounded-xl bg-[var(--color-teal)] hover:bg-[var(--color-teal)]/90 text-[#09090b] font-bold text-sm transition-all disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                "Beli Sekarang"
+              )}
+            </Button>
+          </div>
+        </motion.div>
       </AnimatePresence>
 
     </div>

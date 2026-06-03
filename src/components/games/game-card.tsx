@@ -4,27 +4,34 @@ import { motion } from "framer-motion";
 import { Star, Smartphone, Monitor } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface GameCardProps {
   id: string;
+  slug?: string;
   name: string;
   publisher: string;
-  platform: string;
+  platform?: string;
+  category?: string;
   popular: boolean;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   color: string;
-  bg: string;
+  bg?: string;
   index: number;
   image?: string;
 }
 
-export function GameCard({ name, publisher, platform, popular, icon: Icon, color, bg, index, image }: GameCardProps) {
+export function GameCard({ slug, id, name, publisher, platform, category, popular, icon: Icon, color, bg, index, image }: GameCardProps) {
+  const gamePlatform = platform || category || "Mobile";
+  const linkHref = slug ? `/games/${slug}` : `/games/${id}`;
+
   return (
+    <Link href={linkHref} className="block group relative">
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="group relative bg-[var(--color-cream)] rounded-[18px] border border-[#0F3D4A]/20 p-3 hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col"
+      className="bg-[var(--color-cream)] rounded-[18px] border border-[#0F3D4A]/20 p-3 hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full"
     >
       {/* Image Thumbnail Placeholder */}
       <div className={`relative w-full aspect-[4/5] rounded-[14px] ${bg} overflow-hidden mb-4 flex items-center justify-center`}>
@@ -47,7 +54,7 @@ export function GameCard({ name, publisher, platform, popular, icon: Icon, color
             <Image src={image} alt={name} fill className="object-cover opacity-90" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Icon className="h-16 w-16 opacity-80" style={{ color }} />
+              {Icon && <Icon className="h-16 w-16 opacity-80" style={{ color }} />}
             </div>
           )}
         </div>
@@ -64,13 +71,14 @@ export function GameCard({ name, publisher, platform, popular, icon: Icon, color
 
         <div className="mt-auto flex items-center justify-between">
           {/* Platform Badge */}
-          <div className="inline-flex items-center gap-1.5 border border-[#0F3D4A]/30 rounded-full px-2 py-0.5 text-[10px] font-semibold text-[var(--color-navy)] bg-white/50">
-            {platform.includes('Mobile') && <Smartphone className="h-3 w-3" />}
-            {platform.includes('PC') && <Monitor className="h-3 w-3" />}
-            {platform}
+          <div className="inline-flex items-center gap-1.5 border border-[#0F3D4A]/30 rounded-full px-2 py-0.5 text-[10px] font-semibold text-[var(--color-navy)] bg-white/50 capitalize">
+            {gamePlatform.includes('obile') && <Smartphone className="h-3 w-3" />}
+            {gamePlatform.includes('pc') || gamePlatform.includes('PC') ? <Monitor className="h-3 w-3" /> : null}
+            {gamePlatform}
           </div>
         </div>
       </div>
     </motion.div>
+    </Link>
   );
 }

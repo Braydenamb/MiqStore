@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import { ArrowRight, Gamepad2, Shield, Crosshair, Sword, Zap } from "lucide-react";
 import Image from "next/image";
 
+import Link from "next/link";
+
 const popularGames = [
-  { id: "mlbb", name: "Mobile Legends", category: "MOBA", price: "Rp 1.500", icon: Sword, color: "#073B4C", bg: "bg-blue-100", image: "/images/Mobile_legends(1).jpg" },
-  { id: "pubgm", name: "PUBG Mobile", category: "Battle Royale", price: "Rp 10.000", icon: Crosshair, color: "#0B1D34", bg: "bg-orange-100", image: "/images/pubgm.jpg" },
-  { id: "ff", name: "Free Fire", category: "Battle Royale", price: "Rp 5.000", icon: Shield, color: "#F7C873", bg: "bg-red-100", image: "/images/Free_Fire.webp" },
-  { id: "valo", name: "Valorant", category: "FPS", price: "Rp 15.000", icon: Zap, color: "#073B4C", bg: "bg-red-50", image: "/images/Valorant_(1).jpg" },
-  { id: "genshin", name: "Genshin Impact", category: "RPG", price: "Rp 16.000", icon: Gamepad2, color: "#0B1D34", bg: "bg-purple-100", image: "/images/genshin-impact-(1).jpg" },
+  { id: "mlbb", slug: "mobile-legends", name: "Mobile Legends", category: "MOBA", price: "Rp 1.500", icon: Sword, color: "#073B4C", bg: "bg-blue-100", image: "/images/Mobile_legends(1).jpg" },
+  { id: "pubgm", slug: "pubg-mobile", name: "PUBG Mobile", category: "Battle Royale", price: "Rp 10.000", icon: Crosshair, color: "#0B1D34", bg: "bg-orange-100", image: "/images/pubgm.jpg" },
+  { id: "ff", slug: "free-fire", name: "Free Fire", category: "Battle Royale", price: "Rp 5.000", icon: Shield, color: "#F7C873", bg: "bg-red-100", image: "/images/Free_Fire.webp" },
+  { id: "valo", slug: "valorant", name: "Valorant", category: "FPS", price: "Rp 15.000", icon: Zap, color: "#073B4C", bg: "bg-red-50", image: "/images/Valorant_(1).jpg" },
+  { id: "genshin", slug: "genshin-impact", name: "Genshin Impact", category: "RPG", price: "Rp 16.000", icon: Gamepad2, color: "#0B1D34", bg: "bg-purple-100", image: "/images/genshin-impact-(1).jpg" },
 ];
 
 export function PopularGames() {
@@ -26,21 +28,21 @@ export function PopularGames() {
               Find the best deals for your favorite games.
             </p>
           </div>
-          <button className="text-[var(--color-teal)] font-medium flex items-center gap-1 hover:gap-2 transition-all">
+          <Link href="/games" className="text-[var(--color-teal)] font-medium flex items-center gap-1 hover:gap-2 transition-all">
             View All Games <ArrowRight className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
           {popularGames.map((game, idx) => (
-            <motion.div
-              key={game.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="group flex flex-col bg-white rounded-[20px] p-4 premium-shadow border border-white hover:-translate-y-2 transition-all duration-300 relative overflow-hidden"
-            >
+            <Link href={`/games/${game.slug}`} key={game.id} className="block group">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                className="flex flex-col bg-white rounded-[20px] p-4 premium-shadow border border-white hover:-translate-y-2 transition-all duration-300 relative overflow-hidden h-full"
+              >
               {/* Thumbnail Placeholder / Image */}
               <div className={`w-full aspect-[4/3] rounded-xl ${game.bg} flex items-center justify-center relative overflow-hidden mb-4 bg-[var(--color-navy)]`}>
                 <Image 
@@ -64,6 +66,7 @@ export function PopularGames() {
                 </button>
               </div>
             </motion.div>
+            </Link>
           ))}
         </div>
         
