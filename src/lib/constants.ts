@@ -9,6 +9,7 @@ import {
   Tv,
   type LucideIcon,
 } from "lucide-react";
+import { cloudinaryUrl } from "./cloudinary";
 
 /* ============================================
    App Constants
@@ -144,8 +145,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "mobile-legends",
     publisher: "Moonton",
     category: "mobile",
-    image: "/images/games/mobile-legends.webp",
-    banner: "/images/games/mobile-legends.webp",
+    image: cloudinaryUrl("games/mobile-legends/thumb"),
+    banner: cloudinaryUrl("games/mobile-legends/banner"),
     color: "#1a56db",
     fields: [
       { key: "user_id", label: "User ID", placeholder: "Masukkan User ID", type: "text" },
@@ -159,8 +160,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "free-fire",
     publisher: "Garena",
     category: "mobile",
-    image: "/images/games/free-fire.webp",
-    banner: "/images/games/free-fire.webp",
+    image: cloudinaryUrl("games/free-fire/thumb"),
+    banner: cloudinaryUrl("games/free-fire/banner"),
     color: "#ff5722",
     fields: [
       { key: "user_id", label: "User ID", placeholder: "Masukkan User ID", type: "text" },
@@ -173,8 +174,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "pubg-mobile",
     publisher: "Tencent",
     category: "mobile",
-    image: "/images/games/pubg-mobile.webp",
-    banner: "/images/games/pubg-mobile.webp",
+    image: cloudinaryUrl("games/pubg-mobile/thumb"),
+    banner: cloudinaryUrl("games/pubg-mobile/banner"),
     color: "#f5a623",
     fields: [
       { key: "user_id", label: "Player ID", placeholder: "Masukkan Player ID", type: "text" },
@@ -187,8 +188,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "valorant",
     publisher: "Riot Games",
     category: "pc",
-    image: "/images/games/valorant.webp",
-    banner: "/images/games/valorant.webp",
+    image: cloudinaryUrl("games/valorant/thumb"),
+    banner: cloudinaryUrl("games/valorant/banner"),
     color: "#ff4655",
     fields: [
       { key: "riot_id", label: "Riot ID", placeholder: "Nama#TAG", type: "text" },
@@ -201,8 +202,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "genshin-impact",
     publisher: "miHoYo",
     category: "pc",
-    image: "/images/games/genshin-impact.webp",
-    banner: "/images/games/genshin-impact.webp",
+    image: cloudinaryUrl("games/genshin-impact/thumb"),
+    banner: cloudinaryUrl("games/genshin-impact/banner"),
     color: "#5b8cff",
     fields: [
       { key: "user_id", label: "UID", placeholder: "Masukkan UID", type: "text" },
@@ -227,8 +228,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "honkai-star-rail",
     publisher: "miHoYo",
     category: "pc",
-    image: "/images/games/honkai-star-rail.webp",
-    banner: "/images/games/honkai-star-rail.webp",
+    image: cloudinaryUrl("games/honkai-star-rail/thumb"),
+    banner: cloudinaryUrl("games/honkai-star-rail/banner"),
     color: "#a855f7",
     fields: [
       { key: "user_id", label: "UID", placeholder: "Masukkan UID", type: "text" },
@@ -253,8 +254,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "roblox",
     publisher: "Roblox Corp",
     category: "pc",
-    image: "/images/games/roblox.webp",
-    banner: "/images/games/roblox.webp",
+    image: cloudinaryUrl("games/roblox/thumb"),
+    banner: cloudinaryUrl("games/roblox/banner"),
     color: "#e2231a",
     fields: [
       { key: "username", label: "Username", placeholder: "Masukkan Username", type: "text" },
@@ -267,8 +268,8 @@ export const POPULAR_GAMES: Game[] = [
     slug: "steam-wallet",
     publisher: "Valve",
     category: "pc",
-    image: "/images/games/steam-wallet.webp",
-    banner: "/images/games/steam-wallet.webp",
+    image: cloudinaryUrl("games/steam-wallet/thumb"),
+    banner: cloudinaryUrl("games/steam-wallet/banner"),
     color: "#171a21",
     fields: [],
     popular: true,
@@ -467,25 +468,25 @@ export interface NewsBanner {
 export const HOME_NEWS_BANNERS: NewsBanner[] = [
   {
     id: "news-1",
-    image: "/images/games/mobile-legends.webp",
+    image: cloudinaryUrl("games/mobile-legends/banner"),
     alt: "Update Season Mobile Legends",
     link: "/games/mobile-legends",
   },
   {
     id: "news-2",
-    image: "/images/games/pubg-mobile.webp",
+    image: cloudinaryUrl("games/pubg-mobile/banner"),
     alt: "PUBG Mobile Royale Pass Baru",
     link: "/games/pubg-mobile",
   },
   {
     id: "news-3",
-    image: "/images/games/valorant.webp",
+    image: cloudinaryUrl("games/valorant/banner"),
     alt: "Valorant Bundle Night Market",
     link: "/games/valorant",
   },
   {
     id: "news-4",
-    image: "/images/games/genshin-impact.webp",
+    image: cloudinaryUrl("games/genshin-impact/banner"),
     alt: "Genshin Impact Patch Update",
     link: "/games/genshin-impact",
   },
