@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -108,6 +109,17 @@ export default function RootLayout({
           />
           <PwaRegistry />
         </Providers>
+
+        {/* Midtrans Snap Script */}
+        <Script
+          src={
+            process.env.MIDTRANS_PRODUCTION === "true"
+              ? "https://app.midtrans.com/snap/snap.js"
+              : "https://app.sandbox.midtrans.com/snap/snap.js"
+          }
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

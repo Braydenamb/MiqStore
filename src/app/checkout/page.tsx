@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
 import { formatCurrency } from "@/lib/utils";
+import { toast } from "sonner";
 
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState(15 * 60);
@@ -62,14 +63,60 @@ export default function CheckoutPage() {
   const fee = selectedPayment.fee || 0;
   const total = price + fee;
 
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!isAgreed) return;
     setIsProcessing(true);
-    // Simulate API call
-    setTimeout(() => {
-      const invoiceId = `INV-${Date.now().toString(36).toUpperCase()}`;
-      router.push(`/invoice/${invoiceId}`);
-    }, 1500);
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameSlug: game.id,
+          gameName: game.name,
+          productCode: selectedProduct.id,
+          productName: selectedProduct.name,
+          gameUserId: userId,
+          gameZoneId: zoneId,
+          price: selectedProduct.price,
+          paymentMethod: selectedPayment.id,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error?.message || "Gagal membuat transaksi");
+      }
+
+      const { token, invoiceId } = result.data;
+
+      // Trigger Midtrans Snap
+      if (window.snap) {
+        window.snap.pay(token, {
+          onSuccess: function () {
+            router.push(`/invoice/${invoiceId}?status=success`);
+          },
+          onPending: function () {
+            router.push(`/invoice/${invoiceId}?status=pending`);
+          },
+          onError: function () {
+            toast.error("Pembayaran gagal atau dibatalkan.");
+            setIsProcessing(false);
+          },
+          onClose: function () {
+            toast.info("Anda menutup jendela pembayaran.");
+            setIsProcessing(false);
+          },
+        });
+      } else {
+        toast.error("Sistem pembayaran belum siap. Silakan refresh halaman.");
+        setIsProcessing(false);
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Terjadi kesalahan jaringan");
+      setIsProcessing(false);
+    }
   };
 
   return (
