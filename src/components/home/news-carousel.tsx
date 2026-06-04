@@ -40,7 +40,7 @@ export function NewsCarousel() {
   if (!banners || banners.length === 0) return null;
 
   return (
-    <section className="relative w-full overflow-hidden bg-[var(--color-cream)]">
+    <section className="relative w-full overflow-hidden bg-transparent">
       {/* 
         Container Edge-to-Edge on Mobile, 
         Rounded Container on lg screens 
@@ -55,8 +55,8 @@ export function NewsCarousel() {
               variants={{
                 enter: (direction: number) => {
                   return {
-                    x: direction > 0 ? 1000 : -1000,
-                    opacity: 0
+                    x: direction > 0 ? "100%" : "-100%",
+                    opacity: 1
                   };
                 },
                 center: {
@@ -67,8 +67,8 @@ export function NewsCarousel() {
                 exit: (direction: number) => {
                   return {
                     zIndex: 0,
-                    x: direction < 0 ? 1000 : -1000,
-                    opacity: 0
+                    x: direction < 0 ? "100%" : "-100%",
+                    opacity: 1
                   };
                 }
               }}
@@ -105,7 +105,7 @@ export function NewsCarousel() {
                 
                 {/* Premium Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d34]/90 via-[#0b1d34]/20 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none" />
+                <div className="absolute inset-0 texture-overlay opacity-30 mix-blend-overlay pointer-events-none" />
                 
                 {/* Text Content */}
                 <div className="absolute bottom-6 left-6 right-6 lg:bottom-12 lg:left-12 lg:right-12 pointer-events-none">
