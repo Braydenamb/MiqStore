@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { UploadZone } from "@/components/admin/UploadZone";
+import { MultiUploadZone } from "@/components/admin/MultiUploadZone";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { createAdminProduct, updateAdminProduct, deleteAdminProduct } from "@/actions/admin-products";
 
@@ -28,6 +29,7 @@ type Product = {
   isActive: boolean;
   image: string | null;
   banner: string | null;
+  gallery: string[];
   _count?: { items: number };
 };
 
@@ -44,6 +46,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
     isActive: true,
     image: "",
     banner: "",
+    gallery: [] as string[],
   });
 
   const resetForm = () => {
@@ -55,6 +58,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       isActive: true,
       image: "",
       banner: "",
+      gallery: [],
     });
     setIsFormOpen(false);
   };
@@ -68,6 +72,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       isActive: product.isActive,
       image: product.image || "",
       banner: product.banner || "",
+      gallery: product.gallery || [],
     });
     setIsFormOpen(true);
   };
@@ -200,6 +205,11 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                     recommendedAspect="1:1 / 512x512px" 
                     defaultValue={formData.image}
                     onUpload={(publicId) => setFormData({...formData, image: publicId})}
+                  />
+                  <MultiUploadZone 
+                    label="Game Gallery" 
+                    defaultValues={formData.gallery}
+                    onUpdate={(publicIds) => setFormData({...formData, gallery: publicIds})}
                   />
                   
                   <div className="pt-4 flex justify-end">

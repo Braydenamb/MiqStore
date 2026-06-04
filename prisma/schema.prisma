@@ -173,6 +173,7 @@ model Product {
   description String?  @db.Text
   image       String?
   banner      String?
+  gallery     String[] @default([])
   color       String?
   fields      Json?    @db.JsonB
   gameType    String? // mobile, pc, console

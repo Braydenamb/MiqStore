@@ -50,6 +50,7 @@ export async function createAdminProduct(data: {
   isActive: boolean;
   image?: string;
   banner?: string;
+  gallery?: string[];
 }) {
   try {
     const category = await ensureDefaultCategory();
@@ -63,6 +64,7 @@ export async function createAdminProduct(data: {
         isActive: data.isActive,
         image: data.image || null,
         banner: data.banner || null,
+        gallery: data.gallery || [],
         gameType: "mobile",
       },
     });
@@ -86,6 +88,7 @@ export async function updateAdminProduct(
     isActive: boolean;
     image?: string;
     banner?: string;
+    gallery?: string[];
   }
 ) {
   try {
@@ -98,6 +101,7 @@ export async function updateAdminProduct(
         isActive: data.isActive,
         image: data.image || null,
         banner: data.banner || null,
+        gallery: data.gallery || [],
       },
     });
 
