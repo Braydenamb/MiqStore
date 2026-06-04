@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 
 const stats = [
-  { label: "Happy Customers", value: "50K+" },
-  { label: "Top Ups Delivered", value: "1M+" },
-  { label: "Average Rating", value: "4.9/5" },
-  { label: "Uptime & Reliability", value: "99.9%" },
+  { label: "Pelanggan Aktif", value: "50K+" },
+  { label: "Transaksi Berhasil", value: "1M+" },
+  { label: "Rating Kepuasan", value: "4.9/5" },
+  { label: "Uptime Server", value: "99.9%" },
 ];
 
 export function StatsSection() {

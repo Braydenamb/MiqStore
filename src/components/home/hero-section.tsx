@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Zap, Gamepad2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 export function HeroSection() {
   return (
@@ -27,7 +29,7 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 rounded-full bg-white/50 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] backdrop-blur-md border border-white/50 shadow-sm mb-6"
             >
               <Zap className="h-4 w-4 text-[var(--color-gold)] fill-[var(--color-gold)]" />
-              New Look. Same Speed.
+              Proses Cepat, Harga Bersahabat.
             </motion.div>
 
             <motion.h1
@@ -37,8 +39,8 @@ export function HeroSection() {
               className="text-display"
             >
               Top Up.<br />
-              <span className="text-[var(--color-teal)]">Play.</span><br />
-              Done Right.
+              <span className="text-[var(--color-teal)]">Main.</span><br />
+              Tanpa Ribet.
             </motion.h1>
 
             <motion.p
@@ -47,7 +49,7 @@ export function HeroSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-6 text-body-large max-w-lg"
             >
-              Instant game top ups, memberships, and vouchers delivered in seconds.
+              Top up diamond, UC, dan voucher game favoritmu dengan harga termurah dan proses kilat.
             </motion.p>
 
             <motion.div
@@ -61,7 +63,7 @@ export function HeroSection() {
                 className="bg-teal hover:bg-[var(--color-navy)] rounded-full h-14 px-8 text-lg shadow-lg shadow-[#073B4C]/20 transition-all hover:-translate-y-1"
                 onClick={() => toast.success("Memulai Top Up", { description: "Mengarahkan ke halaman Top Up..." })}
               >
-                Top Up Now
+                Top Up Sekarang
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
@@ -73,7 +75,7 @@ export function HeroSection() {
                   window.location.href = "/games";
                 }}
               >
-                Browse Games
+                Lihat Daftar Game
               </Button>
             </motion.div>
           </div>
@@ -89,29 +91,20 @@ export function HeroSection() {
             <div className="absolute top-[70%] right-[30%] w-1.5 h-1.5 rounded-full bg-white animate-twinkle shadow-[0_0_8px_white]" style={{ animationDelay: '1s' }} />
             <div className="absolute bottom-[20%] left-[40%] w-3 h-3 rounded-full bg-[var(--color-teal)] animate-twinkle shadow-[0_0_12px_var(--color-teal)]" style={{ animationDelay: '2s' }} />
             
-            {/* Realistic White Controller (Abstract Placeholder built with SVG) */}
+            {/* Main Visual Image */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center"
+              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl border border-white/20"
             >
-              {/* Abstract 3D-ish Controller Shape */}
-              <div className="absolute w-[360px] h-[220px] bg-white rounded-[100px] shadow-[0_30px_60px_rgba(11,29,52,0.15),inset_0_-10px_20px_rgba(0,0,0,0.05),inset_0_10px_20px_rgba(255,255,255,1)] flex items-center justify-between px-10">
-                {/* D-Pad Area */}
-                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center shadow-inner relative">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
-                     <Gamepad2 className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-                {/* Buttons Area */}
-                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center shadow-inner relative gap-2">
-                  <div className="absolute top-2 w-6 h-6 rounded-full bg-[var(--color-teal)] shadow-sm" />
-                  <div className="absolute bottom-2 w-6 h-6 rounded-full bg-[var(--color-navy)] shadow-sm" />
-                  <div className="absolute left-2 w-6 h-6 rounded-full bg-[var(--color-gold)] shadow-sm" />
-                  <div className="absolute right-2 w-6 h-6 rounded-full bg-gray-300 shadow-sm" />
-                </div>
-              </div>
+              <Image 
+                src={cloudinaryUrl("Games/Mobile legends/banner")} 
+                alt="Gaming Experience" 
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-navy)]/60 to-transparent" />
             </motion.div>
 
             {/* Floating Card */}
@@ -126,8 +119,8 @@ export function HeroSection() {
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="font-heading font-bold text-[var(--color-navy)] leading-tight">Instant Delivery</p>
-                  <p className="text-sm font-medium text-gray-500">100% Secure</p>
+                  <p className="font-heading font-bold text-[var(--color-navy)] leading-tight">Proses Instan</p>
+                  <p className="text-sm font-medium text-gray-500">Aman & Terpercaya</p>
                 </div>
               </div>
             </motion.div>

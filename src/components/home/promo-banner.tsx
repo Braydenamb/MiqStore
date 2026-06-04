@@ -24,27 +24,27 @@ export function PromoBanner() {
             {/* Left Content */}
             <div className="max-w-xl text-center md:text-left">
               <h2 className="text-h1 text-white mb-6">
-                Your Games. <br />
-                <span className="text-[var(--color-gold)]">Your Way.</span>
+                Top Up Praktis. <br />
+                <span className="text-[var(--color-gold)]">Harga Ekonomis.</span>
               </h2>
               
               <ul className="text-body-large space-y-4 mb-8 text-white/90 text-left mx-auto md:mx-0 max-w-sm">
                 <li className="flex items-center gap-3 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-[var(--color-gold)]" />
-                  Fast Delivery
+                  Proses Instan
                 </li>
                 <li className="flex items-center gap-3 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-[var(--color-gold)]" />
-                  Secure Checkout
+                  Pembayaran Aman
                 </li>
                 <li className="flex items-center gap-3 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-[var(--color-gold)]" />
-                  Trusted by Thousands
+                  Terpercaya
                 </li>
               </ul>
 
               <Button size="lg" className="bg-[var(--color-gold)] text-[var(--color-navy)] hover:bg-white rounded-full h-14 px-8 text-lg font-semibold shadow-lg transition-all w-full sm:w-auto">
-                Explore Deals
+                Lihat Promo
               </Button>
             </div>
 

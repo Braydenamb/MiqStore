@@ -115,7 +115,7 @@ export function NewsCarousel() {
                     transition={{ delay: 0.2 }}
                   >
                     <div className="inline-block bg-[var(--color-teal)]/20 backdrop-blur-md border border-[var(--color-teal)]/30 text-[var(--color-teal)] text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
-                      Hot Update
+                      Info Terbaru
                     </div>
                     <h3 className="font-heading text-2xl sm:text-3xl lg:text-5xl font-extrabold text-white drop-shadow-xl max-w-3xl leading-tight">
                       {banners[imageIndex].alt}

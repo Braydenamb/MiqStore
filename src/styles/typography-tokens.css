@@ -1,0 +1,54 @@
+:root {
+  /* Font Families */
+  --font-display: var(--font-heading), 'Satoshi', sans-serif;
+  --font-heading: var(--font-heading), 'Satoshi', sans-serif;
+  --font-body: var(--font-sans), 'Inter', sans-serif;
+
+  /* Typography Scales (Fluid using clamp) */
+  /* Display Scale */
+  --text-display-xl: clamp(3.5rem, 8vw, 5.5rem);
+  --text-display-lg: clamp(3rem, 6vw, 4.5rem);
+  --text-display-md: clamp(2.5rem, 5vw, 3.5rem);
+
+  /* Heading Scale */
+  --text-h1: clamp(2.25rem, 4vw, 3rem);
+  --text-h2: clamp(1.875rem, 3vw, 2.25rem);
+  --text-h3: clamp(1.5rem, 2.5vw, 1.875rem);
+  --text-h4: clamp(1.25rem, 2vw, 1.5rem);
+
+  /* Body Scale */
+  --text-body-lg: clamp(1.125rem, 1.5vw, 1.25rem);
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+
+  /* Small Scales */
+  --text-caption: 0.75rem;
+  --text-label: 0.75rem;
+
+  /* Letter Spacing */
+  --tracking-display: -0.04em;
+  --tracking-heading: -0.02em;
+  --tracking-body: 0em;
+  --tracking-caption: 0.02em;
+
+  /* Line Heights */
+  --leading-display: 1.05;
+  --leading-heading: 1.15;
+  --leading-body: 1.6;
+  --leading-caption: 1.4;
+
+  /* Typography Colors (Semantic) */
+  --typo-primary: hsl(var(--foreground));
+  --typo-secondary: hsl(var(--muted-foreground));
+  --typo-muted: hsl(var(--muted-foreground) / 0.7);
+  --typo-success: #10b981; /* Tailwind emerald-500 */
+  --typo-warning: #f59e0b; /* Tailwind amber-500 */
+  --typo-danger: #ef4444; /* Tailwind red-500 */
+}
+
+/* Dark mode specific typography overrides if needed */
+.dark {
+  --typo-primary: #ffffff;
+  --typo-secondary: #9ca3af; /* Tailwind gray-400 */
+  --typo-muted: #6b7280; /* Tailwind gray-500 */
+}

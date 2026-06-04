@@ -22,14 +22,14 @@ export function PopularGames() {
         <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-4">
           <div>
             <h2 className="text-h1">
-              Popular Top Ups
+              Game Terpopuler
             </h2>
             <p className="mt-2 text-body-large">
-              Find the best deals for your favorite games.
+              Temukan penawaran terbaik untuk game favoritmu.
             </p>
           </div>
           <Link href="/games" className="text-[var(--color-teal)] font-medium flex items-center gap-1 hover:gap-2 transition-all">
-            View All Games <ArrowRight className="h-4 w-4" />
+            Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
@@ -59,7 +59,7 @@ export function PopularGames() {
               <div className="flex-1 flex flex-col z-10 relative">
                 <span className="text-caption text-[var(--color-gold)] mb-1">{game.category}</span>
                 <h3 className="text-h3 mb-1 line-clamp-1">{game.name}</h3>
-                <p className="text-body text-sm mb-4">Starts at {game.price}</p>
+                <p className="text-body text-sm mb-4">Mulai dari {game.price}</p>
                 
                 <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-cream)] text-[var(--color-teal)] group-hover:bg-[var(--color-teal)] group-hover:text-white transition-colors ml-auto shadow-sm">
                   <ArrowRight className="h-4 w-4" />

@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { Zap, ShieldCheck, Tag, Clock } from "lucide-react";
 
 const features = [
-  { icon: Zap, title: "Instant Top Up", subtitle: "Delivered in seconds" },
-  { icon: ShieldCheck, title: "Secure Payments", subtitle: "100% safe checkout" },
-  { icon: Tag, title: "Best Prices", subtitle: "Unbeatable deals" },
-  { icon: Clock, title: "24/7 Support", subtitle: "Always here for you" },
+  { icon: Zap, title: "Proses Instan", subtitle: "Hitungan detik masuk" },
+  { icon: ShieldCheck, title: "Transaksi Aman", subtitle: "100% garansi aman" },
+  { icon: Tag, title: "Harga Termurah", subtitle: "Promo setiap hari" },
+  { icon: Clock, title: "CS 24/7", subtitle: "Siap bantu kendalamu" },
 ];
 
 export function FeatureStrip() {
