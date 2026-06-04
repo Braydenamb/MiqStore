@@ -24,7 +24,7 @@ export function FeatureStrip() {
                 <feature.icon className="h-5 w-5" />
               </div>
               <div>
-                <Typography.Heading level="h4" size="md" className="mb-1 font-semibold">
+                <Typography.Heading level="h4" className="mb-1 font-semibold">
                   {feature.title}
                 </Typography.Heading>
                 <Typography.Body size="sm" color="muted">

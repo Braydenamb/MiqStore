@@ -56,7 +56,7 @@ export function PopularGames() {
               {/* Details */}
               <div className="flex-1 flex flex-col z-10 relative mt-2">
                 <Typography.Caption className="text-amber-600 dark:text-amber-400 mb-1 font-medium">{game.category}</Typography.Caption>
-                <Typography.Heading level="h3" size="md" className="mb-1 line-clamp-1">{game.name}</Typography.Heading>
+                <Typography.Heading level="h3" className="mb-1 line-clamp-1">{game.name}</Typography.Heading>
                 <Typography.Body size="sm" className="mb-4">Mulai dari {game.price}</Typography.Body>
                 
                 <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 text-gray-600 group-hover:bg-blue-600 group-hover:text-white transition-colors ml-auto shadow-sm">
