@@ -14,6 +14,7 @@ interface BaseTypographyProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   color?: TypographyColor;
   as?: React.ElementType;
+  className?: string;
 }
 
 const getColorClass = (color?: TypographyColor) => {

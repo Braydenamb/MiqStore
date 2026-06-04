@@ -43,3 +43,5 @@ next-env.d.ts
 # Archived Features
 MiqStore (Database)/
 
+# pnpm
+.pnpm-store/

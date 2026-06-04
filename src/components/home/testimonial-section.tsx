@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Star, MessageSquare } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
+import { Typography } from "@/components/typography";
 
 const testimonials = [
   { name: "Budi Gamer", text: "Mantap banget, diamond masuk detik itu juga. Adminnya juga fast respon. Recomended pokoknya!", rating: 5, role: "Pro Player MLBB" },

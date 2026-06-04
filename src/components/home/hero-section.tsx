@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Zap, Gamepad2, ShieldCheck } from "lucide-react";
+import { ArrowRight, Zap, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { Typography } from "@/components/typography";
+import { FlipWords } from "@/components/ui/flip-words";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
   return (
@@ -38,7 +40,7 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
             >
               <Typography.Display size="xl" color="primary" className="drop-shadow-sm">
                 Top Up.<br />
-                <span className="text-[hsl(var(--primary))] drop-shadow-[0_0_15px_rgba(165,180,252,0.3)]">Main.</span><br />
+                <FlipWords words={["Main.", "Menang.", "Juara."]} /> <br />
                 Tanpa Ribet.
               </Typography.Display>
             </motion.div>
@@ -60,14 +62,14 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
             >
-              <Button 
-                size="lg" 
-                className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-full h-14 px-8 text-lg shadow-[0_0_20px_rgba(165,180,252,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(165,180,252,0.6)]"
+              <HoverBorderGradient
+                containerClassName="rounded-full"
+                className="flex items-center gap-2 bg-[hsl(var(--background))] hover:bg-[hsl(var(--primary))]/10 transition-colors text-[hsl(var(--foreground))] text-lg font-medium px-8 h-14"
                 onClick={() => toast.success("Memulai Top Up", { description: "Mengarahkan ke halaman Top Up..." })}
               >
                 Top Up Sekarang
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+                <ArrowRight className="h-5 w-5" />
+              </HoverBorderGradient>
               <Button 
                 size="lg" 
                 variant="outline" 

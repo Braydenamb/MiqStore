@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Typography } from "@/components/typography";
 
 export function CTASection() {
   return (
