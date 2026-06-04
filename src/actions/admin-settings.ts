@@ -30,7 +30,7 @@ export async function saveAdminSettings(settingsDict: Record<string, string>, gr
       });
     }
 
-    revalidateTag("settings");
+    revalidateTag("settings", {});
 
     return { success: true, message: "Settings saved successfully" };
   } catch (error: any) {
