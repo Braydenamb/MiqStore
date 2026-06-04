@@ -21,21 +21,25 @@ import { Select } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-const mockTransactions = Array.from({ length: 20 }, (_, i) => ({
-  id: `INV-${(1000 + i).toString()}`,
-  game: ["Mobile Legends", "Free Fire", "Genshin Impact", "Valorant", "PUBG Mobile"][i % 5],
-  product: ["344 Diamonds", "355 Diamonds", "Welkin Moon", "700 VP", "325 UC"][i % 5],
-  price: [68000, 65000, 79000, 79000, 55000][i % 5],
-  status: (["success", "success", "success", "processing", "failed"] as const)[i % 5],
-  payment: ["QRIS", "GoPay", "BCA VA", "DANA", "OVO"][i % 5],
-  date: `${28 - i} Mei 2026`,
-}));
+import { useQuery } from "@tanstack/react-query";
+
+interface Transaction {
+  id: string;
+  invoiceId: string;
+  game: string;
+  product: string;
+  price: number;
+  total: number;
+  status: "SUCCESS" | "PROCESSING" | "PENDING" | "FAILED";
+  paymentMethod: string;
+  createdAt: string;
+}
 
 const statusMap = {
-  success: { label: "Sukses", variant: "success" as const, icon: CheckCircle2, color: "text-green-400" },
-  processing: { label: "Proses", variant: "warning" as const, icon: Clock, color: "text-amber-400" },
-  pending: { label: "Pending", variant: "warning" as const, icon: Clock, color: "text-amber-400" },
-  failed: { label: "Gagal", variant: "destructive" as const, icon: XCircle, color: "text-red-400" },
+  SUCCESS: { label: "Sukses", variant: "success" as const, icon: CheckCircle2, color: "text-green-400" },
+  PROCESSING: { label: "Proses", variant: "warning" as const, icon: Clock, color: "text-amber-400" },
+  PENDING: { label: "Pending", variant: "warning" as const, icon: Clock, color: "text-amber-400" },
+  FAILED: { label: "Gagal", variant: "destructive" as const, icon: XCircle, color: "text-red-400" },
 };
 
 export default function TransactionsPage() {
@@ -44,16 +48,32 @@ export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  const filtered = mockTransactions.filter((tx) => {
-    const matchSearch =
-      tx.game.toLowerCase().includes(search.toLowerCase()) ||
-      tx.id.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === "all" || tx.status === statusFilter;
-    return matchSearch && matchStatus;
+  const { data, isLoading } = useQuery({
+    queryKey: ["transactions", page, perPage, statusFilter],
+    queryFn: async () => {
+      const url = new URL("/api/transactions", window.location.origin);
+      url.searchParams.set("page", page.toString());
+      url.searchParams.set("per_page", perPage.toString());
+      if (statusFilter !== "all") {
+        url.searchParams.set("status", statusFilter);
+      }
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      return res.json();
+    },
   });
 
-  const totalPages = Math.ceil(filtered.length / perPage);
-  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+  const transactions: Transaction[] = data?.data || [];
+  const meta = data?.meta || { total: 0, totalPages: 1 };
+  const totalPages = meta.totalPages;
+
+  const filtered = transactions.filter((tx) => {
+    if (!search) return true;
+    return (
+      tx.game.toLowerCase().includes(search.toLowerCase()) ||
+      tx.invoiceId.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   return (
     <div className="space-y-6">
@@ -116,10 +136,11 @@ export default function TransactionsPage() {
               <span>Status</span>
             </div>
 
-            {/* Rows */}
-            {paginated.length > 0 ? (
-              paginated.map((tx) => {
-                const st = statusMap[tx.status];
+            {isLoading ? (
+              <div className="flex justify-center p-8 text-[hsl(var(--muted-foreground))]">Memuat transaksi...</div>
+            ) : filtered.length > 0 ? (
+              filtered.map((tx) => {
+                const st = statusMap[tx.status] || statusMap.PENDING;
                 return (
                   <div
                     key={tx.id}
@@ -132,13 +153,15 @@ export default function TransactionsPage() {
                       <div className="min-w-0">
                         <p className="text-sm font-semibold truncate">{tx.game}</p>
                         <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                          {tx.product} • {tx.id}
+                          {tx.product} • {tx.invoiceId}
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{tx.payment}</span>
-                    <span className="text-sm font-semibold text-right">{formatCurrency(tx.price)}</span>
-                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{tx.date}</span>
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{tx.paymentMethod}</span>
+                    <span className="text-sm font-semibold text-right">{formatCurrency(tx.total)}</span>
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">
+                      {new Date(tx.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                    </span>
                     <Badge variant={st.variant} className="text-[10px] w-fit justify-self-start sm:justify-self-auto">
                       {st.label}
                     </Badge>
@@ -174,7 +197,7 @@ export default function TransactionsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-xs text-[hsl(var(--muted-foreground))]">
-            Menampilkan {(page - 1) * perPage + 1}-{Math.min(page * perPage, filtered.length)} dari {filtered.length}
+            Menampilkan {filtered.length > 0 ? (page - 1) * perPage + 1 : 0}-{Math.min(page * perPage, meta.total)} dari {meta.total}
           </p>
           <div className="flex items-center gap-2">
             <Button

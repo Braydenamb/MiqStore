@@ -30,7 +30,7 @@ export function PopularGames() {
               Temukan penawaran terbaik untuk game favoritmu.
             </Typography.Body>
           </div>
-          <Link href="/games" className="text-blue-600 font-medium flex items-center gap-1 hover:gap-2 transition-all">
+          <Link href="/games" className="text-[hsl(var(--primary))] font-medium flex items-center gap-1 hover:gap-2 transition-all">
             Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -39,7 +39,7 @@ export function PopularGames() {
           {popularGames.map((game, idx) => (
             <Link href={`/games/${game.slug}`} key={game.id} className="block group">
               <div
-                className="flex flex-col bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 hover:-translate-y-1 transition-all duration-300 h-full"
+                className="flex flex-col bg-[hsl(var(--card))]/40 backdrop-blur-md rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/5 hover:bg-[hsl(var(--card))]/80 hover:border-[hsl(var(--primary))]/30 hover:-translate-y-1 transition-all duration-300 h-full group-hover:shadow-[0_8px_30px_rgba(165,180,252,0.1)]"
               >
               {/* Thumbnail Placeholder / Image */}
               <div className={`w-full aspect-[4/3] rounded-xl ${game.bg} flex items-center justify-center relative overflow-hidden mb-4 bg-gray-900`}>
@@ -55,11 +55,11 @@ export function PopularGames() {
               
               {/* Details */}
               <div className="flex-1 flex flex-col z-10 relative mt-2">
-                <Typography.Caption className="text-amber-600 dark:text-amber-400 mb-1 font-medium">{game.category}</Typography.Caption>
-                <Typography.Heading level="h3" className="mb-1 line-clamp-1">{game.name}</Typography.Heading>
-                <Typography.Body size="sm" className="mb-4">Mulai dari {game.price}</Typography.Body>
+                <Typography.Caption className="text-[var(--color-gold)] mb-1 font-medium tracking-wider uppercase">{game.category}</Typography.Caption>
+                <Typography.Heading level="h3" className="mb-1 line-clamp-1 text-[hsl(var(--foreground))]">{game.name}</Typography.Heading>
+                <Typography.Body size="sm" className="mb-4 text-[hsl(var(--muted-foreground))]">Mulai dari {game.price}</Typography.Body>
                 
-                <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 text-gray-600 group-hover:bg-blue-600 group-hover:text-white transition-colors ml-auto shadow-sm">
+                <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-white/5 text-[hsl(var(--muted-foreground))] group-hover:bg-[hsl(var(--primary))] group-hover:text-[hsl(var(--primary-foreground))] transition-colors ml-auto shadow-sm">
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>

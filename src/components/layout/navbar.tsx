@@ -16,7 +16,7 @@ const NAV_LINKS = [
   // { label: "Deals", href: "/deals" },
 ];
 
-export function Navbar() {
+export function Navbar({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -32,7 +32,7 @@ export function Navbar() {
           
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img src="/icons/logo.png" alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+            <img src={logoUrl || "/icons/logo.png"} alt="MiqStore Logo" className="h-8 w-auto object-contain" />
             <span className="font-heading text-2xl font-bold tracking-tight text-[hsl(var(--primary))]">
               MiqStore
             </span>
@@ -73,7 +73,7 @@ export function Navbar() {
                 type="text"
                 name="q"
                 placeholder="Search games..."
-                className="h-10 w-64 rounded-full border border-gray-200 bg-white/50 pl-10 pr-4 text-sm outline-none transition-all focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
+                className="h-10 w-64 rounded-full border border-[hsl(var(--border))] bg-white/5 pl-10 pr-4 text-sm text-[hsl(var(--foreground))] outline-none transition-all focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
               />
             </form>
 
@@ -100,13 +100,13 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/40 shadow-[0_20px_40px_rgba(7,59,76,0.15)] z-50 p-6 flex flex-col items-center justify-center text-center origin-top-right"
+                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-[hsl(var(--popover))]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-50 p-6 flex flex-col items-center justify-center text-center origin-top-right"
                     >
-                      <div className="w-12 h-12 rounded-full bg-[var(--color-navy)]/5 flex items-center justify-center mb-4">
-                        <BellOff className="h-6 w-6 text-[var(--color-navy)]/40" />
+                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                        <BellOff className="h-6 w-6 text-[hsl(var(--muted-foreground))]" />
                       </div>
-                      <h3 className="font-bold text-[var(--color-navy)] mb-1">Belum Ada Notifikasi</h3>
-                      <p className="text-xs text-[var(--color-navy)]/60">Notifikasi tentang pesanan dan promo akan muncul di sini.</p>
+                      <h3 className="font-bold text-[hsl(var(--foreground))] mb-1">Belum Ada Notifikasi</h3>
+                      <p className="text-xs text-[hsl(var(--muted-foreground))]">Notifikasi tentang pesanan dan promo akan muncul di sini.</p>
                     </motion.div>
                   </>
                 )}
@@ -139,14 +139,14 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/40 shadow-[0_20px_40px_rgba(7,59,76,0.15)] z-50 p-6 flex flex-col items-center justify-center text-center origin-top-right"
+                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-[hsl(var(--popover))]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-50 p-6 flex flex-col items-center justify-center text-center origin-top-right"
                     >
-                      <div className="w-12 h-12 rounded-full bg-[var(--color-teal)]/10 flex items-center justify-center mb-4">
-                        <PackageOpen className="h-6 w-6 text-[var(--color-teal)]" />
+                      <div className="w-12 h-12 rounded-full bg-[hsl(var(--primary))]/10 flex items-center justify-center mb-4">
+                        <PackageOpen className="h-6 w-6 text-[hsl(var(--primary))]" />
                       </div>
-                      <h3 className="font-bold text-[var(--color-navy)] mb-1">Keranjang Kosong</h3>
-                      <p className="text-xs text-[var(--color-navy)]/60 mb-4">Kamu belum menambahkan produk apa pun ke keranjang.</p>
-                      <Button className="w-full bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white rounded-xl h-10 text-xs font-bold" onClick={() => setIsCartOpen(false)}>
+                      <h3 className="font-bold text-[hsl(var(--foreground))] mb-1">Keranjang Kosong</h3>
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] mb-4">Kamu belum menambahkan produk apa pun ke keranjang.</p>
+                      <Button className="w-full bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-xl h-10 text-xs font-bold" onClick={() => setIsCartOpen(false)}>
                         Mulai Belanja
                       </Button>
                     </motion.div>
@@ -194,11 +194,11 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white shadow-2xl z-[70] p-6 flex flex-col md:hidden overflow-y-auto"
+              className="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-[hsl(var(--background))] border-l border-white/5 shadow-2xl z-[70] p-6 flex flex-col md:hidden overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
-                  <img src="/icons/logo.png" alt="MiqStore Logo" className="h-6 w-auto object-contain" />
+                  <img src={logoUrl || "/icons/logo.png"} alt="MiqStore Logo" className="h-6 w-auto object-contain" />
                   <span className="font-heading text-xl font-bold tracking-tight text-[hsl(var(--primary))]">
                     MiqStore
                   </span>
@@ -223,7 +223,7 @@ export function Navbar() {
                     type="text"
                     name="q"
                     placeholder="Search games..."
-                    className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
+                    className="h-12 w-full rounded-xl border border-[hsl(var(--border))] bg-white/5 pl-10 pr-4 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
                   />
                 </form>
               </div>
@@ -253,14 +253,14 @@ export function Navbar() {
                 </Link>
               </nav>
 
-              <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-3">
+              <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
                 <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
-                  <Button variant="outline" className="w-full h-12 rounded-xl font-bold border-[var(--color-teal)] text-[var(--color-teal)]">
+                  <Button variant="outline" className="w-full h-12 rounded-xl font-bold border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))]">
                     Masuk
                   </Button>
                 </Link>
                 <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
-                  <Button className="w-full h-12 rounded-xl font-bold bg-[var(--color-navy)] text-white hover:bg-[var(--color-teal)]">
+                  <Button className="w-full h-12 rounded-xl font-bold bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90">
                     Daftar Sekarang
                   </Button>
                 </Link>

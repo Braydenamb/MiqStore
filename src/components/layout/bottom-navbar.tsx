@@ -50,8 +50,8 @@ export function BottomNavbar() {
                 className={cn(
                   "relative flex flex-col items-center gap-1 px-3 py-2 rounded-2xl transition-all duration-300",
                   isActive
-                    ? "text-[var(--color-navy)]"
-                    : "text-gray-400 hover:text-gray-600"
+                    ? "text-[var(--color-teal)]"
+                    : "text-gray-400 hover:text-[var(--color-teal)]/70"
                 )}
               >
                 {/* Active background */}
@@ -76,7 +76,7 @@ export function BottomNavbar() {
 
                 {/* Active dot */}
                 {isActive && (
-                  <div className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[var(--color-gold)] shadow-[0_0_8px_var(--color-gold)]" />
+                  <div className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[var(--color-teal)] shadow-[0_0_8px_var(--color-teal)]" />
                 )}
               </Link>
             );

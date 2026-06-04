@@ -3,6 +3,7 @@ import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
 import { createTransactionSchema } from "@/lib/validators";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 /**
  * POST /api/transactions
@@ -85,34 +86,45 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const perPage = parseInt(searchParams.get("per_page") || "10");
-    const status = searchParams.get("status");
+    const status = searchParams.get("status")?.toUpperCase();
 
-    // Mock transactions
-    const allTransactions = Array.from({ length: 25 }, (_, i) => ({
-      id: `tx_${i + 1}`,
-      invoiceId: `INV-${(1000 + i).toString()}`,
-      game: ["Mobile Legends", "Free Fire", "Genshin Impact", "Valorant", "PUBG Mobile"][i % 5],
-      product: ["344 Diamonds", "355 Diamonds", "Welkin Moon", "700 VP", "325 UC"][i % 5],
-      price: [68000, 65000, 79000, 79000, 55000][i % 5],
-      total: [72000, 69000, 83000, 83000, 59000][i % 5],
-      status: (["SUCCESS", "SUCCESS", "SUCCESS", "PROCESSING", "FAILED"] as const)[i % 5],
-      paymentMethod: ["QRIS", "GoPay", "BCA VA", "DANA", "OVO"][i % 5],
-      createdAt: new Date(Date.now() - i * 86400000).toISOString(),
+    const where = {
+      userId: user.id,
+      ...(status ? { status: status as any } : {}),
+    };
+
+    const total = await prisma.transaction.count({ where });
+    const totalPages = Math.ceil(total / perPage);
+
+    const transactions = await prisma.transaction.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * perPage,
+      take: perPage,
+      include: {
+        product: { select: { name: true } },
+        productItem: { select: { name: true } },
+        payment: { select: { method: true } },
+      },
+    });
+
+    const formattedTransactions = transactions.map((tx) => ({
+      id: tx.id,
+      invoiceId: tx.invoiceId,
+      game: tx.product?.name || "Unknown Game",
+      product: tx.productItem?.name || "Unknown Product",
+      price: tx.price,
+      total: tx.total,
+      status: tx.status,
+      paymentMethod: tx.payment?.method || "Unknown",
+      createdAt: tx.createdAt.toISOString(),
     }));
 
-    let filtered = allTransactions;
-    if (status) {
-      filtered = filtered.filter((t) => t.status === status.toUpperCase());
-    }
-
-    const total = filtered.length;
-    const totalPages = Math.ceil(total / perPage);
-    const paginated = filtered.slice((page - 1) * perPage, page * perPage);
-
-    return apiSuccess(paginated, {
+    return apiSuccess(formattedTransactions, {
       meta: { page, perPage, total, totalPages },
     });
-  } catch {
+  } catch (error) {
+    console.error("GET /api/transactions error:", error);
     return API_ERRORS.internal();
   }
 }

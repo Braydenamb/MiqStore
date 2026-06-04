@@ -24,13 +24,13 @@ export function TestimonialSection() {
           animate={isInView ? "visible" : "hidden"}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 border-2 border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 py-1 text-sm font-black uppercase text-[hsl(var(--foreground))] mb-4 shadow-[var(--brutal-shadow-sm)]">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-teal)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] mb-6">
             <MessageSquare className="h-4 w-4" />
             Kata Mereka
           </div>
-          <h2 className="text-4xl font-black uppercase text-[hsl(var(--foreground))] sm:text-5xl tracking-tighter">
-            Review <span className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))] px-2 inline-block rotate-1 border-4 border-[hsl(var(--background))] shadow-[4px_4px_0px_#000] dark:shadow-[4px_4px_0px_#fff]">Gamer</span>
-          </h2>
+          <Typography.Heading level="h2">
+            Review <span className="text-[var(--color-teal)]">Gamer</span>
+          </Typography.Heading>
         </motion.div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -40,19 +40,28 @@ export function TestimonialSection() {
               initial={{ opacity: 0, x: -20 }}
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
               transition={{ delay: idx * 0.2 }}
-              className="border-4 border-[hsl(var(--border))] bg-[hsl(var(--background))] p-6 shadow-[var(--brutal-shadow)] transition-transform hover:-translate-y-2"
+              className="rounded-3xl border border-gray-100 bg-white p-8 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
             >
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-1 mb-6">
                 {[...Array(testi.rating)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-[hsl(var(--foreground))] text-[hsl(var(--foreground))]" />
+                  <Star key={i} className="h-5 w-5 fill-[var(--color-gold)] text-[var(--color-gold)]" />
                 ))}
               </div>
-              <p className="text-lg font-bold uppercase text-[hsl(var(--foreground))] mb-6 line-clamp-4 leading-relaxed">
+              <Typography.Body size="lg" className="mb-8 font-medium italic text-gray-700 dark:text-gray-300">
                 "{testi.text}"
-              </p>
-              <div className="border-t-4 border-[hsl(var(--border))] pt-4">
-                <h4 className="font-black uppercase text-[hsl(var(--foreground))] text-xl">{testi.name}</h4>
-                <p className="text-sm font-bold uppercase text-[hsl(var(--foreground))]/60">{testi.role}</p>
+              </Typography.Body>
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-[var(--color-teal)]/10 flex items-center justify-center text-[var(--color-teal)] font-bold">
+                  {testi.name.charAt(0)}
+                </div>
+                <div>
+                  <Typography.Heading level="h4" className="text-base font-bold">
+                    {testi.name}
+                  </Typography.Heading>
+                  <Typography.Body size="sm" color="muted">
+                    {testi.role}
+                  </Typography.Body>
+                </div>
               </div>
             </motion.div>
           ))}

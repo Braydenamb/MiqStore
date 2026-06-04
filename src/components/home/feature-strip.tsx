@@ -12,15 +12,15 @@ const features = [
 
 export function FeatureStrip() {
   return (
-    <section className="py-12 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+    <section className="py-12 bg-[hsl(var(--background))] border-y border-white/5 relative z-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="flex flex-col items-center text-center sm:flex-row sm:text-left gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+              className="flex flex-col items-center text-center sm:flex-row sm:text-left gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors group"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] group-hover:bg-[hsl(var(--primary))]/20 transition-colors shadow-[0_0_15px_rgba(165,180,252,0.1)] group-hover:shadow-[0_0_20px_rgba(165,180,252,0.3)]">
                 <feature.icon className="h-5 w-5" />
               </div>
               <div>

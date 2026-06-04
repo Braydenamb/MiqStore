@@ -7,6 +7,8 @@ import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { PwaRegistry } from "@/components/pwa-registry";
 import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
+import { getSetting } from "@/lib/settings";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 import "./globals.css";
 
 import { Inter } from "next/font/google";
@@ -83,19 +85,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteLogo = await getSetting("site_logo");
+  const logoUrl = siteLogo ? (siteLogo.startsWith("http") ? siteLogo : cloudinaryUrl(siteLogo)) : undefined;
+
   return (
     <html lang="id" suppressHydrationWarning>
       <body className={`${inter.variable} min-h-screen bg-[hsl(var(--background))] font-sans antialiased`}>
         <Providers>
           <div className="relative flex min-h-screen flex-col">
-            <Navbar />
+            <Navbar logoUrl={logoUrl} />
             <main className="flex-1 pb-mobile-nav">{children}</main>
-            <Footer />
+            <Footer logoUrl={logoUrl} />
             <BottomNavbar />
           </div>
           <Toaster

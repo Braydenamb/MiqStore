@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { Grid, Smartphone, Monitor, Ticket, Coins } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
+import { Typography } from "@/components/typography";
 
 const categories = [
   { id: "mobile", name: "Mobile Games", icon: Smartphone, count: 42 },
@@ -26,13 +27,13 @@ export function CategorySection() {
           animate={isInView ? "visible" : "hidden"}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 border-2 border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 py-1 text-sm font-black uppercase text-[hsl(var(--foreground))] mb-4 shadow-[var(--brutal-shadow-sm)]">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-teal)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] mb-6">
             <Grid className="h-4 w-4" />
             Kategori
           </div>
-          <h2 className="text-4xl font-black uppercase text-[hsl(var(--foreground))] sm:text-5xl tracking-tighter">
-            Jelajahi <span className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))] px-2 inline-block -rotate-1 border-4 border-[hsl(var(--background))] shadow-[4px_4px_0px_#000] dark:shadow-[4px_4px_0px_#fff]">Katalog</span>
-          </h2>
+          <Typography.Heading level="h2">
+            Jelajahi <span className="text-[var(--color-teal)]">Katalog</span>
+          </Typography.Heading>
         </motion.div>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
@@ -45,17 +46,17 @@ export function CategorySection() {
             >
               <Link
                 href={`/categories/${category.id}`}
-                className="group block border-4 border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-center shadow-[var(--brutal-shadow)] transition-all hover:-translate-y-2 hover:-translate-x-2 hover:shadow-[var(--brutal-shadow-lg)]"
+                className="group block rounded-3xl border border-gray-100 bg-white p-6 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
               >
-                <div className="mx-auto flex h-16 w-16 items-center justify-center border-4 border-[hsl(var(--border))] bg-[hsl(var(--background))] mb-4 group-hover:bg-[hsl(var(--primary))] group-hover:text-[hsl(var(--primary-foreground))] transition-colors">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-teal)]/5 mb-4 group-hover:bg-[var(--color-teal)] group-hover:text-white transition-colors text-[var(--color-teal)]">
                   <category.icon className="h-8 w-8" />
                 </div>
-                <h3 className="text-lg font-black uppercase text-[hsl(var(--foreground))]">
+                <Typography.Heading level="h4" className="mb-2">
                   {category.name}
-                </h3>
-                <p className="mt-2 inline-block border-2 border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-2 py-0.5 text-xs font-bold uppercase">
+                </Typography.Heading>
+                <Typography.Body size="sm" color="muted">
                   {category.count} Item
-                </p>
+                </Typography.Body>
               </Link>
             </motion.div>
           ))}

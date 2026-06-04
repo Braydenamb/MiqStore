@@ -8,12 +8,13 @@ import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { Typography } from "@/components/typography";
 
-export function HeroSection() {
+export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-[hsl(var(--background))] texture-overlay flex items-center pt-20 pb-16">
       
-      {/* Clean Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none z-0 dark:from-blue-900/10" />
+      {/* Ambient Glow */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[hsl(var(--primary))]/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8 items-center">
@@ -24,9 +25,9 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 rounded-full bg-white/50 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] backdrop-blur-md border border-white/50 shadow-sm mb-6"
+              className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))]/10 px-4 py-1.5 text-sm font-semibold text-[hsl(var(--primary))] backdrop-blur-xl border border-[hsl(var(--primary))]/20 shadow-[0_0_15px_rgba(165,180,252,0.15)] mb-6"
             >
-              <Zap className="h-4 w-4 text-[var(--color-gold)] fill-[var(--color-gold)]" />
+              <Zap className="h-4 w-4 text-[var(--color-gold)] fill-[var(--color-gold)] drop-shadow-md" />
               Proses Cepat, Harga Bersahabat.
             </motion.div>
 
@@ -35,9 +36,9 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <Typography.Display size="xl" color="primary">
+              <Typography.Display size="xl" color="primary" className="drop-shadow-sm">
                 Top Up.<br />
-                <span className="text-[var(--color-teal)]">Main.</span><br />
+                <span className="text-[hsl(var(--primary))] drop-shadow-[0_0_15px_rgba(165,180,252,0.3)]">Main.</span><br />
                 Tanpa Ribet.
               </Typography.Display>
             </motion.div>
@@ -61,7 +62,7 @@ export function HeroSection() {
             >
               <Button 
                 size="lg" 
-                className="bg-teal hover:bg-[var(--color-navy)] rounded-full h-14 px-8 text-lg shadow-lg shadow-[#073B4C]/20 transition-all hover:-translate-y-1"
+                className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-full h-14 px-8 text-lg shadow-[0_0_20px_rgba(165,180,252,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(165,180,252,0.6)]"
                 onClick={() => toast.success("Memulai Top Up", { description: "Mengarahkan ke halaman Top Up..." })}
               >
                 Top Up Sekarang
@@ -70,7 +71,7 @@ export function HeroSection() {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="rounded-full h-14 px-8 text-lg border-[var(--color-teal)] text-[var(--color-teal)] hover:bg-[var(--color-teal)]/5 transition-all"
+                className="rounded-full h-14 px-8 text-lg border-[hsl(var(--primary))]/50 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/10 transition-all"
                 onClick={() => {
                   toast("Menjelajahi Game", { description: "Mengarahkan ke katalog game..." });
                   window.location.href = "/games";
@@ -90,28 +91,28 @@ export function HeroSection() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl border border-white/20"
+              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10"
             >
               <Image 
-                src={cloudinaryUrl("Games/Mobile legends/banner")} 
+                src={heroBannerUrl || cloudinaryUrl("Games/Mobile legends/banner")} 
                 alt="Gaming Experience" 
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-navy)]/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))]/90 to-transparent" />
             </motion.div>
 
             {/* Floating Card */}
             <div className="absolute bottom-[10%] right-[10%] z-20">
-              <div className="bg-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-4 border border-gray-100">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <div className="bg-[hsl(var(--popover))]/80 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-white/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))]">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <Typography.Heading level="h4" color="primary" className="font-bold leading-tight">
+                  <Typography.Heading level="h4" className="font-bold leading-tight text-[hsl(var(--foreground))]">
                     Proses Instan
                   </Typography.Heading>
-                  <Typography.Body size="sm" color="muted" className="font-medium">
+                  <Typography.Body size="sm" className="font-medium text-[hsl(var(--muted-foreground))]">
                     Aman & Terpercaya
                   </Typography.Body>
                 </div>
