@@ -6,12 +6,14 @@ import { Typography } from "@/components/typography";
 
 import Link from "next/link";
 
+import { cloudinaryUrl } from "@/lib/cloudinary";
+
 const popularGames = [
-  { id: "mlbb", slug: "mobile-legends", name: "Mobile Legends", category: "MOBA", price: "Rp 1.500", icon: Sword, color: "#073B4C", bg: "bg-blue-100", image: "/images/mobile-legends.jpg" },
-  { id: "pubgm", slug: "pubg-mobile", name: "PUBG Mobile", category: "Battle Royale", price: "Rp 10.000", icon: Crosshair, color: "#0B1D34", bg: "bg-orange-100", image: "/images/pubg-mobile.jpg" },
-  { id: "ff", slug: "free-fire", name: "Free Fire", category: "Battle Royale", price: "Rp 5.000", icon: Shield, color: "#F7C873", bg: "bg-red-100", image: "/images/free-fire.webp" },
-  { id: "valo", slug: "valorant", name: "Valorant", category: "FPS", price: "Rp 15.000", icon: Zap, color: "#073B4C", bg: "bg-red-50", image: "/images/valorant.jpg" },
-  { id: "genshin", slug: "genshin-impact", name: "Genshin Impact", category: "RPG", price: "Rp 16.000", icon: Gamepad2, color: "#0B1D34", bg: "bg-purple-100", image: "/images/genshin-impact.jpg" },
+  { id: "mlbb", slug: "mobile-legends", name: "Mobile Legends", category: "MOBA", price: "Rp 1.500", icon: Sword, color: "#073B4C", bg: "bg-blue-100", image: cloudinaryUrl("Games/Mobile legends/thumbnail") },
+  { id: "pubgm", slug: "pubg-mobile", name: "PUBG Mobile", category: "Battle Royale", price: "Rp 10.000", icon: Crosshair, color: "#0B1D34", bg: "bg-orange-100", image: cloudinaryUrl("Games/PUBG Mobile/thumbnail") },
+  { id: "ff", slug: "free-fire", name: "Free Fire", category: "Battle Royale", price: "Rp 5.000", icon: Shield, color: "#F7C873", bg: "bg-red-100", image: cloudinaryUrl("Games/Free fire/thumbnail") },
+  { id: "valo", slug: "valorant", name: "Valorant", category: "FPS", price: "Rp 15.000", icon: Zap, color: "#073B4C", bg: "bg-red-50", image: cloudinaryUrl("Games/Valorant/thumbnail") },
+  { id: "genshin", slug: "genshin-impact", name: "Genshin Impact", category: "RPG", price: "Rp 16.000", icon: Gamepad2, color: "#0B1D34", bg: "bg-purple-100", image: cloudinaryUrl("Games/Genshin impact/thumbnail") },
 ];
 
 export function PopularGames() {
@@ -20,6 +22,7 @@ export function PopularGames() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-4">
+          <div>
             <Typography.Heading level="h2">
               Game Terpopuler
             </Typography.Heading>

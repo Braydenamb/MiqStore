@@ -4,5 +4,6 @@
  */
 export function cloudinaryUrl(publicId: string) {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "demo";
-  return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${publicId}`;
+  const encodedId = encodeURI(publicId);
+  return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${encodedId}`;
 }
