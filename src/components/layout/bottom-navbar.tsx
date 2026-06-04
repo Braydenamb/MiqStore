@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import {
   Home,
   Gamepad2,
@@ -11,7 +10,6 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { spring } from "@/lib/motion";
 
 const tabs = [
   { href: "/", label: "Home", icon: Home },
@@ -58,21 +56,13 @@ export function BottomNavbar() {
               >
                 {/* Active background */}
                 {isActive && (
-                  <motion.div
-                    layoutId="bottom-nav-active-bg"
-                    className="absolute inset-0 rounded-2xl bg-[var(--color-teal)]/10"
-                    transition={spring.soft}
-                  />
+                  <div className="absolute inset-0 rounded-2xl bg-[var(--color-teal)]/10" />
                 )}
 
                 {/* Icon */}
-                <motion.div
-                  animate={isActive ? { y: -2, scale: 1.1 } : { y: 0, scale: 1 }}
-                  transition={spring.snappy}
-                  className="relative z-10"
-                >
+                <div className={cn("relative z-10 transition-transform duration-300", isActive && "-translate-y-0.5 scale-110")}>
                   <tab.icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
-                </motion.div>
+                </div>
 
                 {/* Label */}
                 <span
@@ -86,11 +76,7 @@ export function BottomNavbar() {
 
                 {/* Active dot */}
                 {isActive && (
-                  <motion.div
-                    layoutId="bottom-nav-active-dot"
-                    className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[var(--color-gold)] shadow-[0_0_8px_var(--color-gold)]"
-                    transition={spring.soft}
-                  />
+                  <div className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[var(--color-gold)] shadow-[0_0_8px_var(--color-gold)]" />
                 )}
               </Link>
             );

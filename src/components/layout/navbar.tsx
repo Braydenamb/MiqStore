@@ -156,7 +156,7 @@ export function Navbar() {
             </div>
 
             <Link href="/dashboard" tabIndex={-1}>
-              <Button variant="ghost" size="icon" className="hidden sm:flex rounded-full text-[hsl(var(--foreground))]">
+              <Button variant="ghost" size="icon" className="flex rounded-full text-[hsl(var(--foreground))]">
                 <User className="h-5 w-5" />
               </Button>
             </Link>
