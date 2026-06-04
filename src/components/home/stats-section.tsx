@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { Typography } from "@/components/typography";
 
 const stats = [
   { label: "Pelanggan Aktif", value: "50K+" },
@@ -11,28 +11,22 @@ const stats = [
 
 export function StatsSection() {
   return (
-    <section className="py-12 bg-[var(--color-teal)] relative overflow-hidden">
-      {/* Decorative Texture */}
-      <div className="absolute inset-0 opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+    <section className="py-12 bg-blue-900 relative overflow-hidden border-t border-b border-blue-800">
       
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 divide-x divide-white/10">
-          {stats.map((stat, idx) => (
-            <motion.div
+          {stats.map((stat) => (
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
               className="flex flex-col items-center text-center px-4"
             >
-              <div className="text-h1 text-white mb-2">
+              <Typography.Heading level="h2" className="text-white mb-2">
                 {stat.value}
-              </div>
-              <div className="text-caption text-[var(--color-gold)]">
+              </Typography.Heading>
+              <Typography.Label className="text-yellow-400 font-medium tracking-wide">
                 {stat.label}
-              </div>
-            </motion.div>
+              </Typography.Label>
+            </div>
           ))}
         </div>
       </div>

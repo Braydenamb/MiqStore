@@ -6,16 +6,14 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { Typography } from "@/components/typography";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-[hsl(var(--background))] texture-overlay flex items-center pt-20 pb-16">
       
-      {/* Background Decor */}
-      <div className="absolute right-0 top-0 w-1/2 h-full opacity-30 pointer-events-none z-0">
-        <div className="absolute right-[-20%] top-[-10%] w-[800px] h-[800px] rounded-full bg-[var(--color-navy)] blur-[120px]" />
-        <div className="absolute right-[10%] top-[20%] w-[500px] h-[500px] rounded-full bg-[var(--color-teal)] blur-[100px]" />
-      </div>
+      {/* Clean Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none z-0 dark:from-blue-900/10" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8 items-center">
@@ -32,25 +30,28 @@ export function HeroSection() {
               Proses Cepat, Harga Bersahabat.
             </motion.div>
 
-            <motion.h1
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-display"
             >
-              Top Up.<br />
-              <span className="text-[var(--color-teal)]">Main.</span><br />
-              Tanpa Ribet.
-            </motion.h1>
+              <Typography.Display size="xl" color="primary">
+                Top Up.<br />
+                <span className="text-[var(--color-teal)]">Main.</span><br />
+                Tanpa Ribet.
+              </Typography.Display>
+            </motion.div>
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-6 text-body-large max-w-lg"
+              className="mt-6 max-w-lg"
             >
-              Top up diamond, UC, dan voucher game favoritmu dengan harga termurah dan proses kilat.
-            </motion.p>
+              <Typography.Body size="lg" color="secondary">
+                Top up diamond, UC, dan voucher game favoritmu dengan harga termurah dan proses kilat.
+              </Typography.Body>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -83,14 +84,7 @@ export function HeroSection() {
           {/* Right Visuals */}
           <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
             
-            {/* Cosmic blue streak (CSS implementation) */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[var(--color-teal)] to-[var(--color-navy)] opacity-20 rounded-[100px] rotate-12 blur-3xl animate-pulse" />
-            
-            {/* Twinkling stars */}
-            <div className="absolute top-[20%] left-[20%] w-2 h-2 rounded-full bg-[var(--color-gold)] animate-twinkle shadow-[0_0_10px_var(--color-gold)]" />
-            <div className="absolute top-[70%] right-[30%] w-1.5 h-1.5 rounded-full bg-white animate-twinkle shadow-[0_0_8px_white]" style={{ animationDelay: '1s' }} />
-            <div className="absolute bottom-[20%] left-[40%] w-3 h-3 rounded-full bg-[var(--color-teal)] animate-twinkle shadow-[0_0_12px_var(--color-teal)]" style={{ animationDelay: '2s' }} />
-            
+
             {/* Main Visual Image */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -108,22 +102,21 @@ export function HeroSection() {
             </motion.div>
 
             {/* Floating Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="absolute bottom-[10%] right-[10%] z-20"
-            >
-              <div className="glass-panel px-6 py-4 rounded-2xl premium-shadow flex items-center gap-4 bg-white/90">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-gold)]/20 text-[var(--color-navy)]">
+            <div className="absolute bottom-[10%] right-[10%] z-20">
+              <div className="bg-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-4 border border-gray-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="font-heading font-bold text-[var(--color-navy)] leading-tight">Proses Instan</p>
-                  <p className="text-sm font-medium text-gray-500">Aman & Terpercaya</p>
+                  <Typography.Heading level="h4" color="primary" className="font-bold leading-tight">
+                    Proses Instan
+                  </Typography.Heading>
+                  <Typography.Body size="sm" color="muted" className="font-medium">
+                    Aman & Terpercaya
+                  </Typography.Body>
                 </div>
               </div>
-            </motion.div>
+            </div>
             
           </div>
         </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowRight, Gamepad2, Shield, Crosshair, Sword, Zap } from "lucide-react";
 import Image from "next/image";
+import { Typography } from "@/components/typography";
 
 import Link from "next/link";
 
@@ -20,15 +20,14 @@ export function PopularGames() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-4">
-          <div>
-            <h2 className="text-h1">
+            <Typography.Heading level="h2">
               Game Terpopuler
-            </h2>
-            <p className="mt-2 text-body-large">
+            </Typography.Heading>
+            <Typography.Body size="lg" className="mt-2">
               Temukan penawaran terbaik untuk game favoritmu.
-            </p>
+            </Typography.Body>
           </div>
-          <Link href="/games" className="text-[var(--color-teal)] font-medium flex items-center gap-1 hover:gap-2 transition-all">
+          <Link href="/games" className="text-blue-600 font-medium flex items-center gap-1 hover:gap-2 transition-all">
             Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -36,15 +35,11 @@ export function PopularGames() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
           {popularGames.map((game, idx) => (
             <Link href={`/games/${game.slug}`} key={game.id} className="block group">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                className="flex flex-col bg-white rounded-[20px] p-4 premium-shadow border border-white hover:-translate-y-2 transition-all duration-300 relative overflow-hidden h-full"
+              <div
+                className="flex flex-col bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 hover:-translate-y-1 transition-all duration-300 h-full"
               >
               {/* Thumbnail Placeholder / Image */}
-              <div className={`w-full aspect-[4/3] rounded-xl ${game.bg} flex items-center justify-center relative overflow-hidden mb-4 bg-[var(--color-navy)]`}>
+              <div className={`w-full aspect-[4/3] rounded-xl ${game.bg} flex items-center justify-center relative overflow-hidden mb-4 bg-gray-900`}>
                 <Image 
                   src={game.image} 
                   alt={game.name} 
@@ -56,16 +51,16 @@ export function PopularGames() {
               </div>
               
               {/* Details */}
-              <div className="flex-1 flex flex-col z-10 relative">
-                <span className="text-caption text-[var(--color-gold)] mb-1">{game.category}</span>
-                <h3 className="text-h3 mb-1 line-clamp-1">{game.name}</h3>
-                <p className="text-body text-sm mb-4">Mulai dari {game.price}</p>
+              <div className="flex-1 flex flex-col z-10 relative mt-2">
+                <Typography.Caption className="text-amber-600 dark:text-amber-400 mb-1 font-medium">{game.category}</Typography.Caption>
+                <Typography.Heading level="h3" size="md" className="mb-1 line-clamp-1">{game.name}</Typography.Heading>
+                <Typography.Body size="sm" className="mb-4">Mulai dari {game.price}</Typography.Body>
                 
-                <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-cream)] text-[var(--color-teal)] group-hover:bg-[var(--color-teal)] group-hover:text-white transition-colors ml-auto shadow-sm">
+                <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 text-gray-600 group-hover:bg-blue-600 group-hover:text-white transition-colors ml-auto shadow-sm">
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
-            </motion.div>
+              </div>
             </Link>
           ))}
         </div>

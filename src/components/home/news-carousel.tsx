@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HOME_NEWS_BANNERS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { Typography } from "@/components/typography";
 
 const wrap = (min: number, max: number, v: number) => {
   const rangeSize = max - min;
@@ -105,22 +106,17 @@ export function NewsCarousel() {
                 
                 {/* Premium Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d34]/90 via-[#0b1d34]/20 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 texture-overlay opacity-30 mix-blend-overlay pointer-events-none" />
                 
                 {/* Text Content */}
                 <div className="absolute bottom-6 left-6 right-6 lg:bottom-12 lg:left-12 lg:right-12 pointer-events-none">
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <div className="inline-block bg-[var(--color-teal)]/20 backdrop-blur-md border border-[var(--color-teal)]/30 text-[var(--color-teal)] text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
+                  <div>
+                    <div className="inline-block bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
                       Info Terbaru
                     </div>
-                    <h3 className="font-heading text-2xl sm:text-3xl lg:text-5xl font-extrabold text-white drop-shadow-xl max-w-3xl leading-tight">
+                    <Typography.Heading level="h3" className="text-2xl sm:text-3xl lg:text-5xl font-extrabold text-white drop-shadow-xl max-w-3xl leading-tight">
                       {banners[imageIndex].alt}
-                    </h3>
-                  </motion.div>
+                    </Typography.Heading>
+                  </div>
                 </div>
               </Link>
             </motion.div>
