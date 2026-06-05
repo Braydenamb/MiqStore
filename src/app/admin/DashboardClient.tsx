@@ -87,8 +87,8 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
       trend: "+12.5%", 
       trendUp: true, 
       icon: Wallet,
-      color: "text-[var(--color-teal)]",
-      bg: "bg-[var(--color-teal)]/10"
+      color: "text-emerald-400",
+      bg: "bg-emerald-400/10"
     },
     { 
       title: "Total Orders", 
@@ -96,8 +96,8 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
       trend: "+5.2%", 
       trendUp: true, 
       icon: Receipt,
-      color: "text-[var(--color-navy)]",
-      bg: "bg-[var(--color-navy)]/10"
+      color: "text-[hsl(var(--primary))]",
+      bg: "bg-[hsl(var(--primary))]/10"
     },
     { 
       title: "Total Users", 
@@ -105,8 +105,8 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
       trend: "+18.1%", 
       trendUp: true, 
       icon: Users,
-      color: "text-blue-500",
-      bg: "bg-blue-500/10"
+      color: "text-blue-400",
+      bg: "bg-blue-400/10"
     },
     { 
       title: "Pending Orders", 
@@ -114,8 +114,8 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
       trend: "-2.4%", 
       trendUp: false, 
       icon: Clock,
-      color: "text-[var(--color-gold)]",
-      bg: "bg-[var(--color-gold)]/20"
+      color: "text-amber-400",
+      bg: "bg-amber-400/10"
     },
   ];
 
@@ -148,14 +148,14 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
         className="relative overflow-hidden rounded-3xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] text-[hsl(var(--foreground))] p-8 sm:p-10 shadow-lg shadow-black/20"
       >
         <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-        <div className="absolute -right-20 -top-20 w-64 h-64 bg-[var(--color-teal)] rounded-full blur-[80px] opacity-60" />
-        <div className="absolute right-20 -bottom-20 w-48 h-48 bg-[var(--color-gold)] rounded-full blur-[60px] opacity-40" />
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-[hsl(var(--primary))] rounded-full blur-[80px] opacity-20" />
+        <div className="absolute right-20 -bottom-20 w-48 h-48 bg-[hsl(var(--accent))] rounded-full blur-[60px] opacity-20" />
         
         <div className="relative z-10 max-w-2xl">
-          <p className="text-[var(--color-gold)] font-bold text-sm mb-2">{today}</p>
+          <p className="text-[hsl(var(--primary))] font-bold text-sm mb-2">{today}</p>
           <h1 className="text-3xl sm:text-4xl font-extrabold font-heading mb-4">Welcome back, Admin! 👋</h1>
-          <p className="text-white/80 text-sm sm:text-base leading-relaxed">
-            Here's what's happening with your store today. You have <strong className="text-white">{pendingOrders} pending orders</strong> that need your attention.
+          <p className="text-[hsl(var(--foreground))]/80 text-sm sm:text-base leading-relaxed">
+            Here's what's happening with your store today. You have <strong className="text-[hsl(var(--foreground))]">{pendingOrders} pending orders</strong> that need your attention.
           </p>
           <div className="mt-8 flex gap-3">
             <Button className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90 font-bold rounded-xl h-10 px-6 transition-colors shadow-lg shadow-[hsl(var(--primary))]/20">
