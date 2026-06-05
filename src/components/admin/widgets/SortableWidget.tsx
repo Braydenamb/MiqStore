@@ -25,9 +25,9 @@ export function SortableWidget({ id, children, className = "" }: { id: string; c
       <div 
         {...attributes} 
         {...listeners}
-        className="absolute top-2 right-2 z-20 p-2 bg-white/80 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing shadow-sm border border-gray-100"
+        className="absolute top-2 right-2 z-20 p-2 bg-[hsl(var(--card))]/80 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing shadow-sm border border-[hsl(var(--border))]"
       >
-        <GripHorizontal className="w-4 h-4 text-gray-500" />
+        <GripHorizontal className="w-4 h-4 text-[hsl(var(--foreground))]/50" />
       </div>
       {children}
     </div>

@@ -29,3 +29,7 @@ Modern agents perform best with structured roadmaps rather than vague instructio
 ## 5. Environment Variables Privacy
 **Do NOT read the `.env` file directly.**
 You must never attempt to view or read the `.env` file using any tools (e.g., `view_file`, `cat`, etc.). You should assume the `.env` file exists and contains the correct values based on the `.env.example` file. When you need to link environment variables to the project, simply write the code to reference `process.env.VARIABLE_NAME` and trust that the runtime environment will provide the values.
+
+## 6. Dependency Management & Deployment
+**Ensure lockfile synchronization.**
+Whenever dependencies are added, updated, or removed in `package.json`, ensure that `pnpm-lock.yaml` is correctly updated. This prevents deployment failures on platforms like Vercel. Always use `pnpm` exclusively for this project.

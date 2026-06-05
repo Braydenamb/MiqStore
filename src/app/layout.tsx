@@ -11,12 +11,16 @@ import { getSetting } from "@/lib/settings";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import "./globals.css";
 
-import { Inter } from "next/font/google";
+import { Outfit, Space_Grotesk } from "next/font/google";
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
+  variable: "--font-outfit",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
 });
 
 export const viewport: Viewport = {
@@ -95,7 +99,7 @@ export default async function RootLayout({
 
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`${inter.variable} min-h-screen bg-[hsl(var(--background))] font-sans antialiased`}>
+      <body className={`min-h-screen bg-[hsl(var(--background))] font-sans antialiased ${outfit.variable} ${spaceGrotesk.variable}`}>
         <Providers>
           <div className="relative flex min-h-screen flex-col">
             <Navbar logoUrl={logoUrl} />

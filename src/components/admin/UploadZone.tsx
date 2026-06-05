@@ -34,7 +34,7 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
       <div className="flex justify-between items-center">
         <label className="text-sm font-bold text-[hsl(var(--foreground))]">{label}</label>
         {recommendedAspect && (
-          <span className="text-[10px] text-gray-400 font-medium">Rec: {recommendedAspect}</span>
+          <span className="text-[10px] text-[hsl(var(--foreground))]/40 font-medium">Rec: {recommendedAspect}</span>
         )}
       </div>
       
@@ -60,7 +60,7 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
             <div
               className={cn(
                 "relative border-2 border-dashed rounded-2xl overflow-hidden transition-all duration-300 flex flex-col items-center justify-center min-h-[160px]",
-                "border-gray-200 bg-gray-50 hover:bg-gray-100 cursor-pointer",
+                "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--secondary))]/80 cursor-pointer",
                 preview ? "p-2 border-solid" : "p-6"
               )}
               onClick={(e) => {
@@ -102,12 +102,12 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
                     exit={{ opacity: 0 }}
                     className="flex flex-col items-center gap-3 text-center"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm flex items-center justify-center">
                       <UploadCloud className="w-6 h-6 text-[hsl(var(--primary))]" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-[hsl(var(--foreground))]">Click to upload from Cloudinary</p>
-                      <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or WEBP (MAX. 2MB)</p>
+                      <p className="text-xs text-[hsl(var(--foreground))]/60 mt-1">SVG, PNG, JPG or WEBP (MAX. 2MB)</p>
                     </div>
                   </motion.div>
                 )}

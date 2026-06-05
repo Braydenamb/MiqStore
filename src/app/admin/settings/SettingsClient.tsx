@@ -37,20 +37,20 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
     <div className="space-y-6 pb-10">
       
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div className="bg-[hsl(var(--card))] p-6 rounded-3xl shadow-sm border border-[hsl(var(--border))]">
         <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Store Settings</h1>
-        <p className="text-sm text-gray-500 mt-1">Configure your marketplace platform.</p>
+        <p className="text-sm text-[hsl(var(--foreground))]/60 mt-1">Configure your marketplace platform.</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         
         {/* Navigation / Sections */}
         <div className="xl:col-span-1 space-y-2">
-          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 space-y-1">
+          <div className="bg-[hsl(var(--card))] rounded-3xl p-4 shadow-sm border border-[hsl(var(--border))] space-y-1">
             <button 
               onClick={() => setActiveTab("website")}
               className={`w-full flex items-center gap-3 px-4 py-3 font-bold rounded-xl transition-colors ${
-                activeTab === "website" ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--foreground))]" : "text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))] font-medium"
+                activeTab === "website" ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--foreground))]" : "text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium"
               }`}
             >
               <Globe className={`w-5 h-5 ${activeTab === "website" ? "text-[hsl(var(--primary))]" : ""}`} /> Website Settings
@@ -58,18 +58,18 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
             <button 
               onClick={() => setActiveTab("media")}
               className={`w-full flex items-center gap-3 px-4 py-3 font-bold rounded-xl transition-colors ${
-                activeTab === "media" ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--foreground))]" : "text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))] font-medium"
+                activeTab === "media" ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--foreground))]" : "text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium"
               }`}
             >
               <ImageIcon className={`w-5 h-5 ${activeTab === "media" ? "text-[hsl(var(--primary))]" : ""}`} /> Media & Assets
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
+            <button className="w-full flex items-center gap-3 px-4 py-3 text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
               <CreditCard className="w-5 h-5" /> Payment Gateways
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
+            <button className="w-full flex items-center gap-3 px-4 py-3 text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
               <Key className="w-5 h-5" /> API & Reseller
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
+            <button className="w-full flex items-center gap-3 px-4 py-3 text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
               <SettingsIcon className="w-5 h-5" /> Advanced
             </button>
           </div>
@@ -77,7 +77,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
 
         {/* Content Area */}
         <div className="xl:col-span-2">
-          <form onSubmit={handleSave} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <form onSubmit={handleSave} className="bg-[hsl(var(--card))] rounded-3xl shadow-sm border border-[hsl(var(--border))] overflow-hidden">
             <div className="p-6 sm:p-8">
               
               <AnimatePresence mode="wait">
@@ -91,7 +91,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                     className="space-y-8"
                   >
                     <div className="space-y-6">
-                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-gray-100 pb-2">General Information</h2>
+                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">General Information</h2>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
@@ -99,7 +99,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                           <Input 
                             value={settings["store_name"] || "MiqStore"} 
                             onChange={(e) => updateSetting("store_name", e.target.value)}
-                            className="h-12 bg-gray-50 border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
+                            className="h-12 bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--foreground))] focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
                           />
                         </div>
                         <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                             type="email"
                             value={settings["store_email"] || "support@miqstore.com"} 
                             onChange={(e) => updateSetting("store_email", e.target.value)} 
-                            className="h-12 bg-gray-50 border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
+                            className="h-12 bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--foreground))] focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
                           />
                         </div>
                       </div>
@@ -118,13 +118,13 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                         <textarea 
                           value={settings["store_description"] || "Platform top up game tercepat, termurah, dan terpercaya."}
                           onChange={(e) => updateSetting("store_description", e.target.value)}
-                          className="w-full h-24 p-4 bg-gray-50 border border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl text-sm outline-none resize-none"
+                          className="w-full h-24 p-4 bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] text-[hsl(var(--foreground))] focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl text-sm outline-none resize-none"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-6">
-                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-gray-100 pb-2">Appearance</h2>
+                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Appearance</h2>
                       
                       <div className="flex items-center space-x-2">
                         <input 
@@ -132,13 +132,13 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                           id="maintenance"
                           checked={settings["maintenance_mode"] === "true"}
                           onChange={(e) => updateSetting("maintenance_mode", e.target.checked ? "true" : "false")}
-                          className="w-4 h-4 rounded border-gray-300 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer" 
+                          className="w-4 h-4 rounded border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer" 
                         />
                         <label htmlFor="maintenance" className="text-sm font-bold text-[hsl(var(--foreground))] cursor-pointer">
                           Enable Maintenance Mode
                         </label>
                       </div>
-                      <p className="text-xs text-gray-500 -mt-2 ml-6">When active, only admins can access the store front.</p>
+                      <p className="text-xs text-[hsl(var(--foreground))]/50 -mt-2 ml-6">When active, only admins can access the store front.</p>
                     </div>
                   </motion.div>
                 )}
@@ -153,8 +153,8 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                     className="space-y-8"
                   >
                     <div className="space-y-6">
-                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-gray-100 pb-2">Site Media & Assets</h2>
-                      <p className="text-sm text-gray-500 mb-6">Manage global images like logos and banners. These are uploaded securely to Cloudinary.</p>
+                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Site Media & Assets</h2>
+                      <p className="text-sm text-[hsl(var(--foreground))]/60 mb-6">Manage global images like logos and banners. These are uploaded securely to Cloudinary.</p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <UploadZone 
@@ -190,7 +190,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
 
             </div>
 
-            <div className="p-6 sm:px-8 sm:py-6 bg-gray-50/50 border-t border-gray-100 flex justify-end mt-4">
+            <div className="p-6 sm:px-8 sm:py-6 bg-[hsl(var(--secondary))]/30 border-t border-[hsl(var(--border))] flex justify-end mt-4">
               <Button type="submit" disabled={isLoading} className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] text-white font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20 transition-all h-12 px-8">
                 {isLoading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
                 Save Settings

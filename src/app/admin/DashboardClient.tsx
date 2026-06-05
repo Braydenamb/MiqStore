@@ -145,7 +145,7 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl bg-[var(--color-navy)] text-white p-8 sm:p-10"
+        className="relative overflow-hidden rounded-3xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] text-[hsl(var(--foreground))] p-8 sm:p-10 shadow-lg shadow-black/20"
       >
         <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
         <div className="absolute -right-20 -top-20 w-64 h-64 bg-[var(--color-teal)] rounded-full blur-[80px] opacity-60" />
@@ -158,7 +158,7 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
             Here's what's happening with your store today. You have <strong className="text-white">{pendingOrders} pending orders</strong> that need your attention.
           </p>
           <div className="mt-8 flex gap-3">
-            <Button className="bg-[var(--color-gold)] text-[var(--color-navy)] hover:bg-white font-bold rounded-xl h-10 px-6 transition-colors">
+            <Button className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90 font-bold rounded-xl h-10 px-6 transition-colors shadow-lg shadow-[hsl(var(--primary))]/20">
               View Pending Orders
             </Button>
           </div>
@@ -174,7 +174,7 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="border-gray-100 shadow-sm hover:shadow-md transition-shadow rounded-2xl overflow-hidden">
+            <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-sm hover:shadow-md transition-shadow rounded-2xl overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", stat.bg)}>
@@ -185,8 +185,8 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
                     {stat.trend}
                   </div>
                 </div>
-                <h3 className="text-gray-500 text-sm font-medium">{stat.title}</h3>
-                <p className="text-2xl font-extrabold text-[var(--color-navy)] mt-1">{stat.value}</p>
+                <h3 className="text-[hsl(var(--foreground))]/60 text-sm font-medium">{stat.title}</h3>
+                <p className="text-2xl font-extrabold text-[hsl(var(--foreground))] mt-1">{stat.value}</p>
               </CardContent>
             </Card>
           </motion.div>

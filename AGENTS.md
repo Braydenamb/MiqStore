@@ -14,6 +14,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **TypeScript**: Strict mode enabled. No `any` types allowed. Define explicit interfaces for all data models and API responses.
 - **Tailwind v4**: Use the new utility classes and configuration patterns. Avoid inline styles.
 - **shadcn/ui**: Use for base components. Customize to match the "Liquid glass" and "Pastel blue" aesthetic.
+- **Cloudinary**: Used for gallery management, image hosting, and optimization via `next-cloudinary`.
+- **DnD Kit**: Used for drag-and-drop interactions in complex UI components (e.g., admin dashboard widgets).
 - **pnpm**: Always use `pnpm` for package management. Do not use `npm` or `yarn`.
 - **Docker**: Used for local development databases (e.g., PostgreSQL, Redis) to ensure environment consistency.
 - **Playwright**: Write E2E tests for critical flows like checkout, authentication, and top-up processing.
@@ -31,7 +33,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Design System (Aesthetic)
 - **Liquid Glass**: Implement glassmorphism using Tailwind's `backdrop-blur`, semi-transparent backgrounds (e.g., `bg-white/10` or `bg-slate-900/40`), and subtle borders (`border-white/20`).
 - **Pastel Blue Theme**: Use a calming, modern pastel blue as the primary accent color. Contrast with deep dark backgrounds for a premium, sleek feel.
-- **Modern Dashboard**: Clean, grid-based layouts with clear typography (e.g., Inter, Outfit) and ample whitespace.
+- **Modern Dashboard**: Clean, grid-based layouts with clear typography (e.g., Inter, Playfair Display) and ample whitespace.
 - **Smooth Animation**: Use CSS transitions or `framer-motion` for micro-interactions (hover states, dialog reveals, page transitions). Keep animations quick and subtle (150ms-300ms).
 
 ## Common Errors to Avoid

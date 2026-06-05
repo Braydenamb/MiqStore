@@ -34,6 +34,7 @@ Fully observable infrastructure. Blind `console.log` statements are replaced wit
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4 & Framer Motion
+- **Image & Asset Management**: Cloudinary (`next-cloudinary`)
 - **Package Manager**: pnpm
 - **Database**: PostgreSQL with Prisma ORM
 - **Containerization**: Docker (Local DBs & Deployment)

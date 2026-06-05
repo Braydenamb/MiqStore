@@ -19,7 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[hsl(var(--background))] texture-overlay overflow-hidden font-sans">
       
       {/* Desktop Sidebar */}
       <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed} />

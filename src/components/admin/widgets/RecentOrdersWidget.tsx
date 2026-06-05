@@ -24,9 +24,9 @@ export type RecentOrder = {
 
 export function RecentOrdersWidget({ recentOrders }: { recentOrders: RecentOrder[] }) {
   return (
-    <Card className="h-full border-gray-100 shadow-sm rounded-2xl overflow-hidden flex flex-col">
-      <CardHeader className="border-b border-gray-50 bg-white/50 px-6 py-5 flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-bold font-heading text-[var(--color-navy)]">Recent Orders</CardTitle>
+    <Card className="h-full bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-sm rounded-2xl overflow-hidden flex flex-col">
+      <CardHeader className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] px-6 py-5 flex flex-row items-center justify-between">
+        <CardTitle className="text-lg font-bold font-heading text-[hsl(var(--foreground))]">Recent Orders</CardTitle>
         <Button variant="outline" size="sm" className="h-8 text-xs font-bold rounded-lg hidden sm:flex" asChild>
           <Link href="/admin/orders">
             View All <ArrowUpRight className="ml-1 w-3 h-3" />
@@ -35,7 +35,7 @@ export function RecentOrdersWidget({ recentOrders }: { recentOrders: RecentOrder
       </CardHeader>
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
+          <thead className="bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]/60 font-medium border-b border-[hsl(var(--border))]">
             <tr>
               <th className="px-6 py-4 whitespace-nowrap">Invoice ID</th>
               <th className="px-6 py-4 whitespace-nowrap">Customer</th>
@@ -45,19 +45,19 @@ export function RecentOrdersWidget({ recentOrders }: { recentOrders: RecentOrder
               <th className="px-6 py-4 whitespace-nowrap text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50 bg-white">
+          <tbody className="divide-y divide-[hsl(var(--border))] bg-[hsl(var(--card))]">
             {recentOrders.map((order: RecentOrder) => (
-              <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 font-mono text-xs font-bold text-[var(--color-navy)] whitespace-nowrap">
+              <tr key={order.id} className="hover:bg-[hsl(var(--secondary))] transition-colors">
+                <td className="px-6 py-4 font-mono text-xs font-bold text-[hsl(var(--foreground))] whitespace-nowrap">
                   {order.id}
-                  <div className="text-[10px] text-gray-400 font-sans font-normal mt-0.5">{order.date}</div>
+                  <div className="text-[10px] text-[hsl(var(--foreground))]/40 font-sans font-normal mt-0.5">{order.date}</div>
                 </td>
-                <td className="px-6 py-4 font-medium text-[var(--color-navy)] whitespace-nowrap">
+                <td className="px-6 py-4 font-medium text-[hsl(var(--foreground))] whitespace-nowrap">
                   {order.user}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <p className="font-bold text-[var(--color-navy)]">{order.game}</p>
-                  <p className="text-xs text-gray-500">{order.product}</p>
+                  <p className="font-bold text-[hsl(var(--foreground))]">{order.game}</p>
+                  <p className="text-xs text-[hsl(var(--foreground))]/50">{order.product}</p>
                 </td>
                 <td className="px-6 py-4 font-bold text-[var(--color-teal)] whitespace-nowrap">
                   {formatCurrency(order.total)}
@@ -68,7 +68,7 @@ export function RecentOrdersWidget({ recentOrders }: { recentOrders: RecentOrder
                   </Badge>
                 </td>
                 <td className="px-6 py-4 text-right whitespace-nowrap">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--color-navy)] rounded-lg">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-[hsl(var(--foreground))]/40 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] rounded-lg">
                     <MoreHorizontal className="w-4 h-4" />
                   </Button>
                 </td>
