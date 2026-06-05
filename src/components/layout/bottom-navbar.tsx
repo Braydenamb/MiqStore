@@ -50,13 +50,13 @@ export function BottomNavbar() {
                 className={cn(
                   "relative flex flex-col items-center gap-1 px-3 py-2 rounded-2xl transition-all duration-300",
                   isActive
-                    ? "text-[var(--color-teal)]"
-                    : "text-gray-400 hover:text-[var(--color-teal)]/70"
+                    ? "text-[hsl(var(--primary))]"
+                    : "text-gray-400 hover:text-[hsl(var(--primary))]/70"
                 )}
               >
                 {/* Active background */}
                 {isActive && (
-                  <div className="absolute inset-0 rounded-2xl bg-[var(--color-teal)]/10" />
+                  <div className="absolute inset-0 rounded-2xl bg-[hsl(var(--primary))]/10" />
                 )}
 
                 {/* Icon */}
@@ -68,7 +68,7 @@ export function BottomNavbar() {
                 <span
                   className={cn(
                     "text-[10px] font-medium relative z-10 transition-colors",
-                    isActive && "font-bold text-[var(--color-teal)]"
+                    isActive && "font-bold text-[hsl(var(--primary))]"
                   )}
                 >
                   {tab.label}
@@ -76,7 +76,7 @@ export function BottomNavbar() {
 
                 {/* Active dot */}
                 {isActive && (
-                  <div className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[var(--color-teal)] shadow-[0_0_8px_var(--color-teal)]" />
+                  <div className="absolute -top-1 h-1.5 w-1.5 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_8px_hsl(var(--primary))]" />
                 )}
               </Link>
             );

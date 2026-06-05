@@ -10,7 +10,7 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
   if (pathname.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-[var(--color-navy)] text-white pt-16 pb-8 border-t border-[var(--color-teal)]/30">
+    <footer className="bg-[hsl(var(--secondary))] text-white pt-16 pb-8 border-t border-[hsl(var(--primary))]/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12">
           
@@ -26,13 +26,13 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
               The premium gaming top-up marketplace. Instant game top ups, memberships, and vouchers delivered in seconds.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[var(--color-teal)] transition-colors">
+              <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[hsl(var(--primary))] transition-colors">
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[var(--color-teal)] transition-colors">
+              <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[hsl(var(--primary))] transition-colors">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[var(--color-teal)] transition-colors">
+              <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[hsl(var(--primary))] transition-colors">
                 <Facebook className="h-4 w-4" />
               </a>
             </div>
@@ -40,7 +40,7 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
 
           {/* Links Cols */}
           <div>
-            <h4 className="font-heading font-semibold text-lg mb-4 text-[var(--color-cream)]">Company</h4>
+            <h4 className="font-heading font-semibold text-lg mb-4 text-[hsl(var(--background))]">Company</h4>
             <ul className="space-y-3">
               <li><Link href="/about" className="text-sm text-gray-400 hover:text-[var(--color-gold)] transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="text-sm text-gray-400 hover:text-[var(--color-gold)] transition-colors">Contact</Link></li>
@@ -49,7 +49,7 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
           </div>
 
           <div>
-            <h4 className="font-heading font-semibold text-lg mb-4 text-[var(--color-cream)]">Support</h4>
+            <h4 className="font-heading font-semibold text-lg mb-4 text-[hsl(var(--background))]">Support</h4>
             <ul className="space-y-3">
               <li><Link href="/help" className="text-sm text-gray-400 hover:text-[var(--color-gold)] transition-colors">Help Center</Link></li>
               <li><Link href="/terms" className="text-sm text-gray-400 hover:text-[var(--color-gold)] transition-colors">Terms of Service</Link></li>
@@ -58,7 +58,7 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
           </div>
 
           <div>
-            <h4 className="font-heading font-semibold text-lg mb-4 text-[var(--color-cream)]">Payment Methods</h4>
+            <h4 className="font-heading font-semibold text-lg mb-4 text-[hsl(var(--background))]">Payment Methods</h4>
             <div className="flex flex-wrap gap-2">
               {['QRIS', 'OVO', 'GoPay', 'DANA', 'BCA', 'Mandiri'].map((method) => (
                 <span key={method} className="px-3 py-1 bg-white/10 text-xs font-medium rounded-full text-gray-300">

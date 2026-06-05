@@ -127,12 +127,12 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
         <div>
-          <h1 className="text-2xl font-extrabold font-heading text-[var(--color-navy)]">Products Management</h1>
+          <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Products Management</h1>
           <p className="text-sm text-gray-500 mt-1">Manage games, top-up nominals, and pricing.</p>
         </div>
         <Button 
           onClick={() => isFormOpen ? resetForm() : setIsFormOpen(true)}
-          className="bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold rounded-xl shadow-lg shadow-[var(--color-navy)]/20 transition-all h-12 px-6"
+          className="bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold rounded-xl shadow-lg shadow-[hsl(var(--foreground))]/20 transition-all h-12 px-6"
         >
           {isFormOpen ? "Cancel" : <><Plus className="w-5 h-5 mr-2" /> Add New Game</>}
         </Button>
@@ -147,37 +147,37 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
             className="overflow-hidden"
           >
             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 mb-6">
-              <h2 className="text-lg font-bold font-heading text-[var(--color-navy)] mb-6">
+              <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] mb-6">
                 {formData.id ? "Edit Game" : "Create New Game"}
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-[var(--color-navy)]">Game Name</label>
+                    <label className="text-sm font-bold text-[hsl(var(--foreground))]">Game Name</label>
                     <Input 
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="e.g. Mobile Legends" 
-                      className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--color-teal)] focus:ring-[var(--color-teal)] rounded-xl" 
+                      className="h-12 bg-gray-50 border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-[var(--color-navy)]">Slug (URL)</label>
+                    <label className="text-sm font-bold text-[hsl(var(--foreground))]">Slug (URL)</label>
                     <Input 
                       value={formData.slug}
                       onChange={(e) => setFormData({...formData, slug: e.target.value})}
                       placeholder="e.g. mobile-legends" 
-                      className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--color-teal)] focus:ring-[var(--color-teal)] rounded-xl" 
+                      className="h-12 bg-gray-50 border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-[var(--color-navy)]">Description</label>
+                    <label className="text-sm font-bold text-[hsl(var(--foreground))]">Description</label>
                     <textarea 
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
                       placeholder="Short description for the game page..."
-                      className="w-full h-24 p-4 bg-gray-50 border border-gray-200 focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] rounded-xl text-sm outline-none resize-none"
+                      className="w-full h-24 p-4 bg-gray-50 border border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl text-sm outline-none resize-none"
                     />
                   </div>
                   
@@ -187,9 +187,9 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                       id="activeStatus" 
                       checked={formData.isActive}
                       onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                      className="w-4 h-4 rounded border-gray-300 text-[var(--color-teal)] focus:ring-[var(--color-teal)] accent-[var(--color-teal)] cursor-pointer" 
+                      className="w-4 h-4 rounded border-gray-300 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer" 
                     />
-                    <label htmlFor="activeStatus" className="text-sm font-bold text-[var(--color-navy)] cursor-pointer">Set as Active</label>
+                    <label htmlFor="activeStatus" className="text-sm font-bold text-[hsl(var(--foreground))] cursor-pointer">Set as Active</label>
                   </div>
                 </div>
 
@@ -216,7 +216,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                     <Button 
                       onClick={handleSubmit}
                       disabled={isLoading}
-                      className="bg-[var(--color-teal)] hover:bg-[var(--color-navy)] text-white font-bold rounded-xl h-12 px-8 w-full sm:w-auto"
+                      className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] text-white font-bold rounded-xl h-12 px-8 w-full sm:w-auto"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                       Save Game
@@ -276,14 +276,14 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                         ) : null}
                         <Gamepad2 className="w-6 h-6 text-gray-400 absolute -z-10" />
                       </div>
-                      <span className="font-bold text-[var(--color-navy)] text-base group-hover:text-[var(--color-teal)] transition-colors">{game.name}</span>
+                      <span className="font-bold text-[hsl(var(--foreground))] text-base group-hover:text-[hsl(var(--primary))] transition-colors">{game.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
                     /{game.slug}
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--color-teal)]/10 text-[var(--color-teal)] font-bold">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-bold">
                       {game._count?.items || 0}
                     </span>
                   </td>
@@ -317,7 +317,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--color-navy)] rounded-lg md:hidden">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[hsl(var(--foreground))] rounded-lg md:hidden">
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </div>
@@ -332,7 +332,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
           Showing {products.length > 0 ? 1 : 0} to {products.length} of {products.length} entries
           <div className="flex gap-1">
             <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg" disabled>Prev</Button>
-            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg bg-[var(--color-navy)] text-white border-[var(--color-navy)]">1</Button>
+            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg bg-[hsl(var(--secondary))] text-white border-[hsl(var(--foreground))]">1</Button>
             <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg" disabled>Next</Button>
           </div>
         </div>

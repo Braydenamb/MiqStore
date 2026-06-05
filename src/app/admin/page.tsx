@@ -55,12 +55,71 @@ export default async function AdminDashboardPage() {
     }),
   }));
 
+  // 6. Fetch Top Products
+  const topProductsRaw = await prisma.transaction.groupBy({
+    by: ['productId'],
+    _count: { productId: true },
+    _sum: { total: true },
+    where: { status: "SUCCESS" },
+    orderBy: { _count: { productId: 'desc' } },
+    take: 5,
+  });
+
+  // Since groupBy doesn't include relations, we fetch product details separately
+  const topProductIds = topProductsRaw.map((p) => p.productId);
+  const products = await prisma.product.findMany({
+    where: { id: { in: topProductIds } },
+    select: { id: true, name: true, image: true },
+  });
+
+  const topProducts = topProductsRaw.map((p) => {
+    const product = products.find((prod) => prod.id === p.productId);
+    return {
+      id: p.productId,
+      name: product?.name || "Unknown Product",
+      image: product?.image || null,
+      sales: p._count.productId,
+      revenue: p._sum.total || 0,
+    };
+  });
+
+  // 7. Fetch Recent Users
+  const recentUsers = await prisma.user.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  // 8. Mock Chart Data (Last 7 Days)
+  const chartData = [
+    { name: "Mon", revenue: 4000000 },
+    { name: "Tue", revenue: 3000000 },
+    { name: "Wed", revenue: 5000000 },
+    { name: "Thu", revenue: 2780000 },
+    { name: "Fri", revenue: 6890000 },
+    { name: "Sat", revenue: 8390000 },
+    { name: "Sun", revenue: 9490000 },
+  ];
+
   const initialData = {
     totalRevenue,
     totalOrders,
     totalUsers,
     pendingOrders,
     recentOrders: mappedRecentOrders,
+    topProducts,
+    recentUsers: recentUsers.map(u => ({
+      ...u,
+      createdAt: u.createdAt.toISOString()
+    })),
+    chartData,
   };
 
   return <DashboardClient initialData={initialData} />;

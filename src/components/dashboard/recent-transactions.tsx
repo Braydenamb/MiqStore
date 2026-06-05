@@ -16,13 +16,13 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
   const displayTransactions = transactions || [];
 
   return (
-    <div className="bg-[#FFF8EC] border border-[#E8DCC7] rounded-[24px] p-6 sm:p-8 shadow-sm">
+    <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-[24px] p-6 sm:p-8 shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="font-heading font-bold text-lg text-[var(--color-navy)] flex items-center gap-2">
-          <Receipt className="h-5 w-5 text-[var(--color-teal)]" />
+        <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] flex items-center gap-2">
+          <Receipt className="h-5 w-5 text-[hsl(var(--primary))]" />
           Transaksi Terakhir
         </h3>
-        <Button variant="ghost" className="text-sm font-bold text-[var(--color-teal)] hover:bg-[#E8DCC7]/30 hover:text-[var(--color-navy)] rounded-xl h-9">
+        <Button variant="ghost" className="text-sm font-bold text-[hsl(var(--primary))] hover:bg-[hsl(var(--border))]/30 hover:text-[hsl(var(--foreground))] rounded-xl h-9">
           Lihat Semua
         </Button>
       </div>
@@ -30,19 +30,19 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
       <div className="flex flex-col gap-3">
         {displayTransactions.length > 0 ? (
           displayTransactions.map((trx) => (
-            <div key={trx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[#E8DCC7]/60 hover:border-[#E8DCC7] transition-colors group">
+            <div key={trx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[hsl(var(--border))]/60 hover:border-[hsl(var(--border))] transition-colors group">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[var(--color-teal)]/20 to-[var(--color-navy)]/10 flex items-center justify-center font-bold text-[var(--color-navy)] shadow-sm group-hover:scale-105 transition-transform">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[hsl(var(--primary))]/20 to-[hsl(var(--foreground))]/10 flex items-center justify-center font-bold text-[hsl(var(--foreground))] shadow-sm group-hover:scale-105 transition-transform">
                   {trx.game.substring(0, 1)}
                 </div>
                 <div>
-                  <h4 className="font-bold text-[var(--color-navy)] text-sm">{trx.game}</h4>
-                  <p className="text-[11px] font-medium text-[var(--color-navy)]/50 mt-0.5">{trx.product} &bull; {trx.date}</p>
+                  <h4 className="font-bold text-[hsl(var(--foreground))] text-sm">{trx.game}</h4>
+                  <p className="text-[11px] font-medium text-[hsl(var(--foreground))]/50 mt-0.5">{trx.product} &bull; {trx.date}</p>
                 </div>
               </div>
               
               <div className="flex flex-col items-end gap-1">
-                <span className="font-bold text-sm text-[var(--color-navy)]">
+                <span className="font-bold text-sm text-[hsl(var(--foreground))]">
                   -Rp {trx.amount.toLocaleString("id-ID")}
                 </span>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -57,7 +57,7 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
           ))
         ) : (
           <div className="text-center py-8">
-            <p className="text-sm text-[var(--color-navy)]/60">Belum ada transaksi.</p>
+            <p className="text-sm text-[hsl(var(--foreground))]/60">Belum ada transaksi.</p>
           </div>
         )}
       </div>

@@ -72,11 +72,11 @@ export default function GameDetailPage() {
 
   if (!game) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-[var(--color-cream)] texture-overlay text-[var(--color-navy)]">
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-[hsl(var(--background))] texture-overlay text-[hsl(var(--foreground))]">
         <div className="text-center relative z-10">
-          <Gamepad2 className="h-16 w-16 text-[var(--color-teal)]/40 mx-auto mb-4 animate-pulse" />
+          <Gamepad2 className="h-16 w-16 text-[hsl(var(--primary))]/40 mx-auto mb-4 animate-pulse" />
           <h2 className="text-2xl font-bold font-heading mb-2">Game tidak ditemukan</h2>
-          <Button variant="outline" className="mt-4 border-[var(--color-teal)] text-[var(--color-teal)] bg-transparent hover:bg-[var(--color-teal)]/10" asChild>
+          <Button variant="outline" className="mt-4 border-[hsl(var(--primary))] text-[hsl(var(--primary))] bg-transparent hover:bg-[hsl(var(--primary))]/10" asChild>
             <Link href="/games">Kembali ke katalog</Link>
           </Button>
         </div>
@@ -134,7 +134,7 @@ export default function GameDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-cream)] texture-overlay text-[var(--color-navy)] pb-32 lg:pb-16 font-sans">
+    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay text-[hsl(var(--foreground))] pb-32 lg:pb-16 font-sans">
       <GameBanner game={game} />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-8 relative z-20">

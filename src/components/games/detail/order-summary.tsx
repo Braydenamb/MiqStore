@@ -37,11 +37,11 @@ export function OrderSummary({
     <div className="lg:col-span-4 space-y-6">
       {/* Sticky Order Summary (Desktop Only) */}
       <div className="hidden lg:block sticky top-24">
-        <div className="bg-white rounded-2xl border border-[var(--color-teal)]/20 p-6 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[var(--color-teal)] to-transparent opacity-50" />
+        <div className="bg-white rounded-2xl border border-[hsl(var(--primary))]/20 p-6 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[hsl(var(--primary))] to-transparent opacity-50" />
           
-          <h3 className="text-lg font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
-            <Info className="h-5 w-5 text-[var(--color-teal)]" /> Ringkasan Pesanan
+          <h3 className="text-lg font-bold font-heading mb-4 flex items-center gap-2 text-[hsl(var(--foreground))]">
+            <Info className="h-5 w-5 text-[hsl(var(--primary))]" /> Ringkasan Pesanan
           </h3>
 
           <div className="space-y-4">
@@ -49,8 +49,8 @@ export function OrderSummary({
             <div className="flex justify-between items-start">
               <span className="text-sm text-gray-500">Produk</span>
               <div className="text-right">
-                <p className="text-sm font-bold text-[var(--color-navy)]">{game.name}</p>
-                <p className="text-xs text-[var(--color-teal)] font-medium">{chosenProduct?.name || "-"}</p>
+                <p className="text-sm font-bold text-[hsl(var(--foreground))]">{game.name}</p>
+                <p className="text-xs text-[hsl(var(--primary))] font-medium">{chosenProduct?.name || "-"}</p>
               </div>
             </div>
             
@@ -61,7 +61,7 @@ export function OrderSummary({
               <div className="flex justify-between items-start">
                 <span className="text-sm text-gray-500">Detail Akun</span>
                 <div className="text-right">
-                  <p className="text-sm font-mono text-[var(--color-navy)] max-w-[150px] truncate">
+                  <p className="text-sm font-mono text-[hsl(var(--foreground))] max-w-[150px] truncate">
                     {fieldValues[game.fields[0]?.key] || "-"}
                   </p>
                 </div>
@@ -73,7 +73,7 @@ export function OrderSummary({
             {/* Payment */}
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">Pembayaran</span>
-              <span className="text-sm font-bold text-[var(--color-navy)]">
+              <span className="text-sm font-bold text-[hsl(var(--foreground))]">
                 {chosenPayment?.name || "-"}
               </span>
             </div>
@@ -82,16 +82,16 @@ export function OrderSummary({
             <div className="bg-gray-50 rounded-xl p-3 space-y-2 border border-gray-100 mt-4">
               <div className="flex justify-between text-xs">
                 <span className="text-gray-500">Harga</span>
-                <span className="text-[var(--color-navy)] font-medium">{chosenProduct ? formatCurrency(chosenProduct.price) : "-"}</span>
+                <span className="text-[hsl(var(--foreground))] font-medium">{chosenProduct ? formatCurrency(chosenProduct.price) : "-"}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-gray-500">Biaya Admin</span>
-                <span className="text-[var(--color-navy)] font-medium">{chosenPayment ? formatCurrency(fee) : "-"}</span>
+                <span className="text-[hsl(var(--foreground))] font-medium">{chosenPayment ? formatCurrency(fee) : "-"}</span>
               </div>
               <Separator className="bg-gray-200 my-2" />
               <div className="flex justify-between items-end">
-                <span className="text-sm font-bold text-[var(--color-navy)]">Total</span>
-                <span className="text-xl font-extrabold text-[var(--color-teal)]">
+                <span className="text-sm font-bold text-[hsl(var(--foreground))]">Total</span>
+                <span className="text-xl font-extrabold text-[hsl(var(--primary))]">
                   {chosenProduct ? formatCurrency(total) : "-"}
                 </span>
               </div>
@@ -101,7 +101,7 @@ export function OrderSummary({
               size="lg"
               onClick={onCheckout}
               disabled={isSubmitting || !canCheckout}
-              className="w-full h-12 rounded-xl bg-[var(--color-teal)] hover:bg-[var(--color-teal)]/90 text-white font-bold text-base transition-all disabled:opacity-50 mt-4 shadow-lg shadow-[var(--color-teal)]/20"
+              className="w-full h-12 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white font-bold text-base transition-all disabled:opacity-50 mt-4 shadow-lg shadow-[hsl(var(--primary))]/20"
             >
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Memproses...</>
@@ -114,13 +114,13 @@ export function OrderSummary({
 
         {/* FAQ Section (Desktop) */}
         <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
+          <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[hsl(var(--foreground))]">
             <HelpCircle className="h-4 w-4" /> Bantuan Top Up
           </h3>
           <Accordion type="single" collapsible className="space-y-2">
             {FAQ_ITEMS.slice(0, 3).map((faq, i) => (
               <AccordionItem value={`faq-${i}`} key={i} className="border-none">
-                <AccordionTrigger className="hover:no-underline py-2 text-xs font-semibold text-left text-[var(--color-navy)]/70 hover:text-[var(--color-navy)]">
+                <AccordionTrigger className="hover:no-underline py-2 text-xs font-semibold text-left text-[hsl(var(--foreground))]/70 hover:text-[hsl(var(--foreground))]">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-[11px] text-gray-500 leading-relaxed pb-2">
@@ -133,12 +133,12 @@ export function OrderSummary({
 
         {/* Dummy Recent Orders (Desktop) */}
         <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
-          <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+          <History className="h-8 w-8 text-[hsl(var(--primary))]/40 shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
             <div className="animate-pulse">
-              <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
-              <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+              <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">0812****889 top up 1050 Diamonds</p>
+              <p className="text-[10px] text-[hsl(var(--primary))]">Beberapa detik yang lalu</p>
             </div>
           </div>
         </div>
@@ -148,7 +148,7 @@ export function OrderSummary({
       <div className="lg:hidden space-y-6">
         {/* FAQ Mobile */}
         <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-          <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[var(--color-navy)]">
+          <h3 className="text-sm font-bold font-heading mb-4 flex items-center gap-2 text-[hsl(var(--foreground))]">
             <HelpCircle className="h-4 w-4" /> Cara Top Up
           </h3>
           <ol className="list-decimal pl-4 space-y-2 text-xs text-gray-600">
@@ -162,12 +162,12 @@ export function OrderSummary({
 
         {/* Dummy Recent Orders (Mobile) */}
         <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 overflow-hidden shadow-sm">
-          <History className="h-8 w-8 text-[var(--color-teal)]/40 shrink-0" />
+          <History className="h-8 w-8 text-[hsl(var(--primary))]/40 shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-xs text-gray-500 font-medium mb-0.5">Transaksi Terakhir</p>
             <div className="animate-pulse">
-              <p className="text-sm font-bold text-[var(--color-navy)] truncate">0812****889 top up 1050 Diamonds</p>
-              <p className="text-[10px] text-[var(--color-teal)]">Beberapa detik yang lalu</p>
+              <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">0812****889 top up 1050 Diamonds</p>
+              <p className="text-[10px] text-[hsl(var(--primary))]">Beberapa detik yang lalu</p>
             </div>
           </div>
         </div>

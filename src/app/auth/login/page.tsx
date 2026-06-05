@@ -64,7 +64,7 @@ export default function LoginPage() {
         {/* Social Login */}
         <Button 
           variant="outline" 
-          className="w-full gap-3 h-12 rounded-xl border-white/50 bg-white/40 hover:bg-white/80 hover:border-white transition-all premium-shadow font-bold text-[var(--color-navy)]"
+          className="w-full gap-3 h-12 rounded-xl border-white/50 bg-white/40 hover:bg-white/80 hover:border-white transition-all premium-shadow font-bold text-[hsl(var(--foreground))]"
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -90,10 +90,10 @@ export default function LoginPage() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-[var(--color-navy)]/10" />
+            <span className="w-full border-t border-[hsl(var(--foreground))]/10" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-transparent px-2 text-[var(--color-navy)]/40 font-bold">atau</span>
+            <span className="bg-transparent px-2 text-[hsl(var(--foreground))]/40 font-bold">atau</span>
           </div>
         </div>
 
@@ -131,13 +131,13 @@ export default function LoginPage() {
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input 
                   type="checkbox" 
-                  className="w-3.5 h-3.5 rounded-sm border-[var(--color-navy)]/30 text-[var(--color-teal)] focus:ring-[var(--color-teal)] transition-colors group-hover:border-[var(--color-teal)] accent-[var(--color-teal)]" 
+                  className="w-3.5 h-3.5 rounded-sm border-[hsl(var(--foreground))]/30 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] transition-colors group-hover:border-[hsl(var(--primary))] accent-[hsl(var(--primary))]" 
                 />
-                <span className="text-[11px] font-bold text-[var(--color-navy)]/60 group-hover:text-[var(--color-navy)] transition-colors">
+                <span className="text-[11px] font-bold text-[hsl(var(--foreground))]/60 group-hover:text-[hsl(var(--foreground))] transition-colors">
                   Ingat saya
                 </span>
               </label>
-              <a href="#" className="text-[11px] font-bold text-[var(--color-teal)] hover:text-[var(--color-gold)] transition-colors">
+              <a href="#" className="text-[11px] font-bold text-[hsl(var(--primary))] hover:text-[var(--color-gold)] transition-colors">
                 Lupa password?
               </a>
             </div>
@@ -146,7 +146,7 @@ export default function LoginPage() {
           <Button 
             type="submit" 
             disabled={isLoading}
-            className="w-full h-12 rounded-xl bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold text-[15px] transition-colors shadow-lg shadow-[var(--color-navy)]/20 mt-2"
+            className="w-full h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold text-[15px] transition-colors shadow-lg shadow-[hsl(var(--foreground))]/20 mt-2"
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" />

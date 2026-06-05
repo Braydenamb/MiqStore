@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (isLoginPage) {
-    return <div className="min-h-screen bg-[var(--color-cream)] texture-overlay">{children}</div>;
+    return <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay">{children}</div>;
   }
 
   return (
@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-[var(--color-navy)]/40 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-[hsl(var(--secondary))]/40 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.div

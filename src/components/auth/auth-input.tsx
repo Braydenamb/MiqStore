@@ -16,20 +16,20 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
 
     return (
       <div className="space-y-1.5 w-full">
-        <label className="text-xs font-bold text-[var(--color-navy)] ml-1">
+        <label className="text-xs font-bold text-[hsl(var(--foreground))] ml-1">
           {label}
         </label>
         <div className="relative group">
           {icon && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-navy)]/40 group-focus-within:text-[var(--color-teal)] transition-colors">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))]/40 group-focus-within:text-[hsl(var(--primary))] transition-colors">
               {icon}
             </div>
           )}
           <input
             type={inputType}
             className={cn(
-              "flex h-12 w-full rounded-xl border border-white/50 bg-white/50 px-4 py-2 text-sm font-medium text-[var(--color-navy)] placeholder:text-[var(--color-navy)]/30 outline-none transition-all duration-300",
-              "focus:bg-white focus:border-[var(--color-teal)] focus:ring-4 focus:ring-[var(--color-teal)]/10",
+              "flex h-12 w-full rounded-xl border border-white/50 bg-white/50 px-4 py-2 text-sm font-medium text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))]/30 outline-none transition-all duration-300",
+              "focus:bg-white focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10",
               "hover:border-white hover:bg-white/70",
               icon && "pl-10",
               isPassword && "pr-10",
@@ -43,7 +43,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--color-navy)]/40 hover:text-[var(--color-teal)] transition-colors"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))]/40 hover:text-[hsl(var(--primary))] transition-colors"
               aria-label="Toggle password"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

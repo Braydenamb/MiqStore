@@ -9,8 +9,8 @@ interface LoadingScreenProps {
 
 export function LoadingScreen({ message = "Menyiapkan inventory game...", isOverlay = false }: LoadingScreenProps) {
   const containerClasses = isOverlay
-    ? "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[var(--color-cream)] dark:bg-[#1a1c23] texture-overlay"
-    : "min-h-[100dvh] w-full flex flex-col items-center justify-center bg-[var(--color-cream)] dark:bg-[#1a1c23] texture-overlay";
+    ? "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[hsl(var(--background))] dark:bg-[#1a1c23] texture-overlay"
+    : "min-h-[100dvh] w-full flex flex-col items-center justify-center bg-[hsl(var(--background))] dark:bg-[#1a1c23] texture-overlay";
 
   return (
     <motion.div
@@ -22,7 +22,7 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
     >
       {/* Background gradients for soft vignette & tactile depth */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.04)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-navy)]/5 via-transparent to-[var(--color-teal)]/5 dark:from-[#0B1D34]/40 dark:to-[#073B4C]/20 opacity-50 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-[hsl(var(--foreground))]/5 via-transparent to-[hsl(var(--primary))]/5 dark:from-[#0B1D34]/40 dark:to-[#073B4C]/20 opacity-50 pointer-events-none" />
       
       {/* Floating particles (very subtle) */}
       <motion.div 
@@ -33,7 +33,7 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
       <motion.div 
         animate={{ y: [0, 10, 0], opacity: [0.2, 0.4, 0.2] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-1/3 right-1/4 w-40 h-40 bg-[var(--color-teal)]/10 dark:bg-[var(--color-teal)]/10 rounded-full blur-[50px] pointer-events-none"
+        className="absolute bottom-1/3 right-1/4 w-40 h-40 bg-[hsl(var(--primary))]/10 dark:bg-[hsl(var(--primary))]/10 rounded-full blur-[50px] pointer-events-none"
       />
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-sm">
@@ -44,7 +44,7 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
           className="mb-10 relative"
         >
           {/* Subtle logo glow */}
-          <div className="absolute inset-0 bg-[var(--color-teal)]/10 dark:bg-[var(--color-teal)]/30 blur-2xl rounded-full scale-[1.8] -z-10" />
+          <div className="absolute inset-0 bg-[hsl(var(--primary))]/10 dark:bg-[hsl(var(--primary))]/30 blur-2xl rounded-full scale-[1.8] -z-10" />
           <img 
             src="/icons/logo.png" 
             alt="MiqStore Logo" 
@@ -65,7 +65,7 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
                 delay: i * 0.2,
                 ease: "easeInOut",
               }}
-              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] bg-[var(--color-navy)] dark:bg-[var(--color-cream)] shadow-sm"
+              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] bg-[hsl(var(--secondary))] dark:bg-[hsl(var(--background))] shadow-sm"
             />
           ))}
         </div>
@@ -77,10 +77,10 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
           transition={{ delay: 0.2, duration: 0.8 }}
           className="flex flex-col items-center"
         >
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-[var(--color-navy)] dark:text-[var(--color-cream)] mb-2 tracking-wider">
+          <h2 className="font-heading text-lg sm:text-xl font-bold text-[hsl(var(--foreground))] dark:text-[hsl(var(--background))] mb-2 tracking-wider">
             Loading MiqStore
           </h2>
-          <p className="text-xs sm:text-sm text-[var(--color-navy)]/60 dark:text-[var(--color-cream)]/50 font-medium">
+          <p className="text-xs sm:text-sm text-[hsl(var(--foreground))]/60 dark:text-[hsl(var(--background))]/50 font-medium">
             {message}
           </p>
         </motion.div>

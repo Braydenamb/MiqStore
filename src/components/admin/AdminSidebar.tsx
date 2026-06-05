@@ -46,7 +46,7 @@ export function AdminSidebar({
       <Button
         variant="outline"
         size="icon"
-        className="absolute -right-4 top-6 h-8 w-8 rounded-full border-gray-200 bg-white shadow-sm z-50 text-[var(--color-navy)]"
+        className="absolute -right-4 top-6 h-8 w-8 rounded-full border-gray-200 bg-white shadow-sm z-50 text-[hsl(var(--foreground))]"
         onClick={() => setCollapsed(!collapsed)}
       >
         <ChevronLeft className={cn("h-4 w-4 transition-transform", collapsed && "rotate-180")} />
@@ -55,11 +55,11 @@ export function AdminSidebar({
       {/* Logo */}
       <div className="h-20 flex items-center px-6 border-b border-gray-50">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[var(--color-navy)] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-[hsl(var(--secondary))] flex items-center justify-center shrink-0">
             <Gamepad2 className="h-5 w-5 text-[var(--color-gold)]" />
           </div>
           {!collapsed && (
-            <span className="font-heading text-xl font-bold tracking-tight text-[var(--color-navy)]">
+            <span className="font-heading text-xl font-bold tracking-tight text-[hsl(var(--foreground))]">
               MiqAdmin
             </span>
           )}
@@ -78,21 +78,21 @@ export function AdminSidebar({
               className={cn(
                 "relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group",
                 isActive
-                  ? "text-[var(--color-navy)]"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-[var(--color-navy)]"
+                  ? "text-[hsl(var(--foreground))]"
+                  : "text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))]"
               )}
             >
               {isActive && (
                 <motion.div
                   layoutId="sidebar-active"
-                  className="absolute inset-0 bg-[var(--color-teal)]/5 rounded-xl"
+                  className="absolute inset-0 bg-[hsl(var(--primary))]/5 rounded-xl"
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               )}
               <item.icon
                 className={cn(
                   "h-5 w-5 shrink-0 relative z-10 transition-colors",
-                  isActive ? "text-[var(--color-teal)]" : "text-gray-400 group-hover:text-[var(--color-teal)]"
+                  isActive ? "text-[hsl(var(--primary))]" : "text-gray-400 group-hover:text-[hsl(var(--primary))]"
                 )}
               />
               {!collapsed && (
@@ -110,11 +110,11 @@ export function AdminSidebar({
         <Link
           href="/admin/settings"
           className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-gray-500 hover:bg-gray-50 hover:text-[var(--color-navy)]",
-            pathname.startsWith("/admin/settings") && "bg-[var(--color-teal)]/5 text-[var(--color-navy)] font-bold"
+            "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-gray-500 hover:bg-gray-50 hover:text-[hsl(var(--foreground))]",
+            pathname.startsWith("/admin/settings") && "bg-[hsl(var(--primary))]/5 text-[hsl(var(--foreground))] font-bold"
           )}
         >
-          <Settings className={cn("h-5 w-5 shrink-0", pathname.startsWith("/admin/settings") ? "text-[var(--color-teal)]" : "text-gray-400")} />
+          <Settings className={cn("h-5 w-5 shrink-0", pathname.startsWith("/admin/settings") ? "text-[hsl(var(--primary))]" : "text-gray-400")} />
           {!collapsed && <span className="text-sm font-medium">Settings</span>}
         </Link>
         <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-gray-500 hover:bg-red-50 hover:text-red-600">

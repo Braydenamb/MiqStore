@@ -31,13 +31,13 @@ export function UserIdForm({ fields, fieldValues, isHydrated, onFieldChange }: U
               placeholder={field.placeholder}
               value={fieldValues[field.key] || ""}
               onChange={(e) => onFieldChange(field.key, e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 text-[var(--color-navy)] placeholder:text-gray-400 focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] rounded-xl transition-all font-mono"
+              className="h-12 bg-gray-50 border-gray-200 text-[hsl(var(--foreground))] placeholder:text-gray-400 focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl transition-all font-mono"
             />
           </div>
         ))}
       </div>
       {isHydrated && Object.values(fieldValues).some(v => v) && (
-        <p className="mt-3 text-xs text-[var(--color-teal)] flex items-center gap-1">
+        <p className="mt-3 text-xs text-[hsl(var(--primary))] flex items-center gap-1">
           <CheckCircle2 className="h-3 w-3" /> Data tersimpan otomatis
         </p>
       )}

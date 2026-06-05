@@ -57,7 +57,7 @@ const MEMBERSHIP_TIERS = {
   BRONZE: { name: "Bronze", next: "Silver", pointsReq: 1000, color: "text-[#CD7F32]" },
   SILVER: { name: "Silver", next: "Gold", pointsReq: 2500, color: "text-slate-400" },
   GOLD: { name: "Gold", next: "Diamond", pointsReq: 5000, color: "text-[var(--color-gold)]" },
-  DIAMOND: { name: "Diamond", next: "Max", pointsReq: 10000, color: "text-[var(--color-teal)]" }
+  DIAMOND: { name: "Diamond", next: "Max", pointsReq: 10000, color: "text-[hsl(var(--primary))]" }
 };
 
 export default function DashboardLayoutClient({
@@ -88,9 +88,9 @@ export default function DashboardLayoutClient({
   const progressPercent = Math.min(100, (rewardPoints / nextTierReq) * 100);
 
   return (
-    <div className="flex min-h-screen bg-[#F6EFE2] texture-overlay text-[var(--color-navy)]">
+    <div className="flex min-h-screen bg-[hsl(var(--background))] texture-overlay text-[hsl(var(--foreground))]">
       {/* Sidebar */}
-      <aside className="sticky top-0 hidden lg:flex w-[280px] h-screen flex-col justify-between shrink-0 p-4 border-r border-[#E8DCC7]/50 overflow-y-auto no-scrollbar z-20 bg-white/40 backdrop-blur-xl">
+      <aside className="sticky top-0 hidden lg:flex w-[280px] h-screen flex-col justify-between shrink-0 p-4 border-r border-[hsl(var(--border))]/50 overflow-y-auto no-scrollbar z-20 bg-white/40 backdrop-blur-xl">
         <div className="flex flex-col gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 px-4 pt-2 group">
@@ -105,13 +105,13 @@ export default function DashboardLayoutClient({
           </Link>
 
           {/* User Info (Profile Card) */}
-          <div className="flex flex-col p-4 rounded-2xl bg-[#FFF8EC] border border-[#E8DCC7] shadow-sm transition-all">
+          <div className="flex flex-col p-4 rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-all">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-teal)] text-white font-bold text-lg shadow-md">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[hsl(var(--primary))] text-white font-bold text-lg shadow-md">
                 {session?.user?.name?.[0]?.toUpperCase() || "M"}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-[var(--color-navy)] truncate">{session?.user?.name || "Miq User"}</p>
+                <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">{session?.user?.name || "Miq User"}</p>
                 <div className="flex items-center gap-1 mt-0.5">
                   <Crown className={cn("h-3.5 w-3.5", currentTier.color)} />
                   <span className={cn("text-xs font-bold", currentTier.color)}>{currentTier.name} Member</span>
@@ -120,12 +120,12 @@ export default function DashboardLayoutClient({
             </div>
             {/* XP Bar */}
             {currentTier.next !== "Max" && (
-              <div className="mt-4 pt-3 border-t border-[#E8DCC7]">
+              <div className="mt-4 pt-3 border-t border-[hsl(var(--border))]">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-bold text-[var(--color-teal)]/70">XP {rewardPoints.toLocaleString("id-ID")} / {nextTierReq.toLocaleString("id-ID")}</span>
+                  <span className="text-[10px] font-bold text-[hsl(var(--primary))]/70">XP {rewardPoints.toLocaleString("id-ID")} / {nextTierReq.toLocaleString("id-ID")}</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[var(--color-teal)]/10 overflow-hidden">
-                  <div className="h-full rounded-full bg-[var(--color-teal)]" style={{ width: `${progressPercent}%` }} />
+                <div className="h-2 w-full rounded-full bg-[hsl(var(--primary))]/10 overflow-hidden">
+                  <div className="h-full rounded-full bg-[hsl(var(--primary))]" style={{ width: `${progressPercent}%` }} />
                 </div>
               </div>
             )}
@@ -142,11 +142,11 @@ export default function DashboardLayoutClient({
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all duration-300",
                     isActive
-                      ? "bg-[var(--color-teal)]/10 text-[var(--color-teal)] font-bold shadow-sm"
-                      : "text-[var(--color-navy)]/70 font-medium hover:bg-[var(--color-teal)]/5 hover:text-[var(--color-teal)]"
+                      ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-bold shadow-sm"
+                      : "text-[hsl(var(--foreground))]/70 font-medium hover:bg-[hsl(var(--primary))]/5 hover:text-[hsl(var(--primary))]"
                   )}
                 >
-                  <link.icon className={cn("h-4.5 w-4.5 shrink-0", isActive ? "text-[var(--color-teal)]" : "text-[var(--color-navy)]/60")} />
+                  <link.icon className={cn("h-4.5 w-4.5 shrink-0", isActive ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--foreground))]/60")} />
                   <span className="flex-1">{link.label}</span>
                   {link.badge && !isActive && (
                     <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-[var(--color-gold)]/20 text-[var(--color-gold)]">{link.badge}</span>
@@ -179,16 +179,16 @@ export default function DashboardLayoutClient({
 
         <div className="flex flex-col gap-4 mt-6">
           {/* Top Up Lebih Cepat Card */}
-          <div className="relative overflow-hidden rounded-2xl p-4 bg-[#FFF8EC] border border-[#E8DCC7] shadow-sm">
+          <div className="relative overflow-hidden rounded-2xl p-4 bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm">
             <div className="absolute right-[-10px] bottom-[-10px] opacity-10">
-              <Gamepad2 className="h-20 w-20 text-[var(--color-teal)]" />
+              <Gamepad2 className="h-20 w-20 text-[hsl(var(--primary))]" />
             </div>
             <div className="relative z-10">
-              <h4 className="font-bold text-sm text-[var(--color-navy)] mb-1 flex items-center gap-1">
+              <h4 className="font-bold text-sm text-[hsl(var(--foreground))] mb-1 flex items-center gap-1">
                 Top Up Lebih Cepat <Sparkles className="h-3 w-3 text-[var(--color-gold)]" />
               </h4>
-              <p className="text-xs text-[var(--color-navy)]/60 mb-4 leading-relaxed font-medium">Simpan metode favoritmu untuk top up lebih cepat!</p>
-              <Button size="sm" className="w-full text-xs font-bold bg-[var(--color-teal)] text-white hover:bg-[var(--color-navy)] rounded-xl h-9">
+              <p className="text-xs text-[hsl(var(--foreground))]/60 mb-4 leading-relaxed font-medium">Simpan metode favoritmu untuk top up lebih cepat!</p>
+              <Button size="sm" className="w-full text-xs font-bold bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--secondary))] rounded-xl h-9">
                 Atur Sekarang &rarr;
               </Button>
             </div>
@@ -209,7 +209,7 @@ export default function DashboardLayoutClient({
       <div className="flex-1 flex flex-col min-w-0 relative">
         
         {/* Top Navbar */}
-        <header className="sticky top-0 flex items-center justify-between px-6 lg:px-10 py-5 border-b border-[#E8DCC7]/50 shrink-0 bg-[#F6EFE2]/90 backdrop-blur-md z-30">
+        <header className="sticky top-0 flex items-center justify-between px-6 lg:px-10 py-5 border-b border-[hsl(var(--border))]/50 shrink-0 bg-[hsl(var(--background))]/90 backdrop-blur-md z-30">
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
             {topNavLinks.map((link) => {
@@ -220,7 +220,7 @@ export default function DashboardLayoutClient({
                   href={link.href}
                   className={cn(
                     "text-sm font-bold transition-colors flex items-center gap-2",
-                    isActive ? "text-[var(--color-teal)]" : "text-[var(--color-navy)] hover:text-[var(--color-teal)]"
+                    isActive ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]"
                   )}
                 >
                   {link.label}
@@ -245,25 +245,25 @@ export default function DashboardLayoutClient({
               }}
               className="relative hidden md:flex items-center"
             >
-              <Search className="absolute left-4 h-4 w-4 text-[var(--color-teal)]/50" />
+              <Search className="absolute left-4 h-4 w-4 text-[hsl(var(--primary))]/50" />
               <input 
                 type="text" 
                 name="q"
                 placeholder="Cari game, voucher, dll..." 
-                className="h-11 w-72 rounded-full bg-white border border-[#E8DCC7] pl-11 pr-4 text-sm font-medium outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] transition-all shadow-sm"
+                className="h-11 w-72 rounded-full bg-white border border-[hsl(var(--border))] pl-11 pr-4 text-sm font-medium outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] transition-all shadow-sm"
               />
             </form>
             
-            <Button variant="ghost" size="icon" className="rounded-full relative text-[var(--color-navy)] hover:bg-[#E8DCC7]/50 h-10 w-10">
+            <Button variant="ghost" size="icon" className="rounded-full relative text-[hsl(var(--foreground))] hover:bg-[hsl(var(--border))]/50 h-10 w-10">
               <Bell className="h-5 w-5" />
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white" />
             </Button>
             
-            <Button variant="ghost" size="icon" className="md:hidden rounded-full relative text-[var(--color-navy)] hover:bg-[#E8DCC7]/50 h-10 w-10">
+            <Button variant="ghost" size="icon" className="md:hidden rounded-full relative text-[hsl(var(--foreground))] hover:bg-[hsl(var(--border))]/50 h-10 w-10">
               <Search className="h-5 w-5" />
             </Button>
 
-            <div className="hidden sm:flex items-center justify-center h-10 w-10 rounded-full bg-[var(--color-teal)] text-white font-bold cursor-pointer hover:bg-[var(--color-navy)] transition-colors shadow-sm">
+            <div className="hidden sm:flex items-center justify-center h-10 w-10 rounded-full bg-[hsl(var(--primary))] text-white font-bold cursor-pointer hover:bg-[hsl(var(--secondary))] transition-colors shadow-sm">
               {session?.user?.name?.[0]?.toUpperCase() || "M"}
             </div>
           </div>

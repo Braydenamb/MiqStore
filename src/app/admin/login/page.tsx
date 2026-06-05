@@ -43,13 +43,13 @@ export default function AdminLogin() {
           <div className="p-8 text-center border-b border-gray-50 relative overflow-hidden">
             {/* Soft decorative blur */}
             <div className="absolute -top-12 -right-12 w-32 h-32 bg-[var(--color-gold)]/20 rounded-full blur-3xl" />
-            <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[var(--color-teal)]/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[hsl(var(--primary))]/20 rounded-full blur-3xl" />
             
             <div className="relative z-10">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-[var(--color-navy)] flex items-center justify-center mb-4 shadow-lg shadow-[var(--color-navy)]/20">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-[hsl(var(--secondary))] flex items-center justify-center mb-4 shadow-lg shadow-[hsl(var(--foreground))]/20">
                 <Gamepad2 className="w-8 h-8 text-[var(--color-gold)]" />
               </div>
-              <h1 className="text-2xl font-extrabold font-heading text-[var(--color-navy)]">MiqAdmin Portal</h1>
+              <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">MiqAdmin Portal</h1>
               <p className="text-sm text-gray-500 mt-1">Masuk untuk mengelola MiqStore</p>
             </div>
           </div>
@@ -58,21 +58,21 @@ export default function AdminLogin() {
           <form onSubmit={handleLogin} className="p-8 space-y-6 bg-gray-50/30">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-bold text-[var(--color-navy)] uppercase tracking-wider">Email Address</Label>
+                <Label htmlFor="email" className="text-xs font-bold text-[hsl(var(--foreground))] uppercase tracking-wider">Email Address</Label>
                 <Input 
                   id="email" 
                   type="email" 
                   placeholder="admin@miqstore.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 bg-white border-gray-200 focus:border-[var(--color-teal)] focus:ring-[var(--color-teal)] rounded-xl px-4"
+                  className="h-12 bg-white border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl px-4"
                 />
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs font-bold text-[var(--color-navy)] uppercase tracking-wider">Password</Label>
-                  <a href="#" className="text-xs font-bold text-[var(--color-teal)] hover:underline">Lupa Password?</a>
+                  <Label htmlFor="password" className="text-xs font-bold text-[hsl(var(--foreground))] uppercase tracking-wider">Password</Label>
+                  <a href="#" className="text-xs font-bold text-[hsl(var(--primary))] hover:underline">Lupa Password?</a>
                 </div>
                 <div className="relative">
                   <Input 
@@ -81,7 +81,7 @@ export default function AdminLogin() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 bg-white border-gray-200 focus:border-[var(--color-teal)] focus:ring-[var(--color-teal)] rounded-xl pl-4 pr-10"
+                    className="h-12 bg-white border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl pl-4 pr-10"
                   />
                   <KeyRound className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
@@ -93,7 +93,7 @@ export default function AdminLogin() {
               <input 
                 type="checkbox" 
                 id="remember" 
-                className="w-4 h-4 rounded border-gray-300 text-[var(--color-teal)] focus:ring-[var(--color-teal)] accent-[var(--color-teal)] cursor-pointer"
+                className="w-4 h-4 rounded border-gray-300 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer"
               />
               <label htmlFor="remember" className="text-sm text-gray-500 font-medium cursor-pointer">
                 Ingat saya di perangkat ini
@@ -103,7 +103,7 @@ export default function AdminLogin() {
             <Button 
               type="submit" 
               disabled={isLoading}
-              className="w-full h-12 rounded-xl bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold text-base transition-all shadow-lg shadow-[var(--color-navy)]/20"
+              className="w-full h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold text-base transition-all shadow-lg shadow-[hsl(var(--foreground))]/20"
             >
               {isLoading ? (
                 <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Autentikasi...</>

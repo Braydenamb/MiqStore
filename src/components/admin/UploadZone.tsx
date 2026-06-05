@@ -32,7 +32,7 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <label className="text-sm font-bold text-[var(--color-navy)]">{label}</label>
+        <label className="text-sm font-bold text-[hsl(var(--foreground))]">{label}</label>
         {recommendedAspect && (
           <span className="text-[10px] text-gray-400 font-medium">Rec: {recommendedAspect}</span>
         )}
@@ -103,10 +103,10 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
                     className="flex flex-col items-center gap-3 text-center"
                   >
                     <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
-                      <UploadCloud className="w-6 h-6 text-[var(--color-teal)]" />
+                      <UploadCloud className="w-6 h-6 text-[hsl(var(--primary))]" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-[var(--color-navy)]">Click to upload from Cloudinary</p>
+                      <p className="text-sm font-bold text-[hsl(var(--foreground))]">Click to upload from Cloudinary</p>
                       <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or WEBP (MAX. 2MB)</p>
                     </div>
                   </motion.div>

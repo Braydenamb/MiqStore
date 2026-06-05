@@ -31,7 +31,7 @@ export function MobileCheckoutCTA({
           <div className="flex-1 min-w-0">
             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Total Harga</p>
             <div className="flex items-end gap-2">
-              <p className="text-xl font-extrabold text-[var(--color-teal)] truncate">
+              <p className="text-xl font-extrabold text-[hsl(var(--primary))] truncate">
                 {chosenProduct ? formatCurrency(total) : "Rp 0"}
               </p>
             </div>
@@ -40,7 +40,7 @@ export function MobileCheckoutCTA({
             size="lg"
             onClick={onCheckout}
             disabled={isSubmitting || !canCheckout}
-            className="shrink-0 w-[140px] h-12 rounded-xl bg-[var(--color-teal)] hover:bg-[var(--color-teal)]/90 text-white font-bold text-sm transition-all disabled:opacity-50 shadow-md shadow-[var(--color-teal)]/20"
+            className="shrink-0 w-[140px] h-12 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white font-bold text-sm transition-all disabled:opacity-50 shadow-md shadow-[hsl(var(--primary))]/20"
           >
             {isSubmitting ? (
               <Loader2 className="h-5 w-5 animate-spin" />

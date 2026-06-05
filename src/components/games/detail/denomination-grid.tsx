@@ -23,24 +23,24 @@ export function DenominationGrid({ products, selectedProduct, onSelectProduct, s
             className={cn(
               "relative flex flex-col items-start gap-1 rounded-xl border p-4 text-left transition-all duration-200 cursor-pointer overflow-hidden",
               selectedProduct === product.id
-                ? "border-[var(--color-teal)] bg-[var(--color-teal)]/5 shadow-md transform scale-[1.02]"
-                : "border-gray-100 bg-white hover:border-[var(--color-teal)]/30 hover:bg-gray-50 hover:-translate-y-0.5"
+                ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))]/5 shadow-md transform scale-[1.02]"
+                : "border-gray-100 bg-white hover:border-[hsl(var(--primary))]/30 hover:bg-gray-50 hover:-translate-y-0.5"
             )}
           >
             {product.popular && (
-              <div className="absolute top-0 right-0 bg-[var(--color-gold)] text-[var(--color-navy)] text-[9px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm">
+              <div className="absolute top-0 right-0 bg-[var(--color-gold)] text-[hsl(var(--foreground))] text-[9px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm">
                 HOT
               </div>
             )}
-            <span className="text-sm font-bold text-[var(--color-navy)] leading-tight mb-1 pr-4">
+            <span className="text-sm font-bold text-[hsl(var(--foreground))] leading-tight mb-1 pr-4">
               {product.name}
             </span>
-            <span className="text-xs font-bold text-[var(--color-teal)] mt-auto drop-shadow-sm">
+            <span className="text-xs font-bold text-[hsl(var(--primary))] mt-auto drop-shadow-sm">
               {formatCurrency(product.price)}
             </span>
             {selectedProduct === product.id && (
               <motion.div layoutId="product-check" className="absolute bottom-2 right-2">
-                <CheckCircle2 className="h-5 w-5 text-[var(--color-teal)] drop-shadow-sm" />
+                <CheckCircle2 className="h-5 w-5 text-[hsl(var(--primary))] drop-shadow-sm" />
               </motion.div>
             )}
           </button>

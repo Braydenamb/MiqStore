@@ -184,7 +184,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-[var(--color-navy)]/40 backdrop-blur-sm z-[60] md:hidden"
+              className="fixed inset-0 bg-[hsl(var(--secondary))]/40 backdrop-blur-sm z-[60] md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 

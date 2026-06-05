@@ -25,12 +25,12 @@ export function TestimonialSection() {
           animate={isInView ? "visible" : "hidden"}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-teal)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))]/10 px-4 py-1.5 text-sm font-semibold text-[hsl(var(--primary))] mb-6">
             <MessageSquare className="h-4 w-4" />
             Kata Mereka
           </div>
           <Typography.Heading level="h2">
-            Review <span className="text-[var(--color-teal)]">Gamer</span>
+            Review <span className="text-[hsl(var(--primary))]">Gamer</span>
           </Typography.Heading>
         </motion.div>
 
@@ -52,7 +52,7 @@ export function TestimonialSection() {
                 "{testi.text}"
               </Typography.Body>
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-full bg-[var(--color-teal)]/10 flex items-center justify-center text-[var(--color-teal)] font-bold">
+                <div className="h-10 w-10 rounded-full bg-[hsl(var(--primary))]/10 flex items-center justify-center text-[hsl(var(--primary))] font-bold">
                   {testi.name.charAt(0)}
                 </div>
                 <div>

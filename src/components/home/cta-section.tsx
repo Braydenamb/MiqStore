@@ -14,7 +14,7 @@ export function CTASection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-[40px] bg-gradient-to-br from-[var(--color-navy)] to-[var(--color-teal)] p-10 sm:p-16 shadow-2xl relative overflow-hidden"
+          className="rounded-[40px] bg-gradient-to-br from-[hsl(var(--foreground))] to-[hsl(var(--primary))] p-10 sm:p-16 shadow-2xl relative overflow-hidden"
         >
           {/* Background pattern */}
           <div className="absolute inset-0 pattern-dots-sm opacity-10 pointer-events-none"></div>
@@ -34,7 +34,7 @@ export function CTASection() {
             </Typography.Body>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-full bg-[var(--color-gold)] text-[var(--color-navy)] hover:bg-white hover:text-[var(--color-navy)] text-lg font-bold shadow-lg transition-all" asChild>
+              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-full bg-[var(--color-gold)] text-[hsl(var(--foreground))] hover:bg-white hover:text-[hsl(var(--foreground))] text-lg font-bold shadow-lg transition-all" asChild>
                 <Link href="/auth/register">
                   Daftar Sekarang
                   <ArrowRight className="h-5 w-5 ml-2" />

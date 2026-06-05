@@ -49,13 +49,13 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
   const displayGames = games && games.length > 0 ? games : FAVORITE_GAMES;
 
   return (
-    <div className="bg-[#FFF8EC] border border-[#E8DCC7] rounded-[24px] p-6 sm:p-8 shadow-sm">
+    <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-[24px] p-6 sm:p-8 shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="font-heading font-bold text-lg text-[var(--color-navy)] flex items-center gap-2">
+        <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] flex items-center gap-2">
           <Heart className="h-5 w-5 text-red-500 fill-red-500" />
           Game Favorit
         </h3>
-        <Button variant="ghost" className="text-sm font-bold text-[var(--color-teal)] hover:bg-[#E8DCC7]/30 hover:text-[var(--color-navy)] rounded-xl h-9">
+        <Button variant="ghost" className="text-sm font-bold text-[hsl(var(--primary))] hover:bg-[hsl(var(--border))]/30 hover:text-[hsl(var(--foreground))] rounded-xl h-9">
           Lihat Semua
         </Button>
       </div>
@@ -69,7 +69,7 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
             transition={{ delay: i * 0.1 }}
             className="group cursor-pointer"
           >
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-[var(--color-navy)]">
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-[hsl(var(--secondary))]">
               {game.image ? (
                 <Image 
                   src={game.image} 
@@ -89,8 +89,8 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
                 </>
               )}
             </div>
-            <h4 className="font-bold text-[var(--color-navy)] text-sm truncate">{game.name}</h4>
-            <p className="text-[10px] font-medium text-[var(--color-navy)]/50 truncate">{game.publisher}</p>
+            <h4 className="font-bold text-[hsl(var(--foreground))] text-sm truncate">{game.name}</h4>
+            <p className="text-[10px] font-medium text-[hsl(var(--foreground))]/50 truncate">{game.publisher}</p>
           </motion.div>
         ))}
       </div>

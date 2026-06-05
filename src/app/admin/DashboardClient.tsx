@@ -1,39 +1,84 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Users, 
   Wallet, 
   Receipt, 
   TrendingUp, 
-  MoreHorizontal,
-  ArrowUpRight,
   Clock
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, cn } from "@/lib/utils";
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 
-const statusStyles: Record<string, string> = {
-  success: "bg-green-100 text-green-700 border-green-200",
-  pending: "bg-[var(--color-gold)]/20 text-[var(--color-navy)] border-[var(--color-gold)]",
-  processing: "bg-[var(--color-teal)]/10 text-[var(--color-teal)] border-[var(--color-teal)]/30",
-  failed: "bg-red-100 text-red-700 border-red-200",
-};
-
-type RecentOrder = {
-  id: string;
-  user: string;
-  game: string;
-  product: string;
-  total: number;
-  status: string;
-  date: string;
-};
+import { RevenueChartWidget } from "@/components/admin/widgets/RevenueChartWidget";
+import { QuickActionsWidget } from "@/components/admin/widgets/QuickActionsWidget";
+import { TopProductsWidget } from "@/components/admin/widgets/TopProductsWidget";
+import { RecentUsersWidget } from "@/components/admin/widgets/RecentUsersWidget";
+import { RecentOrdersWidget } from "@/components/admin/widgets/RecentOrdersWidget";
+import { SortableWidget } from "@/components/admin/widgets/SortableWidget";
 
 export default function DashboardClient({ initialData }: { initialData: any }) {
-  const { totalRevenue, totalOrders, totalUsers, pendingOrders, recentOrders } = initialData;
+  const { totalRevenue, totalOrders, totalUsers, pendingOrders, recentOrders, topProducts, recentUsers, chartData } = initialData;
+
+  const defaultLayout = [
+    "revenue-chart",
+    "quick-actions",
+    "top-products",
+    "recent-users",
+    "recent-orders"
+  ];
+
+  const [layout, setLayout] = useState<string[]>(defaultLayout);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const savedLayout = localStorage.getItem("admin-dashboard-layout");
+    if (savedLayout) {
+      try {
+        const parsed = JSON.parse(savedLayout);
+        if (Array.isArray(parsed) && parsed.length === defaultLayout.length) {
+          setLayout(parsed);
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setLayout((items) => {
+        const oldIndex = items.indexOf(active.id as string);
+        const newIndex = items.indexOf(over.id as string);
+        const newLayout = arrayMove(items, oldIndex, newIndex);
+        localStorage.setItem("admin-dashboard-layout", JSON.stringify(newLayout));
+        return newLayout;
+      });
+    }
+  };
 
   const stats = [
     { 
@@ -73,7 +118,25 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
       bg: "bg-[var(--color-gold)]/20"
     },
   ];
+
   const today = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const renderWidget = (id: string) => {
+    switch (id) {
+      case "revenue-chart":
+        return <SortableWidget id={id} className="col-span-1 lg:col-span-2"><RevenueChartWidget chartData={chartData || []} /></SortableWidget>;
+      case "quick-actions":
+        return <SortableWidget id={id} className="col-span-1"><QuickActionsWidget /></SortableWidget>;
+      case "top-products":
+        return <SortableWidget id={id} className="col-span-1"><TopProductsWidget topProducts={topProducts || []} /></SortableWidget>;
+      case "recent-users":
+        return <SortableWidget id={id} className="col-span-1"><RecentUsersWidget recentUsers={recentUsers || []} /></SortableWidget>;
+      case "recent-orders":
+        return <SortableWidget id={id} className="col-span-1 lg:col-span-3"><RecentOrdersWidget recentOrders={recentOrders || []} /></SortableWidget>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="space-y-8 pb-10">
@@ -102,7 +165,7 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
         </div>
       </motion.div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Fixed Top */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat, index) => (
           <motion.div 
@@ -130,65 +193,16 @@ export default function DashboardClient({ initialData }: { initialData: any }) {
         ))}
       </div>
 
-      {/* Recent Orders Table */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <Card className="border-gray-100 shadow-sm rounded-2xl overflow-hidden">
-          <CardHeader className="border-b border-gray-50 bg-white/50 px-6 py-5 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-bold font-heading text-[var(--color-navy)]">Recent Orders</CardTitle>
-            <Button variant="outline" size="sm" className="h-8 text-xs font-bold rounded-lg hidden sm:flex">
-              View All <ArrowUpRight className="ml-1 w-3 h-3" />
-            </Button>
-          </CardHeader>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
-                <tr>
-                  <th className="px-6 py-4 whitespace-nowrap">Invoice ID</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Customer</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Product</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Amount</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Status</th>
-                  <th className="px-6 py-4 whitespace-nowrap text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50 bg-white">
-                {recentOrders.map((order: RecentOrder) => (
-                  <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs font-bold text-[var(--color-navy)] whitespace-nowrap">
-                      {order.id}
-                      <div className="text-[10px] text-gray-400 font-sans font-normal mt-0.5">{order.date}</div>
-                    </td>
-                    <td className="px-6 py-4 font-medium text-[var(--color-navy)] whitespace-nowrap">
-                      {order.user}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="font-bold text-[var(--color-navy)]">{order.game}</p>
-                      <p className="text-xs text-gray-500">{order.product}</p>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-[var(--color-teal)] whitespace-nowrap">
-                      {formatCurrency(order.total)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge variant="outline" className={cn("border font-bold uppercase tracking-wider text-[10px] px-2 py-0.5", statusStyles[order.status])}>
-                        {order.status}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 text-right whitespace-nowrap">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--color-navy)] rounded-lg">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </motion.div>
+      {/* Flexible Drag & Drop Widget Grid */}
+      {isMounted && (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={layout} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-[minmax(300px,auto)]">
+              {layout.map((id) => renderWidget(id))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      )}
 
     </div>
   );

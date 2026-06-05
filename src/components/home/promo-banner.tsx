@@ -8,7 +8,7 @@ export function PromoBanner() {
   return (
     <section className="py-12 bg-[hsl(var(--background))]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-[var(--color-navy)] px-6 py-12 sm:px-12 sm:py-16 shadow-lg">
+        <div className="relative overflow-hidden rounded-3xl bg-[hsl(var(--secondary))] px-6 py-12 sm:px-12 sm:py-16 shadow-lg">
           
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
             
@@ -34,16 +34,16 @@ export function PromoBanner() {
                 </li>
               </ul>
 
-              <Button size="lg" className="bg-[var(--color-gold)] text-[var(--color-navy)] hover:bg-[var(--color-gold)]/80 rounded-full h-14 px-8 text-lg font-semibold shadow-md transition-all w-full sm:w-auto">
+              <Button size="lg" className="bg-[var(--color-gold)] text-[hsl(var(--foreground))] hover:bg-[var(--color-gold)]/80 rounded-full h-14 px-8 text-lg font-semibold shadow-md transition-all w-full sm:w-auto">
                 Lihat Promo
               </Button>
             </div>
 
             {/* Right Illustration */}
             <div className="relative w-48 h-48 sm:w-64 sm:h-64 flex-shrink-0 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[var(--color-teal)]/30 blur-2xl" />
+              <div className="absolute inset-0 rounded-full bg-[hsl(var(--primary))]/30 blur-2xl" />
               <div className="relative z-10 w-32 h-32 bg-white rounded-2xl shadow-xl flex items-center justify-center rotate-12">
-                <Gamepad2 className="h-16 w-16 text-[var(--color-navy)]" />
+                <Gamepad2 className="h-16 w-16 text-[hsl(var(--foreground))]" />
               </div>
             </div>
 

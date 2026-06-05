@@ -31,14 +31,14 @@ export function GameCard({ slug, id, name, publisher, platform, category, popula
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="bg-[var(--color-cream)] rounded-[18px] border border-[#0F3D4A]/20 p-3 hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full"
+      className="bg-[hsl(var(--background))] rounded-[18px] border border-[hsl(var(--border))]/20 p-3 hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full"
     >
       {/* Image Thumbnail Placeholder */}
       <div className={`relative w-full aspect-[4/5] rounded-[14px] ${bg} overflow-hidden mb-4 flex items-center justify-center`}>
         
         {/* Popular Badge */}
         {popular && (
-          <div className="absolute top-3 left-3 z-20 inline-flex items-center gap-1 bg-[var(--color-teal)] text-white px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide shadow-md">
+          <div className="absolute top-3 left-3 z-20 inline-flex items-center gap-1 bg-[hsl(var(--primary))] text-white px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide shadow-md">
             <Star className="h-3 w-3 fill-white" />
             POPULAR
           </div>
@@ -62,16 +62,16 @@ export function GameCard({ slug, id, name, publisher, platform, category, popula
 
       {/* Card Details */}
       <div className="px-1 pb-1 flex flex-col flex-1">
-        <h3 className="font-heading font-bold text-lg text-[var(--color-navy)] mb-1 leading-tight group-hover:text-[var(--color-teal)] transition-colors">
+        <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] mb-1 leading-tight group-hover:text-[hsl(var(--primary))] transition-colors">
           {name}
         </h3>
-        <p className="text-xs text-[var(--color-teal)]/70 font-medium mb-3">
+        <p className="text-xs text-[hsl(var(--primary))]/70 font-medium mb-3">
           {publisher}
         </p>
 
         <div className="mt-auto flex items-center justify-between">
           {/* Platform Badge */}
-          <div className="inline-flex items-center gap-1.5 border border-[#0F3D4A]/30 rounded-full px-2 py-0.5 text-[10px] font-semibold text-[var(--color-navy)] bg-white/50 capitalize">
+          <div className="inline-flex items-center gap-1.5 border border-[hsl(var(--border))]/30 rounded-full px-2 py-0.5 text-[10px] font-semibold text-[hsl(var(--foreground))] bg-white/50 capitalize">
             {gamePlatform.includes('obile') && <Smartphone className="h-3 w-3" />}
             {gamePlatform.includes('pc') || gamePlatform.includes('PC') ? <Monitor className="h-3 w-3" /> : null}
             {gamePlatform}

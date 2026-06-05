@@ -25,10 +25,10 @@ export default function DashboardPage() {
     <div className="space-y-8 pb-8">
       {/* Welcome Section */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-1.5">
-        <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-[var(--color-navy)] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-[hsl(var(--foreground))] tracking-tight">
           Selamat datang kembali, {session?.user?.name || "Miq User"}! <span className="inline-block animate-wave">👋</span>
         </h1>
-        <p className="text-sm font-medium text-[var(--color-navy)]/60">
+        <p className="text-sm font-medium text-[hsl(var(--foreground))]/60">
           Semoga harimu menyenangkan dan hoki selalu!
         </p>
       </motion.div>

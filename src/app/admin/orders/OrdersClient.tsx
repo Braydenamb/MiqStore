@@ -10,9 +10,9 @@ import { getAdminOrders, updateOrderStatus } from "@/actions/admin-orders";
 
 const statusStyles: Record<string, string> = {
   success: "bg-green-100 text-green-700 border-green-200",
-  pending: "bg-[var(--color-gold)]/20 text-[var(--color-navy)] border-[var(--color-gold)]",
+  pending: "bg-[var(--color-gold)]/20 text-[hsl(var(--foreground))] border-[var(--color-gold)]",
   paid: "bg-blue-100 text-blue-700 border-blue-200",
-  processing: "bg-[var(--color-teal)]/10 text-[var(--color-teal)] border-[var(--color-teal)]/30",
+  processing: "bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] border-[hsl(var(--primary))]/30",
   failed: "bg-red-100 text-red-700 border-red-200",
   refunded: "bg-gray-200 text-gray-700 border-gray-300",
   expired: "bg-gray-100 text-gray-400 border-gray-200",
@@ -96,7 +96,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
       
       {/* Header */}
       <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-extrabold font-heading text-[var(--color-navy)]">Order Management</h1>
+        <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Order Management</h1>
         <p className="text-sm text-gray-500 mt-1">Track and manage user top-up transactions.</p>
       </div>
 
@@ -117,7 +117,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="appearance-none h-10 px-4 pr-10 bg-white border border-gray-200 rounded-xl font-bold text-sm outline-none cursor-pointer focus:border-[var(--color-teal)] w-full sm:w-auto"
+                className="appearance-none h-10 px-4 pr-10 bg-white border border-gray-200 rounded-xl font-bold text-sm outline-none cursor-pointer focus:border-[hsl(var(--primary))] w-full sm:w-auto"
               >
                 <option value="all">All Status</option>
                 {statusLabels.map(s => (
@@ -132,7 +132,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
         <div className="overflow-x-auto min-h-[300px] relative">
           {isLoading && (
             <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-[var(--color-teal)] animate-spin" />
+              <Loader2 className="w-8 h-8 text-[hsl(var(--primary))] animate-spin" />
             </div>
           )}
           <table className="w-full text-sm text-left">
@@ -150,19 +150,19 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
               {orders.map((order) => (
                 <tr key={order.dbId} className="hover:bg-gray-50/50 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-mono text-xs font-bold text-[var(--color-navy)]">{order.id}</p>
+                    <p className="font-mono text-xs font-bold text-[hsl(var(--foreground))]">{order.id}</p>
                     <p className="text-[10px] text-gray-400 mt-1 font-medium">{order.date}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-bold text-[var(--color-navy)]">{order.user}</p>
+                    <p className="font-bold text-[hsl(var(--foreground))]">{order.user}</p>
                     <p className="text-xs text-gray-500 font-mono">ID: {order.userId.slice(0, 8)}...</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-bold text-[var(--color-navy)]">{order.game}</p>
-                    <p className="text-xs text-[var(--color-teal)] font-medium">{order.product}</p>
+                    <p className="font-bold text-[hsl(var(--foreground))]">{order.game}</p>
+                    <p className="text-xs text-[hsl(var(--primary))] font-medium">{order.product}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-bold text-[var(--color-navy)]">{formatCurrency(order.total)}</p>
+                    <p className="font-bold text-[hsl(var(--foreground))]">{formatCurrency(order.total)}</p>
                     <p className="text-[10px] uppercase font-bold text-gray-400 mt-1">{order.payment}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -171,12 +171,12 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                         value={order.status}
                         onChange={(e) => handleStatusChange(order.dbId, e.target.value)}
                         className={cn(
-                          "appearance-none border font-bold uppercase tracking-wider text-[10px] px-2 py-1 rounded-full cursor-pointer outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-teal)] transition-shadow pr-6",
+                          "appearance-none border font-bold uppercase tracking-wider text-[10px] px-2 py-1 rounded-full cursor-pointer outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[hsl(var(--primary))] transition-shadow pr-6",
                           statusStyles[order.status] || statusStyles.pending
                         )}
                       >
                         {statusLabels.map((s) => (
-                          <option key={s} value={s} className="bg-white text-[var(--color-navy)] font-bold">
+                          <option key={s} value={s} className="bg-white text-[hsl(var(--foreground))] font-bold">
                             {s}
                           </option>
                         ))}
@@ -185,7 +185,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right whitespace-nowrap">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--color-navy)] rounded-lg">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[hsl(var(--foreground))] rounded-lg">
                       <MoreHorizontal className="w-4 h-4" />
                     </Button>
                   </td>
@@ -215,7 +215,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <span className="flex items-center px-3 font-bold text-[var(--color-navy)]">
+              <span className="flex items-center px-3 font-bold text-[hsl(var(--foreground))]">
                 Page {page} of {totalPages}
               </span>
               <Button 

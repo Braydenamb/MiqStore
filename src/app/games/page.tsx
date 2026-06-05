@@ -32,12 +32,12 @@ function GamesContent() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 relative z-10">
       
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-[var(--color-teal)]/20 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-[hsl(var(--primary))]/20 pb-6">
         <div>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-heading text-4xl sm:text-5xl font-bold text-[var(--color-navy)] mb-2"
+            className="font-heading text-4xl sm:text-5xl font-bold text-[hsl(var(--foreground))] mb-2"
           >
             {q ? `Search: ${searchParams.get("q")}` : "All Games"}
           </motion.h1>
@@ -45,7 +45,7 @@ function GamesContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-[var(--color-teal)]/80"
+            className="text-lg text-[hsl(var(--primary))]/80"
           >
             {q ? `Found ${sortedGames.length} games matching your search.` : "Top up your favorite games instantly."}
           </motion.p>
@@ -62,26 +62,26 @@ function GamesContent() {
             <select 
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="appearance-none bg-white border border-[var(--color-teal)]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[var(--color-navy)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] cursor-pointer shadow-sm hover:border-[var(--color-teal)]/40 transition-colors"
+              className="appearance-none bg-white border border-[hsl(var(--primary))]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] cursor-pointer shadow-sm hover:border-[hsl(var(--primary))]/40 transition-colors"
             >
               <option>All Platforms</option>
               <option>Mobile</option>
               <option>PC</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-teal)] pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--primary))] pointer-events-none" />
           </div>
 
           <div className="relative">
             <select 
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="appearance-none bg-white border border-[var(--color-teal)]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[var(--color-navy)] focus:outline-none focus:border-[var(--color-teal)] focus:ring-1 focus:ring-[var(--color-teal)] cursor-pointer shadow-sm hover:border-[var(--color-teal)]/40 transition-colors"
+              className="appearance-none bg-white border border-[hsl(var(--primary))]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] cursor-pointer shadow-sm hover:border-[hsl(var(--primary))]/40 transition-colors"
             >
               <option>Sort: Popular</option>
               <option>A-Z</option>
               <option>Newest</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-teal)] pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--primary))] pointer-events-none" />
           </div>
         </motion.div>
       </div>
@@ -95,9 +95,9 @@ function GamesContent() {
         </div>
       ) : (
         <div className="py-20 text-center">
-          <Gamepad2 className="h-16 w-16 mx-auto text-[var(--color-teal)]/20 mb-4" />
-          <h3 className="text-xl font-bold text-[var(--color-navy)] mb-2">No games found</h3>
-          <p className="text-[var(--color-navy)]/60">We couldn't find any games matching "{searchParams.get("q")}".</p>
+          <Gamepad2 className="h-16 w-16 mx-auto text-[hsl(var(--primary))]/20 mb-4" />
+          <h3 className="text-xl font-bold text-[hsl(var(--foreground))] mb-2">No games found</h3>
+          <p className="text-[hsl(var(--foreground))]/60">We couldn't find any games matching "{searchParams.get("q")}".</p>
         </div>
       )}
 
@@ -108,7 +108,7 @@ function GamesContent() {
 function GamesSkeleton() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 relative z-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-[var(--color-teal)]/20 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-[hsl(var(--primary))]/20 pb-6">
         <div>
           <div className="h-12 w-64 bg-gray-200/50 rounded-lg animate-pulse mb-4" />
           <div className="h-6 w-96 bg-gray-200/50 rounded-lg animate-pulse" />
@@ -140,7 +140,7 @@ function GamesSkeleton() {
 
 export default function GamesPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-cream)] texture-overlay py-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay py-8 relative overflow-hidden">
       
       {/* Decorative Golden Dotted Side Decoration */}
       <div className="absolute left-4 top-20 bottom-20 w-8 border-l-2 border-dotted border-[var(--color-gold)]/40 hidden lg:block" />

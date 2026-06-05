@@ -46,7 +46,7 @@ const FAQS = [
 
 export default function TopUpPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-cream)] texture-overlay py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay py-12 relative overflow-hidden">
       
       {/* Decorative Elements */}
       <div className="absolute left-4 top-20 bottom-20 w-8 border-l-2 border-dotted border-[var(--color-gold)]/40 hidden lg:block pointer-events-none" />
@@ -60,16 +60,16 @@ export default function TopUpPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="font-heading text-5xl sm:text-6xl font-bold text-[var(--color-navy)] mb-4 leading-tight"
+              className="font-heading text-5xl sm:text-6xl font-bold text-[hsl(var(--foreground))] mb-4 leading-tight"
             >
               Top Up & <br />
-              <span className="text-[var(--color-teal)]">Digital Services</span>
+              <span className="text-[hsl(var(--primary))]">Digital Services</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-[var(--color-teal)]/80 mb-8"
+              className="text-lg text-[hsl(var(--primary))]/80 mb-8"
             >
               Semua kebutuhan digital dalam satu tempat.
             </motion.p>
@@ -81,21 +81,21 @@ export default function TopUpPage() {
               transition={{ delay: 0.2 }}
               className="relative w-full max-w-xl mb-8"
             >
-              <div className="relative flex items-center w-full h-16 rounded-[20px] bg-white border border-[#0F3D4A]/20 shadow-[0_10px_30px_-10px_rgba(8,59,76,0.1)] overflow-hidden">
-                <Search className="absolute left-5 h-6 w-6 text-[var(--color-teal)]/50" />
+              <div className="relative flex items-center w-full h-16 rounded-[20px] bg-white border border-[hsl(var(--border))]/20 shadow-[0_10px_30px_-10px_rgba(8,59,76,0.1)] overflow-hidden">
+                <Search className="absolute left-5 h-6 w-6 text-[hsl(var(--primary))]/50" />
                 <input 
                   type="text" 
                   placeholder="Cari pulsa, e-wallet, subscription..." 
-                  className="w-full h-full pl-14 pr-4 bg-transparent outline-none text-[var(--color-navy)] placeholder:text-[var(--color-teal)]/40 font-medium"
+                  className="w-full h-full pl-14 pr-4 bg-transparent outline-none text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--primary))]/40 font-medium"
                 />
-                <Button className="h-full rounded-none rounded-r-[20px] px-8 bg-[var(--color-teal)] hover:bg-[var(--color-navy)] transition-colors text-white font-semibold">
+                <Button className="h-full rounded-none rounded-r-[20px] px-8 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] transition-colors text-white font-semibold">
                   Cari
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2 mt-4 text-sm font-medium text-[var(--color-teal)]/70">
+              <div className="flex flex-wrap gap-2 mt-4 text-sm font-medium text-[hsl(var(--primary))]/70">
                 <span>Sugesti:</span>
                 {["DANA", "Telkomsel", "Netflix", "Steam Wallet"].map((tag) => (
-                  <span key={tag} className="hover:text-[var(--color-navy)] cursor-pointer transition-colors border-b border-transparent hover:border-[var(--color-navy)]">
+                  <span key={tag} className="hover:text-[hsl(var(--foreground))] cursor-pointer transition-colors border-b border-transparent hover:border-[hsl(var(--foreground))]">
                     {tag}
                   </span>
                 ))}
@@ -111,29 +111,29 @@ export default function TopUpPage() {
             className="relative h-[400px] flex items-center justify-center"
           >
             {/* Abstract Premium Fintech Illustration */}
-            <div className="absolute w-[300px] h-[400px] bg-gradient-to-br from-[var(--color-teal)] to-[var(--color-navy)] rounded-[40px] rotate-6 shadow-[0_20px_50px_rgba(11,29,52,0.2)] opacity-10" />
+            <div className="absolute w-[300px] h-[400px] bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--foreground))] rounded-[40px] rotate-6 shadow-[0_20px_50px_rgba(11,29,52,0.2)] opacity-10" />
             
             {/* Floating Cards */}
-            <div className="relative w-[300px] h-[180px] bg-white rounded-[24px] border border-[#0F3D4A]/10 shadow-[0_20px_40px_rgba(11,29,52,0.1)] p-6 z-10 -rotate-3 animate-float overflow-hidden">
+            <div className="relative w-[300px] h-[180px] bg-white rounded-[24px] border border-[hsl(var(--border))]/10 shadow-[0_20px_40px_rgba(11,29,52,0.1)] p-6 z-10 -rotate-3 animate-float overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-gold)]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="flex justify-between items-center mb-8">
-                <Wallet className="h-8 w-8 text-[var(--color-teal)]" />
+                <Wallet className="h-8 w-8 text-[hsl(var(--primary))]" />
                 <div className="h-8 w-12 bg-gray-100 rounded-md" />
               </div>
               <div className="space-y-2">
                 <div className="h-2 w-32 bg-gray-200 rounded-full" />
-                <div className="h-4 w-48 bg-[var(--color-navy)] rounded-full" />
+                <div className="h-4 w-48 bg-[hsl(var(--secondary))] rounded-full" />
               </div>
             </div>
             
-            <div className="absolute bottom-10 right-10 w-[240px] h-[120px] bg-[var(--color-cream)] rounded-[20px] border border-[var(--color-gold)]/30 shadow-[0_15px_30px_rgba(247,200,115,0.2)] p-4 z-20 rotate-6 animate-float" style={{ animationDelay: '1s' }}>
+            <div className="absolute bottom-10 right-10 w-[240px] h-[120px] bg-[hsl(var(--background))] rounded-[20px] border border-[var(--color-gold)]/30 shadow-[0_15px_30px_rgba(247,200,115,0.2)] p-4 z-20 rotate-6 animate-float" style={{ animationDelay: '1s' }}>
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 bg-[var(--color-teal)] rounded-full flex items-center justify-center">
+                <div className="h-10 w-10 bg-[hsl(var(--primary))] rounded-full flex items-center justify-center">
                   <ShieldCheck className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <div className="h-3 w-20 bg-[var(--color-teal)]/80 rounded-full mb-1" />
-                  <div className="h-2 w-16 bg-[var(--color-teal)]/40 rounded-full" />
+                  <div className="h-3 w-20 bg-[hsl(var(--primary))]/80 rounded-full mb-1" />
+                  <div className="h-2 w-16 bg-[hsl(var(--primary))]/40 rounded-full" />
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function TopUpPage() {
         {/* 2. QUICK ACCESS GRID */}
         <section>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="font-heading text-3xl font-bold text-[var(--color-navy)]">Layanan Digital</h2>
+            <h2 className="font-heading text-3xl font-bold text-[hsl(var(--foreground))]">Layanan Digital</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {QUICK_ACCESS.map((item, idx) => (
@@ -153,13 +153,13 @@ export default function TopUpPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
-                  className="group bg-white rounded-[24px] p-6 border border-[#0F3D4A]/10 shadow-sm hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1 transition-all duration-300"
+                  className="group bg-white rounded-[24px] p-6 border border-[hsl(var(--border))]/10 shadow-sm hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1 transition-all duration-300"
                 >
-                  <div className="h-14 w-14 rounded-2xl bg-[var(--color-cream)] flex items-center justify-center mb-4 group-hover:bg-[var(--color-teal)] group-hover:text-white text-[var(--color-teal)] transition-colors border border-[var(--color-gold)]/20">
+                  <div className="h-14 w-14 rounded-2xl bg-[hsl(var(--background))] flex items-center justify-center mb-4 group-hover:bg-[hsl(var(--primary))] group-hover:text-white text-[hsl(var(--primary))] transition-colors border border-[var(--color-gold)]/20">
                     <item.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-[var(--color-navy)] mb-1 group-hover:text-[var(--color-teal)] transition-colors">{item.title}</h3>
-                  <p className="text-sm text-[var(--color-teal)]/70 font-medium">{item.desc}</p>
+                  <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] mb-1 group-hover:text-[hsl(var(--primary))] transition-colors">{item.title}</h3>
+                  <p className="text-sm text-[hsl(var(--primary))]/70 font-medium">{item.desc}</p>
                 </motion.div>
               </Link>
             ))}
@@ -172,7 +172,7 @@ export default function TopUpPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full bg-[var(--color-teal)] rounded-[32px] p-8 sm:p-12 overflow-hidden relative flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl"
+            className="w-full bg-[hsl(var(--primary))] rounded-[32px] p-8 sm:p-12 overflow-hidden relative flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl"
           >
             {/* BG Decoration */}
             <div className="absolute right-0 top-0 w-1/2 h-full opacity-20 pointer-events-none">
@@ -180,7 +180,7 @@ export default function TopUpPage() {
             </div>
             
             <div className="relative z-10 max-w-xl text-center md:text-left">
-              <div className="inline-block px-4 py-1.5 rounded-full bg-[var(--color-gold)] text-[var(--color-navy)] font-bold text-xs uppercase tracking-wider mb-4">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-[var(--color-gold)] text-[hsl(var(--foreground))] font-bold text-xs uppercase tracking-wider mb-4">
                 Promo Spesial
               </div>
               <h2 className="font-heading text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight">
@@ -190,7 +190,7 @@ export default function TopUpPage() {
               <p className="text-lg text-white/80 mb-8 font-medium">
                 Gunakan kode promo: <span className="text-[var(--color-gold)] font-bold">DANAMIQ</span>. Berlaku hingga akhir bulan ini!
               </p>
-              <Button size="lg" className="bg-white text-[var(--color-teal)] hover:bg-[var(--color-cream)] rounded-full h-14 px-8 font-bold text-lg shadow-lg">
+              <Button size="lg" className="bg-white text-[hsl(var(--primary))] hover:bg-[hsl(var(--background))] rounded-full h-14 px-8 font-bold text-lg shadow-lg">
                 Klaim Sekarang
               </Button>
             </div>
@@ -200,8 +200,8 @@ export default function TopUpPage() {
         {/* 4. POPULAR SERVICES */}
         <section>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="font-heading text-3xl font-bold text-[var(--color-navy)]">Populer Hari Ini</h2>
-            <Link href="#" className="text-[var(--color-teal)] font-medium flex items-center gap-1 hover:gap-2 transition-all">
+            <h2 className="font-heading text-3xl font-bold text-[hsl(var(--foreground))]">Populer Hari Ini</h2>
+            <Link href="#" className="text-[hsl(var(--primary))] font-medium flex items-center gap-1 hover:gap-2 transition-all">
               Lihat Semua <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -213,14 +213,14 @@ export default function TopUpPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="shrink-0 w-[280px] bg-white rounded-[24px] p-5 border border-[#0F3D4A]/10 shadow-sm snap-start hover:shadow-md transition-all flex flex-col"
+                className="shrink-0 w-[280px] bg-white rounded-[24px] p-5 border border-[hsl(var(--border))]/10 shadow-sm snap-start hover:shadow-md transition-all flex flex-col"
               >
-                <div className="h-12 w-12 rounded-full bg-[var(--color-cream)] flex items-center justify-center mb-4 text-[var(--color-teal)]">
+                <div className="h-12 w-12 rounded-full bg-[hsl(var(--background))] flex items-center justify-center mb-4 text-[hsl(var(--primary))]">
                   <Zap className="h-6 w-6" />
                 </div>
-                <h3 className="font-heading font-bold text-lg text-[var(--color-navy)] mb-1">{service.title}</h3>
-                <p className="text-sm text-[var(--color-teal)]/70 font-medium mb-6">{service.desc}</p>
-                <Button className="mt-auto w-full bg-[var(--color-cream)] text-[var(--color-teal)] hover:bg-[var(--color-teal)] hover:text-white rounded-xl font-semibold transition-colors">
+                <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] mb-1">{service.title}</h3>
+                <p className="text-sm text-[hsl(var(--primary))]/70 font-medium mb-6">{service.desc}</p>
+                <Button className="mt-auto w-full bg-[hsl(var(--background))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white rounded-xl font-semibold transition-colors">
                   Top Up
                 </Button>
               </motion.div>
@@ -231,23 +231,23 @@ export default function TopUpPage() {
         {/* 5. RECENT TRANSACTIONS (Logged In State Mockup) */}
         <section>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="font-heading text-3xl font-bold text-[var(--color-navy)]">Transaksi Terakhir</h2>
+            <h2 className="font-heading text-3xl font-bold text-[hsl(var(--foreground))]">Transaksi Terakhir</h2>
           </div>
-          <div className="bg-white rounded-[24px] border border-[#0F3D4A]/10 shadow-sm overflow-hidden p-2">
+          <div className="bg-white rounded-[24px] border border-[hsl(var(--border))]/10 shadow-sm overflow-hidden p-2">
             {[1, 2].map((_, idx) => (
-              <div key={idx} className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 hover:bg-[var(--color-cream)]/50 rounded-[20px] transition-colors border-b border-[#0F3D4A]/5 last:border-0 gap-4">
+              <div key={idx} className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 hover:bg-[hsl(var(--background))]/50 rounded-[20px] transition-colors border-b border-[hsl(var(--border))]/5 last:border-0 gap-4">
                 <div className="flex items-center gap-4 w-full sm:w-auto">
-                  <div className="h-12 w-12 rounded-full bg-[var(--color-teal)]/10 flex items-center justify-center text-[var(--color-teal)]">
+                  <div className="h-12 w-12 rounded-full bg-[hsl(var(--primary))]/10 flex items-center justify-center text-[hsl(var(--primary))]">
                     <Smartphone className="h-6 w-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[var(--color-navy)] text-lg">Telkomsel 25GB</h4>
-                    <p className="text-sm text-[var(--color-teal)]/70">Hari ini, 14:30 WIB</p>
+                    <h4 className="font-bold text-[hsl(var(--foreground))] text-lg">Telkomsel 25GB</h4>
+                    <p className="text-sm text-[hsl(var(--primary))]/70">Hari ini, 14:30 WIB</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between w-full sm:w-auto gap-4">
                   <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider">Berhasil</span>
-                  <Button variant="outline" size="sm" className="rounded-full border-[var(--color-teal)] text-[var(--color-teal)] hover:bg-[var(--color-teal)] hover:text-white flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="rounded-full border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white flex items-center gap-2">
                     <Repeat className="h-4 w-4" />
                     Beli Lagi
                   </Button>
@@ -260,8 +260,8 @@ export default function TopUpPage() {
         {/* 6. WHY CHOOSE US */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[var(--color-navy)] mb-4">Mengapa Memilih Kami?</h2>
-            <p className="text-[var(--color-teal)]/80 max-w-2xl mx-auto">Kami memberikan layanan terbaik dengan sistem otomatis yang cepat, aman, dan terpercaya.</p>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[hsl(var(--foreground))] mb-4">Mengapa Memilih Kami?</h2>
+            <p className="text-[hsl(var(--primary))]/80 max-w-2xl mx-auto">Kami memberikan layanan terbaik dengan sistem otomatis yang cepat, aman, dan terpercaya.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {WHY_US.map((item, idx) => (
@@ -273,19 +273,19 @@ export default function TopUpPage() {
                 transition={{ delay: idx * 0.1 }}
                 className="bg-transparent text-center flex flex-col items-center"
               >
-                <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center text-[var(--color-teal)] mb-6 shadow-sm border border-[var(--color-gold)]/20">
+                <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center text-[hsl(var(--primary))] mb-6 shadow-sm border border-[var(--color-gold)]/20">
                   <item.icon className="h-8 w-8" />
                 </div>
-                <h3 className="font-heading font-bold text-xl text-[var(--color-navy)] mb-2">{item.title}</h3>
-                <p className="text-sm text-[var(--color-teal)]/80 font-medium">{item.desc}</p>
+                <h3 className="font-heading font-bold text-xl text-[hsl(var(--foreground))] mb-2">{item.title}</h3>
+                <p className="text-sm text-[hsl(var(--primary))]/80 font-medium">{item.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
         {/* 7. PAYMENT METHODS LOGO WALL */}
-        <section className="bg-white rounded-[32px] p-8 sm:p-12 border border-[#0F3D4A]/10 shadow-sm text-center">
-          <h2 className="font-heading text-2xl font-bold text-[var(--color-navy)] mb-8">Metode Pembayaran Lengkap</h2>
+        <section className="bg-white rounded-[32px] p-8 sm:p-12 border border-[hsl(var(--border))]/10 shadow-sm text-center">
+          <h2 className="font-heading text-2xl font-bold text-[hsl(var(--foreground))] mb-8">Metode Pembayaran Lengkap</h2>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
             {PAYMENT_METHODS.map((method) => (
               <div key={method} className="px-6 py-3 rounded-xl bg-gray-50 border border-gray-100 font-bold text-gray-400 text-lg">
@@ -298,16 +298,16 @@ export default function TopUpPage() {
         {/* 8. FAQ SECTION */}
         <section className="max-w-3xl mx-auto pb-12">
           <div className="text-center mb-10">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[var(--color-navy)]">Pertanyaan Populer</h2>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[hsl(var(--foreground))]">Pertanyaan Populer</h2>
           </div>
           <div className="space-y-4">
             {FAQS.map((faq, idx) => (
-              <details key={idx} className="group bg-white rounded-[20px] border border-[#0F3D4A]/10 shadow-sm overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex items-center justify-between p-6 cursor-pointer text-[var(--color-navy)] font-heading font-bold text-lg">
+              <details key={idx} className="group bg-white rounded-[20px] border border-[hsl(var(--border))]/10 shadow-sm overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex items-center justify-between p-6 cursor-pointer text-[hsl(var(--foreground))] font-heading font-bold text-lg">
                   {faq.q}
-                  <ChevronDown className="h-5 w-5 text-[var(--color-teal)] transition-transform group-open:rotate-180" />
+                  <ChevronDown className="h-5 w-5 text-[hsl(var(--primary))] transition-transform group-open:rotate-180" />
                 </summary>
-                <div className="p-6 pt-0 text-[var(--color-teal)]/80 font-medium">
+                <div className="p-6 pt-0 text-[hsl(var(--primary))]/80 font-medium">
                   {faq.a}
                 </div>
               </details>

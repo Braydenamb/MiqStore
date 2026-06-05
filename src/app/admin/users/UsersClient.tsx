@@ -119,12 +119,12 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl font-extrabold text-[var(--color-navy)]">Users Management</h1>
+          <h1 className="text-2xl font-extrabold text-[hsl(var(--foreground))]">Users Management</h1>
           <p className="text-sm text-gray-500 mt-1">
             {stats.total} user terdaftar
           </p>
         </div>
-        <Button className="gap-2 bg-[var(--color-navy)] text-white hover:bg-[var(--color-teal)] font-bold rounded-xl h-10 px-4">
+        <Button className="gap-2 bg-[hsl(var(--secondary))] text-white hover:bg-[hsl(var(--primary))] font-bold rounded-xl h-10 px-4">
           <UserPlus className="h-4 w-4" />
           Tambah User
         </Button>
@@ -155,14 +155,14 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
             placeholder="Cari nama atau email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 h-10 bg-gray-50 border-gray-200 rounded-xl focus:border-[var(--color-teal)]"
+            className="pl-10 h-10 bg-gray-50 border-gray-200 rounded-xl focus:border-[hsl(var(--primary))]"
           />
         </div>
         <div className="relative w-full sm:w-48">
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="appearance-none h-10 px-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm outline-none cursor-pointer focus:border-[var(--color-teal)] w-full"
+            className="appearance-none h-10 px-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm outline-none cursor-pointer focus:border-[hsl(var(--primary))] w-full"
           >
             <option value="all">Semua Role</option>
             <option value="USER">User</option>
@@ -177,7 +177,7 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
       <Card className="border-gray-100 shadow-sm rounded-2xl overflow-hidden relative">
         {isLoading && (
           <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-[var(--color-teal)] animate-spin" />
+            <Loader2 className="w-8 h-8 text-[hsl(var(--primary))] animate-spin" />
           </div>
         )}
         <CardContent className="p-0">
@@ -195,11 +195,11 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
               className="grid sm:grid-cols-[1fr_120px_80px_80px_60px_40px] gap-2 sm:gap-4 items-center border-b border-gray-50 px-6 py-4 last:border-0 hover:bg-gray-50/50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-navy)] to-[var(--color-teal)] text-white text-xs font-bold shrink-0">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[hsl(var(--foreground))] to-[hsl(var(--primary))] text-white text-xs font-bold shrink-0">
                   {user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-[var(--color-navy)] truncate">{user.name}</p>
+                  <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">{user.name}</p>
                   <p className="text-xs text-gray-500 font-mono truncate">{user.email}</p>
                 </div>
               </div>
@@ -226,7 +226,7 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
               </span>
               <span className="text-xs font-bold text-gray-700">{user.transactions}</span>
               <div className={cn("h-2.5 w-2.5 rounded-full", user.isActive ? "bg-green-500" : "bg-red-500")} title={user.isActive ? "Active" : "Inactive"} />
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--color-navy)] rounded-lg">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[hsl(var(--foreground))] rounded-lg">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </div>
@@ -243,7 +243,7 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
       {totalPages > 1 && (
         <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <p className="text-sm text-gray-500">
-            Halaman <span className="font-bold text-[var(--color-navy)]">{page}</span> dari <span className="font-bold text-[var(--color-navy)]">{totalPages}</span> ({total} users)
+            Halaman <span className="font-bold text-[hsl(var(--foreground))]">{page}</span> dari <span className="font-bold text-[hsl(var(--foreground))]">{totalPages}</span> ({total} users)
           </p>
           <div className="flex gap-2">
             <Button 
@@ -251,7 +251,7 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
               size="sm" 
               disabled={page <= 1} 
               onClick={() => setPage(page - 1)}
-              className="h-9 px-3 rounded-xl border-gray-200 hover:bg-gray-50 text-[var(--color-navy)]"
+              className="h-9 px-3 rounded-xl border-gray-200 hover:bg-gray-50 text-[hsl(var(--foreground))]"
             >
               <ChevronLeft className="h-4 w-4 mr-1" /> Prev
             </Button>
@@ -260,7 +260,7 @@ export default function UsersClient({ initialData }: { initialData: { users: Use
               size="sm" 
               disabled={page >= totalPages} 
               onClick={() => setPage(page + 1)}
-              className="h-9 px-3 rounded-xl border-gray-200 hover:bg-gray-50 text-[var(--color-navy)]"
+              className="h-9 px-3 rounded-xl border-gray-200 hover:bg-gray-50 text-[hsl(var(--foreground))]"
             >
               Next <ChevronRight className="h-4 w-4 ml-1" />
             </Button>

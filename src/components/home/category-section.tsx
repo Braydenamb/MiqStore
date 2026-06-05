@@ -27,12 +27,12 @@ export function CategorySection() {
           animate={isInView ? "visible" : "hidden"}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-teal)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--color-teal)] mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))]/10 px-4 py-1.5 text-sm font-semibold text-[hsl(var(--primary))] mb-6">
             <Grid className="h-4 w-4" />
             Kategori
           </div>
           <Typography.Heading level="h2">
-            Jelajahi <span className="text-[var(--color-teal)]">Katalog</span>
+            Jelajahi <span className="text-[hsl(var(--primary))]">Katalog</span>
           </Typography.Heading>
         </motion.div>
 
@@ -48,7 +48,7 @@ export function CategorySection() {
                 href={`/categories/${category.id}`}
                 className="group block rounded-3xl border border-gray-100 bg-white p-6 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
               >
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-teal)]/5 mb-4 group-hover:bg-[var(--color-teal)] group-hover:text-white transition-colors text-[var(--color-teal)]">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[hsl(var(--primary))]/5 mb-4 group-hover:bg-[hsl(var(--primary))] group-hover:text-white transition-colors text-[hsl(var(--primary))]">
                   <category.icon className="h-8 w-8" />
                 </div>
                 <Typography.Heading level="h4" className="mb-2">

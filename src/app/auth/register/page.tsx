@@ -145,16 +145,16 @@ export default function RegisterPage() {
               id="agree-terms"
               checked={agree}
               onChange={(e) => setAgree(e.target.checked)}
-              className="mt-1 w-4 h-4 rounded-sm border-[var(--color-navy)]/30 text-[var(--color-teal)] focus:ring-[var(--color-teal)] transition-colors hover:border-[var(--color-teal)] accent-[var(--color-teal)] cursor-pointer"
+              className="mt-1 w-4 h-4 rounded-sm border-[hsl(var(--foreground))]/30 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] transition-colors hover:border-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer"
               required
             />
-            <label htmlFor="agree-terms" className="text-[12px] font-medium text-[var(--color-navy)]/70 leading-relaxed cursor-pointer">
+            <label htmlFor="agree-terms" className="text-[12px] font-medium text-[hsl(var(--foreground))]/70 leading-relaxed cursor-pointer">
               Saya setuju dengan{" "}
-              <a href="#" className="font-bold text-[var(--color-teal)] hover:text-[var(--color-gold)] transition-colors">
+              <a href="#" className="font-bold text-[hsl(var(--primary))] hover:text-[var(--color-gold)] transition-colors">
                 Syarat & Ketentuan
               </a>{" "}
               serta{" "}
-              <a href="#" className="font-bold text-[var(--color-teal)] hover:text-[var(--color-gold)] transition-colors">
+              <a href="#" className="font-bold text-[hsl(var(--primary))] hover:text-[var(--color-gold)] transition-colors">
                 Kebijakan Privasi
               </a>.
             </label>
@@ -163,7 +163,7 @@ export default function RegisterPage() {
           <Button 
             type="submit" 
             disabled={isLoading || !agree}
-            className="w-full h-12 rounded-xl bg-[var(--color-navy)] hover:bg-[var(--color-teal)] text-white font-bold text-[15px] transition-colors shadow-lg shadow-[var(--color-navy)]/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold text-[15px] transition-colors shadow-lg shadow-[hsl(var(--foreground))]/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" />

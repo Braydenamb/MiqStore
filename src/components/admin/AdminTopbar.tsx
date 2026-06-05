@@ -12,7 +12,7 @@ export function AdminTopbar({ toggleMobileMenu }: { toggleMobileMenu: () => void
       
       {/* Left: Mobile Toggle & Search */}
       <div className="flex items-center gap-4 flex-1">
-        <Button variant="ghost" size="icon" className="md:hidden text-[var(--color-navy)]" onClick={toggleMobileMenu}>
+        <Button variant="ghost" size="icon" className="md:hidden text-[hsl(var(--foreground))]" onClick={toggleMobileMenu}>
           <Menu className="h-5 w-5" />
         </Button>
         
@@ -21,14 +21,14 @@ export function AdminTopbar({ toggleMobileMenu }: { toggleMobileMenu: () => void
           <input 
             type="text" 
             placeholder="Search orders, users, or games..." 
-            className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-[var(--color-teal)] focus:border-[var(--color-teal)] transition-all"
+            className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all"
           />
         </div>
       </div>
 
       {/* Right: Actions & Profile */}
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="relative text-gray-500 hover:text-[var(--color-navy)] hover:bg-gray-50 rounded-full">
+        <Button variant="ghost" size="icon" className="relative text-gray-500 hover:text-[hsl(var(--foreground))] hover:bg-gray-50 rounded-full">
           <Bell className="h-5 w-5" />
           {hasNotifications && (
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white" />
@@ -39,11 +39,11 @@ export function AdminTopbar({ toggleMobileMenu }: { toggleMobileMenu: () => void
 
         <div className="flex items-center gap-3 pl-2">
           <div className="hidden sm:flex flex-col text-right">
-            <span className="text-sm font-bold text-[var(--color-navy)]">Admin Store</span>
+            <span className="text-sm font-bold text-[hsl(var(--foreground))]">Admin Store</span>
             <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Superadmin</span>
           </div>
-          <div className="w-10 h-10 rounded-full bg-[var(--color-teal)]/10 border border-[var(--color-teal)]/20 flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold text-[var(--color-teal)]">AS</span>
+          <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))]/10 border border-[hsl(var(--primary))]/20 flex items-center justify-center shrink-0">
+            <span className="text-sm font-bold text-[hsl(var(--primary))]">AS</span>
           </div>
         </div>
       </div>
