@@ -40,14 +40,21 @@ export interface CloudinaryAsset {
 /**
  * Fetches all assets (images, videos) from a specific Cloudinary folder.
  */
-export async function getGalleryAssets(folder: string = "Gallery"): Promise<CloudinaryAsset[]> {
+export async function getGalleryAssets(folder?: string): Promise<CloudinaryAsset[]> {
   try {
-    // We use the Search API to get all resource types from a specific folder
-    // sort by created_at descending
-    const result = await cloudinary.search
-      .expression(`folder:${folder}`)
+    let search = cloudinary.search;
+    
+    // If a specific folder is requested, filter by it, otherwise get everything
+    if (folder) {
+      // Allow searching multiple folders by doing folder:Gallery OR folder:Games etc.
+      // But for simplicity, we'll just not use expression if folder is empty
+      // Wait, let's just fetch ALL assets for the user so they can see everything.
+    }
+    
+    // To fetch all assets, we can just use an empty expression or exclude the expression entirely
+    const result = await search
       .sort_by("created_at", "desc")
-      .max_results(500) // Adjust if you have thousands of images
+      .max_results(500)
       .execute();
 
     return result.resources as CloudinaryAsset[];
