@@ -92,3 +92,30 @@ export async function updateUserRole(id: string, newRole: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function deleteUser(id: string) {
+  try {
+    await prisma.user.delete({ where: { id } });
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function createUser(data: { name: string; email: string; role: string; membership: string }) {
+  try {
+    await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        role: data.role as Role,
+        membership: data.membership as any,
+      }
+    });
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

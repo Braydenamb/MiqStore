@@ -90,7 +90,7 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
                         <X className="w-4 h-4" /> Remove Image
                       </Button>
                     </div>
-                    <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1 shadow-md">
+                    <div className="absolute top-2 right-2 bg-emerald-500/80 backdrop-blur-sm text-white rounded-full p-1 shadow-md">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
                   </motion.div>

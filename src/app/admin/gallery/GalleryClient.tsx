@@ -59,14 +59,14 @@ export function GalleryClient({ initialAssets }: { initialAssets: CloudinaryAsse
   return (
     <div className="space-y-6">
       {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-[hsl(var(--card))] p-4 rounded-2xl border border-[hsl(var(--border))] shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center glass-card p-4 rounded-2xl border border-[hsl(var(--border))]">
         <div className="relative w-full sm:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[hsl(var(--muted-foreground))]" />
           <Input 
             placeholder="Search assets by name..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-gray-50/50 border-gray-100 focus-visible:ring-[hsl(var(--primary))]"
+            className="pl-9 bg-slate-900/50 border-[hsl(var(--border))] focus-visible:ring-[hsl(var(--primary))] text-[hsl(var(--foreground))]"
           />
         </div>
 
@@ -83,7 +83,7 @@ export function GalleryClient({ initialAssets }: { initialAssets: CloudinaryAsse
           {({ open }) => (
             <Button 
               onClick={(e) => { e.preventDefault(); open(); }}
-              className="w-full sm:w-auto gap-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--foreground))]"
+              className="w-full sm:w-auto gap-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))]"
             >
               <UploadCloud className="w-4 h-4" />
               Upload Media
@@ -94,12 +94,12 @@ export function GalleryClient({ initialAssets }: { initialAssets: CloudinaryAsse
 
       {/* Grid */}
       {filteredAssets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
-          <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-4">
-            <FileImage className="w-8 h-8 text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-24 text-center border-2 border-dashed border-[hsl(var(--border))] rounded-3xl bg-slate-900/30">
+          <div className="w-16 h-16 bg-slate-900 border border-[hsl(var(--border))] rounded-2xl flex items-center justify-center mb-4">
+            <FileImage className="w-8 h-8 text-[hsl(var(--muted-foreground))]" />
           </div>
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))]">No assets found</h3>
-          <p className="text-gray-500 text-sm mt-1 max-w-sm">
+          <p className="text-[hsl(var(--muted-foreground))] text-sm mt-1 max-w-sm">
             {searchQuery ? "No media matches your search." : "Your gallery is empty. Upload some images or videos to get started."}
           </p>
         </div>
@@ -114,10 +114,10 @@ export function GalleryClient({ initialAssets }: { initialAssets: CloudinaryAsse
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
-                className="group relative bg-[hsl(var(--card))] rounded-2xl border border-[hsl(var(--border))] shadow-sm overflow-hidden flex flex-col"
+                className="group relative glass-card rounded-2xl border border-[hsl(var(--border))] overflow-hidden flex flex-col"
               >
                 {/* Media Preview */}
-                <div className="relative aspect-square bg-gray-100 overflow-hidden">
+                <div className="relative aspect-square bg-slate-900/80 overflow-hidden">
                   {asset.resource_type === "video" ? (
                     <div className="w-full h-full flex items-center justify-center bg-gray-900 relative">
                        <Film className="w-12 h-12 text-white/50 absolute" />
@@ -182,7 +182,7 @@ export function GalleryClient({ initialAssets }: { initialAssets: CloudinaryAsse
                   <p className="text-sm font-medium text-[hsl(var(--foreground))] truncate" title={asset.filename}>
                     {asset.filename}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
                     {(asset.bytes / 1024).toFixed(1)} KB • {asset.width}x{asset.height}
                   </p>
                 </div>

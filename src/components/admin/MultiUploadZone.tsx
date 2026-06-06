@@ -49,7 +49,7 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <label className="text-sm font-bold text-[hsl(var(--foreground))]">{label}</label>
-        <span className="text-[10px] text-gray-400 font-medium">{items.length} image(s)</span>
+        <span className="text-[10px] text-[hsl(var(--muted-foreground))] font-medium">{items.length} image(s)</span>
       </div>
 
       <CldUploadWidget 
@@ -66,7 +66,7 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
             <div
               className={cn(
                 "border-2 border-dashed rounded-2xl overflow-hidden transition-all duration-300 flex flex-col items-center justify-center p-6",
-                "border-gray-200 bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                "border-[hsl(var(--border))] bg-slate-900/50 hover:bg-slate-800/50 cursor-pointer"
               )}
               onClick={(e) => {
                 e.preventDefault();
@@ -74,12 +74,12 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
               }}
             >
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-[hsl(var(--border))] shadow-sm flex items-center justify-center">
                   <UploadCloud className="w-6 h-6 text-[hsl(var(--primary))]" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-[hsl(var(--foreground))]">Click to add images to Gallery</p>
-                  <p className="text-xs text-gray-500 mt-1">Select multiple files at once</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Select multiple files at once</p>
                 </div>
               </div>
             </div>
@@ -88,20 +88,20 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
       </CldUploadWidget>
 
       {items.length > 0 && (
-        <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-          <p className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-wider">Drag to Reorder</p>
+        <div className="glass-card rounded-2xl p-4">
+          <p className="text-xs font-bold text-[hsl(var(--muted-foreground))] mb-4 uppercase tracking-wider">Drag to Reorder</p>
           <Reorder.Group axis="y" values={items} onReorder={handleReorder} className="space-y-3">
             <AnimatePresence>
               {items.map((item) => (
                 <Reorder.Item 
                   key={item} 
                   value={item} 
-                  className="flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm border border-gray-100 group"
+                  className="flex items-center gap-4 bg-slate-900/80 p-3 rounded-xl shadow-sm border border-[hsl(var(--border))] group"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-[hsl(var(--foreground))] transition-colors">
+                  <div className="cursor-grab active:cursor-grabbing text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
                     <GripVertical className="w-5 h-5" />
                   </div>
                   
@@ -114,14 +114,14 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-mono text-gray-500 truncate">{item}</p>
+                    <p className="text-xs font-mono text-[hsl(var(--muted-foreground))] truncate">{item}</p>
                   </div>
                   
                   <Button 
                     variant="ghost" 
                     size="icon"
                     onClick={(e) => handleRemove(item, e)}
-                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                    className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                   >
                     <X className="w-4 h-4" />
                   </Button>

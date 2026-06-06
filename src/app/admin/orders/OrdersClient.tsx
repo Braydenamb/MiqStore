@@ -9,13 +9,13 @@ import { toast } from "sonner";
 import { getAdminOrders, updateOrderStatus } from "@/actions/admin-orders";
 
 const statusStyles: Record<string, string> = {
-  success: "bg-green-100 text-green-700 border-green-200",
-  pending: "bg-[var(--color-gold)]/20 text-[hsl(var(--foreground))] border-[var(--color-gold)]",
-  paid: "bg-blue-100 text-blue-700 border-blue-200",
+  success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  pending: "bg-[var(--color-gold)]/10 text-[var(--color-gold)] border-[var(--color-gold)]/20",
+  paid: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   processing: "bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] border-[hsl(var(--primary))]/30",
-  failed: "bg-red-100 text-red-700 border-red-200",
-  refunded: "bg-gray-200 text-gray-700 border-gray-300",
-  expired: "bg-gray-100 text-gray-400 border-gray-200",
+  failed: "bg-red-500/10 text-red-400 border-red-500/20",
+  refunded: "bg-slate-500/20 text-slate-300 border-slate-500/30",
+  expired: "bg-slate-500/10 text-slate-400 border-slate-500/20",
 };
 
 const statusLabels = ["pending", "paid", "processing", "success", "failed", "refunded", "expired"];
@@ -95,21 +95,21 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
     <div className="space-y-6 pb-10">
       
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div className="glass-card p-6 rounded-3xl">
         <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Order Management</h1>
-        <p className="text-sm text-gray-500 mt-1">Track and manage user top-up transactions.</p>
+        <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Track and manage user top-up transactions.</p>
       </div>
 
       {/* List Section */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-50 flex flex-col sm:flex-row gap-4 justify-between items-center bg-gray-50/50">
+      <div className="glass-card rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-[hsl(var(--border))] flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900/30">
           <div className="relative w-full sm:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
             <Input 
               placeholder="Search by Invoice, User, or Game..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-10 pl-10 bg-white border-gray-200 rounded-xl w-full" 
+              className="h-10 pl-10 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl w-full text-[hsl(var(--foreground))]" 
             />
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
@@ -117,26 +117,26 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="appearance-none h-10 px-4 pr-10 bg-white border border-gray-200 rounded-xl font-bold text-sm outline-none cursor-pointer focus:border-[hsl(var(--primary))] w-full sm:w-auto"
+                className="appearance-none h-10 px-4 pr-10 bg-slate-900/50 border border-[hsl(var(--border))] rounded-xl font-bold text-sm outline-none cursor-pointer focus:border-[hsl(var(--primary))] w-full sm:w-auto text-[hsl(var(--foreground))]"
               >
                 <option value="all">All Status</option>
                 {statusLabels.map(s => (
                   <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[hsl(var(--muted-foreground))] pointer-events-none" />
             </div>
           </div>
         </div>
 
         <div className="overflow-x-auto min-h-[300px] relative">
           {isLoading && (
-            <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm z-10 flex items-center justify-center">
               <Loader2 className="w-8 h-8 text-[hsl(var(--primary))] animate-spin" />
             </div>
           )}
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
+            <thead className="bg-slate-900/50 text-[hsl(var(--muted-foreground))] font-medium border-b border-[hsl(var(--border))]">
               <tr>
                 <th className="px-6 py-4 whitespace-nowrap">Invoice ID & Date</th>
                 <th className="px-6 py-4 whitespace-nowrap">Customer Info</th>
@@ -146,16 +146,16 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                 <th className="px-6 py-4 whitespace-nowrap text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50 bg-white">
+            <tbody className="divide-y divide-[hsl(var(--border))] bg-transparent">
               {orders.map((order) => (
-                <tr key={order.dbId} className="hover:bg-gray-50/50 transition-colors group">
+                <tr key={order.dbId} className="hover:bg-slate-800/30 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-mono text-xs font-bold text-[hsl(var(--foreground))]">{order.id}</p>
-                    <p className="text-[10px] text-gray-400 mt-1 font-medium">{order.date}</p>
+                    <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-1 font-medium">{order.date}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-[hsl(var(--foreground))]">{order.user}</p>
-                    <p className="text-xs text-gray-500 font-mono">ID: {order.userId.slice(0, 8)}...</p>
+                    <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono">ID: {order.userId.slice(0, 8)}...</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-[hsl(var(--foreground))]">{order.game}</p>
@@ -163,7 +163,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-[hsl(var(--foreground))]">{formatCurrency(order.total)}</p>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 mt-1">{order.payment}</p>
+                    <p className="text-[10px] uppercase font-bold text-[hsl(var(--muted-foreground))] mt-1">{order.payment}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="relative inline-block w-full">
@@ -176,7 +176,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                         )}
                       >
                         {statusLabels.map((s) => (
-                          <option key={s} value={s} className="bg-white text-[hsl(var(--foreground))] font-bold">
+                          <option key={s} value={s} className="bg-slate-900 text-[hsl(var(--foreground))] font-bold">
                             {s}
                           </option>
                         ))}
@@ -185,7 +185,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right whitespace-nowrap">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[hsl(var(--foreground))] rounded-lg">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] rounded-lg">
                       <MoreHorizontal className="w-4 h-4" />
                     </Button>
                   </td>
@@ -193,7 +193,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
               ))}
               {orders.length === 0 && !isLoading && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
                     No orders found matching your filters.
                   </td>
                 </tr>
@@ -203,7 +203,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
         </div>
         
         {totalPages > 1 && (
-          <div className="p-4 border-t border-gray-50 flex items-center justify-between text-sm text-gray-500 bg-gray-50/30">
+          <div className="p-4 border-t border-[hsl(var(--border))] flex items-center justify-between text-sm text-[hsl(var(--muted-foreground))] bg-slate-900/30">
             Showing {orders.length} of {total} entries
             <div className="flex gap-1">
               <Button 
@@ -211,7 +211,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                 size="sm" 
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="h-8 px-3 rounded-lg"
+                className="h-8 px-3 rounded-lg border-[hsl(var(--border))] bg-slate-900/50 hover:bg-slate-800 text-[hsl(var(--muted-foreground))]"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
@@ -223,7 +223,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                 size="sm" 
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="h-8 px-3 rounded-lg"
+                className="h-8 px-3 rounded-lg border-[hsl(var(--border))] bg-slate-900/50 hover:bg-slate-800 text-[hsl(var(--muted-foreground))]"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>

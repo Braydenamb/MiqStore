@@ -125,14 +125,14 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
     <div className="space-y-6 pb-10">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 glass-card p-6 rounded-3xl">
         <div>
           <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Products Management</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage games, top-up nominals, and pricing.</p>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Manage games, top-up nominals, and pricing.</p>
         </div>
         <Button 
           onClick={() => isFormOpen ? resetForm() : setIsFormOpen(true)}
-          className="bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold rounded-xl shadow-lg shadow-[hsl(var(--foreground))]/20 transition-all h-12 px-6"
+          className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20 transition-all h-12 px-6"
         >
           {isFormOpen ? "Cancel" : <><Plus className="w-5 h-5 mr-2" /> Add New Game</>}
         </Button>
@@ -146,7 +146,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 mb-6">
+            <div className="glass-card p-6 sm:p-8 rounded-3xl mb-6">
               <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] mb-6">
                 {formData.id ? "Edit Game" : "Create New Game"}
               </h2>
@@ -159,7 +159,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="e.g. Mobile Legends" 
-                      className="h-12 bg-gray-50 border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
+                      className="h-12 bg-slate-900/50 border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl text-[hsl(var(--foreground))]" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -168,7 +168,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                       value={formData.slug}
                       onChange={(e) => setFormData({...formData, slug: e.target.value})}
                       placeholder="e.g. mobile-legends" 
-                      className="h-12 bg-gray-50 border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl" 
+                      className="h-12 bg-slate-900/50 border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] rounded-xl text-[hsl(var(--foreground))]" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -177,7 +177,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
                       placeholder="Short description for the game page..."
-                      className="w-full h-24 p-4 bg-gray-50 border border-gray-200 focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl text-sm outline-none resize-none"
+                      className="w-full h-24 p-4 bg-slate-900/50 border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl text-sm text-[hsl(var(--foreground))] outline-none resize-none"
                     />
                   </div>
                   
@@ -187,7 +187,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                       id="activeStatus" 
                       checked={formData.isActive}
                       onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                      className="w-4 h-4 rounded border-gray-300 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer" 
+                      className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer" 
                     />
                     <label htmlFor="activeStatus" className="text-sm font-bold text-[hsl(var(--foreground))] cursor-pointer">Set as Active</label>
                   </div>
@@ -216,7 +216,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                     <Button 
                       onClick={handleSubmit}
                       disabled={isLoading}
-                      className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] text-white font-bold rounded-xl h-12 px-8 w-full sm:w-auto"
+                      className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl h-12 px-8 w-full sm:w-auto"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                       Save Game
@@ -231,20 +231,20 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       </AnimatePresence>
 
       {/* List Section */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-50 flex flex-col sm:flex-row gap-4 justify-between items-center bg-gray-50/50">
+      <div className="glass-card rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-[hsl(var(--border))] flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900/30">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input placeholder="Search games..." className="h-10 pl-10 bg-white border-gray-200 rounded-xl w-full" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+            <Input placeholder="Search games..." className="h-10 pl-10 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl w-full text-[hsl(var(--foreground))]" />
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
-            <Button variant="outline" className="rounded-xl font-bold bg-white w-full sm:w-auto">Filter: All</Button>
+            <Button variant="outline" className="rounded-xl font-bold bg-slate-900/50 border-[hsl(var(--border))] text-[hsl(var(--foreground))] hover:bg-slate-800 hover:text-[hsl(var(--foreground))] w-full sm:w-auto">Filter: All</Button>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
+            <thead className="bg-slate-900/50 text-[hsl(var(--muted-foreground))] font-medium border-b border-[hsl(var(--border))]">
               <tr>
                 <th className="px-6 py-4 whitespace-nowrap">Game</th>
                 <th className="px-6 py-4 whitespace-nowrap">Slug</th>
@@ -253,19 +253,19 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                 <th className="px-6 py-4 whitespace-nowrap text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50 bg-white">
+            <tbody className="divide-y divide-[hsl(var(--border))] bg-transparent">
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-8 text-center text-[hsl(var(--muted-foreground))]">
                     No games found. Create one!
                   </td>
                 </tr>
               ) : null}
               {products.map((game) => (
-                <tr key={game.id} className="hover:bg-gray-50/50 transition-colors group">
+                <tr key={game.id} className="hover:bg-slate-800/30 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0 overflow-hidden relative">
+                      <div className="w-12 h-12 rounded-xl bg-slate-900 border border-[hsl(var(--border))] flex items-center justify-center shrink-0 overflow-hidden relative">
                         {game.image ? (
                           <img 
                             src={game.image.startsWith('http') ? game.image : cloudinaryUrl(game.image)} 
@@ -274,12 +274,12 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                             onError={(e) => { e.currentTarget.src = ""; e.currentTarget.classList.add("hidden"); }} 
                           />
                         ) : null}
-                        <Gamepad2 className="w-6 h-6 text-gray-400 absolute -z-10" />
+                        <Gamepad2 className="w-6 h-6 text-[hsl(var(--muted-foreground))] absolute -z-10" />
                       </div>
                       <span className="font-bold text-[hsl(var(--foreground))] text-base group-hover:text-[hsl(var(--primary))] transition-colors">{game.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
+                  <td className="px-6 py-4 font-mono text-xs text-[hsl(var(--muted-foreground))] whitespace-nowrap">
                     /{game.slug}
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap">
@@ -289,11 +289,11 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {game.isActive ? (
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-3 py-1 font-bold">
+                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 font-bold">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Active
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-200 px-3 py-1 font-bold">
+                      <Badge variant="outline" className="bg-slate-500/10 text-slate-400 border-slate-500/20 px-3 py-1 font-bold">
                         <XCircle className="w-3 h-3 mr-1" /> Inactive
                       </Badge>
                     )}
@@ -304,7 +304,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                         variant="ghost" 
                         size="icon" 
                         onClick={() => handleEdit(game)}
-                        className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                        className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-500/20 rounded-lg"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
@@ -313,11 +313,11 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                         size="icon"
                         onClick={() => handleDelete(game.id)}
                         disabled={isLoading}
-                        className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                        className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[hsl(var(--foreground))] rounded-lg md:hidden">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] rounded-lg md:hidden">
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </div>
@@ -328,12 +328,12 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
           </table>
         </div>
         
-        <div className="p-4 border-t border-gray-50 flex items-center justify-between text-sm text-gray-500 bg-gray-50/30">
+        <div className="p-4 border-t border-[hsl(var(--border))] flex items-center justify-between text-sm text-[hsl(var(--muted-foreground))] bg-slate-900/30">
           Showing {products.length > 0 ? 1 : 0} to {products.length} of {products.length} entries
           <div className="flex gap-1">
-            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg" disabled>Prev</Button>
-            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg bg-[hsl(var(--secondary))] text-white border-[hsl(var(--foreground))]">1</Button>
-            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg" disabled>Next</Button>
+            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] bg-slate-900/50 hover:bg-slate-800" disabled>Prev</Button>
+            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-transparent">1</Button>
+            <Button variant="outline" size="sm" className="h-8 px-3 rounded-lg border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] bg-slate-900/50 hover:bg-slate-800" disabled>Next</Button>
           </div>
         </div>
       </div>
