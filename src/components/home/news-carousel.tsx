@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gamepad2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { HOME_NEWS_BANNERS } from "@/lib/constants";
@@ -18,6 +18,31 @@ const swipeConfidenceThreshold = 10000;
 const swipePower = (offset: number, velocity: number) => {
   return Math.abs(offset) * velocity;
 };
+
+function NewsImage({ src, alt }: { src: string, alt: string }) {
+  const [error, setError] = useState(false);
+  
+  if (error) {
+    return (
+      <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
+        <Gamepad2 className="w-32 h-32 text-white/20" />
+      </div>
+    );
+  }
+
+  return (
+    <Image 
+      src={src} 
+      alt={alt} 
+      fill
+      sizes="(max-width: 1440px) 100vw, 1440px"
+      priority
+      className="object-cover"
+      draggable={false}
+      onError={() => setError(true)}
+    />
+  );
+}
 
 export function NewsCarousel() {
   const [[page, direction], setPage] = useState([0, 0]);
@@ -94,15 +119,7 @@ export function NewsCarousel() {
               className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
             >
               <Link href={banners[imageIndex].link} className="block w-full h-full relative" draggable={false}>
-                <Image 
-                  src={banners[imageIndex].image} 
-                  alt={banners[imageIndex].alt} 
-                  fill
-                  sizes="(max-width: 1440px) 100vw, 1440px"
-                  priority
-                  className="object-cover"
-                  draggable={false}
-                />
+                <NewsImage src={banners[imageIndex].image} alt={banners[imageIndex].alt} />
                 
                 {/* Premium Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d34]/90 via-[#0b1d34]/20 to-transparent pointer-events-none" />

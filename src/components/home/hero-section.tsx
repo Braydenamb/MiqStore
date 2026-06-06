@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Zap, ShieldCheck } from "lucide-react";
+import { ArrowRight, Zap, ShieldCheck, Gamepad2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -11,6 +12,8 @@ import { FlipWords } from "@/components/ui/flip-words";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
+  const [imgError, setImgError] = useState(false);
+  
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-[hsl(var(--background))] texture-overlay flex items-center pt-20 pb-16">
       
@@ -93,15 +96,21 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10"
+              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-slate-900/50 backdrop-blur-sm"
             >
-              <Image 
-                src={heroBannerUrl || cloudinaryUrl("Games/Mobile legends/banner")} 
-                alt="Gaming Experience" 
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))]/90 to-transparent" />
+              {!imgError ? (
+                <Image 
+                  src={heroBannerUrl || cloudinaryUrl("Games/Mobile legends/banner")} 
+                  alt="Gaming Experience" 
+                  fill
+                  className="object-cover"
+                  onError={() => setImgError(true)}
+                  priority
+                />
+              ) : (
+                <Gamepad2 className="w-24 h-24 text-[hsl(var(--primary))]/30" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))]/90 to-transparent pointer-events-none" />
             </motion.div>
 
             {/* Floating Card */}

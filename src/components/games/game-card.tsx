@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Star, Smartphone, Monitor } from "lucide-react";
+import { Star, Smartphone, Monitor, Gamepad2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,6 +23,7 @@ interface GameCardProps {
 }
 
 export function GameCard({ slug, id, name, publisher, platform, category, popular, icon: Icon, color, bg, index, image }: GameCardProps) {
+  const [imgError, setImgError] = useState(false);
   const gamePlatform = platform || category || "Mobile";
   const linkHref = slug ? `/games/${slug}` : `/games/${id}`;
 
@@ -34,7 +36,7 @@ export function GameCard({ slug, id, name, publisher, platform, category, popula
       className="bg-[hsl(var(--background))] rounded-[18px] border border-[hsl(var(--border))]/20 p-3 hover:shadow-[0_15px_30px_-5px_rgba(8,59,76,0.15)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full"
     >
       {/* Image Thumbnail Placeholder */}
-      <div className={`relative w-full aspect-[4/5] rounded-[14px] ${bg} overflow-hidden mb-4 flex items-center justify-center`}>
+      <div className={`relative w-full aspect-[4/5] rounded-[14px] bg-slate-900 overflow-hidden mb-4 flex items-center justify-center`}>
         
         {/* Popular Badge */}
         {popular && (
@@ -50,11 +52,17 @@ export function GameCard({ slug, id, name, publisher, platform, category, popula
 
         {/* Scaling Icon Container or Image */}
         <div className="relative w-full h-full z-0 transition-transform duration-500 ease-out group-hover:scale-110">
-          {image ? (
-            <Image src={image} alt={name} fill className="object-cover opacity-90" />
+          {image && !imgError ? (
+            <Image 
+              src={image} 
+              alt={name} 
+              fill 
+              className="object-cover opacity-90" 
+              onError={() => setImgError(true)}
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              {Icon && <Icon className="h-16 w-16 opacity-80" style={{ color }} />}
+            <div className="w-full h-full flex items-center justify-center bg-slate-900/80">
+              {Icon ? <Icon className="h-16 w-16 opacity-80" style={{ color }} /> : <Gamepad2 className="h-16 w-16 opacity-30 text-white" />}
             </div>
           )}
         </div>

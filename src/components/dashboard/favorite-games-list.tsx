@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, ArrowRight } from "lucide-react";
+import { Heart, ArrowRight, Gamepad2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,41 @@ const FAVORITE_GAMES: Game[] = [
   },
 ];
 
+function GameItem({ game, i }: { game: Game, i: number }) {
+  const [imgError, setImgError] = useState(false);
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: i * 0.1 }}
+      className="group cursor-pointer"
+    >
+      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-slate-900">
+        {game.image && !imgError ? (
+          <Image 
+            src={game.image} 
+            alt={game.name} 
+            fill
+            className="object-cover opacity-90 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-300"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <>
+            <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-80 group-hover:opacity-100 transition-opacity`} />
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Gamepad2 className="w-12 h-12 text-white/50" />
+            </div>
+          </>
+        )}
+      </div>
+      <h4 className="font-bold text-[hsl(var(--foreground))] text-sm truncate">{game.name}</h4>
+      <p className="text-[10px] font-medium text-[hsl(var(--foreground))]/50 truncate">{game.publisher}</p>
+    </motion.div>
+  );
+}
+
 export function FavoriteGamesList({ games }: { games?: Game[] }) {
   const displayGames = games && games.length > 0 ? games : FAVORITE_GAMES;
 
@@ -62,36 +98,7 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {displayGames.map((game, i) => (
-          <motion.div
-            key={game.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="group cursor-pointer"
-          >
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-[hsl(var(--secondary))]">
-              {game.image ? (
-                <Image 
-                  src={game.image} 
-                  alt={game.name} 
-                  fill
-                  className="object-cover opacity-90 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-300"
-                />
-              ) : (
-                <>
-                  <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-80 group-hover:opacity-100 transition-opacity`} />
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-heading font-extrabold text-white/90 text-2xl tracking-tighter -rotate-12 group-hover:scale-110 transition-transform">
-                      {game.name.substring(0, 2).toUpperCase()}
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-            <h4 className="font-bold text-[hsl(var(--foreground))] text-sm truncate">{game.name}</h4>
-            <p className="text-[10px] font-medium text-[hsl(var(--foreground))]/50 truncate">{game.publisher}</p>
-          </motion.div>
+          <GameItem key={game.id} game={game} i={i} />
         ))}
       </div>
     </div>
