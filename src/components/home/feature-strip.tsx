@@ -2,6 +2,7 @@
 
 import { Zap, ShieldCheck, Tag, Clock } from "lucide-react";
 import { Typography } from "@/components/typography";
+import { Marquee } from "@/components/ui/marquee";
 
 const features = [
   { icon: Zap, title: "Proses Instan", subtitle: "Hitungan detik masuk" },
@@ -10,10 +11,15 @@ const features = [
   { icon: Clock, title: "CS 24/7", subtitle: "Siap bantu kendalamu" },
 ];
 
+const supportedGames = [
+  "Mobile Legends", "PUBG Mobile", "Free Fire", "Valorant", "Genshin Impact", 
+  "Call of Duty", "Roblox", "EA FC Mobile"
+];
+
 export function FeatureStrip() {
   return (
-    <section className="py-12 bg-[hsl(var(--background))] border-y border-white/5 relative z-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-12 bg-[hsl(var(--background))] border-y border-white/5 relative z-10 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-10">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
           {features.map((feature) => (
             <div
@@ -34,6 +40,18 @@ export function FeatureStrip() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <Marquee pauseOnHover className="[--duration:20s]">
+          {supportedGames.map((game) => (
+            <div key={game} className="mx-4 flex items-center justify-center px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+              <span className="text-sm font-medium text-white/80 whitespace-nowrap">{game}</span>
+            </div>
+          ))}
+        </Marquee>
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[hsl(var(--background))] dark:from-background"></div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[hsl(var(--background))] dark:from-background"></div>
       </div>
     </section>
   );

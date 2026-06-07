@@ -16,12 +16,12 @@ export function UserIdForm({ fields, fieldValues, isHydrated, onFieldChange }: U
   if (fields.length === 0) return null;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7 shadow-sm">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[hsl(var(--card))]/40 backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-7 shadow-2xl">
       <StepBadge num={1} title="Masukkan Detail Akun" />
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((field) => (
           <div key={field.key} className="space-y-2">
-            <Label htmlFor={field.key} className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+            <Label htmlFor={field.key} className="text-xs font-bold text-[hsl(var(--foreground))]/70 uppercase tracking-wider">
               {field.label}
             </Label>
             <Input
@@ -31,7 +31,7 @@ export function UserIdForm({ fields, fieldValues, isHydrated, onFieldChange }: U
               placeholder={field.placeholder}
               value={fieldValues[field.key] || ""}
               onChange={(e) => onFieldChange(field.key, e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 text-[hsl(var(--foreground))] placeholder:text-gray-400 focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl transition-all font-mono"
+              className="h-12 bg-black/20 border-white/10 text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))]/40 focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] rounded-xl transition-all font-mono shadow-inner"
             />
           </div>
         ))}

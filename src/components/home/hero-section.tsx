@@ -9,7 +9,8 @@ import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { Typography } from "@/components/typography";
 import { FlipWords } from "@/components/ui/flip-words";
-import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { Meteors } from "@/components/ui/meteors";
 
 export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
   const [imgError, setImgError] = useState(false);
@@ -18,6 +19,9 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
     <section className="relative min-h-[90vh] overflow-hidden bg-[hsl(var(--background))] texture-overlay flex items-center pt-20 pb-16">
       
       {/* Ambient Glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <Meteors number={20} />
+      </div>
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[hsl(var(--primary))]/10 rounded-full blur-[120px] pointer-events-none z-0" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
 
@@ -65,14 +69,18 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
             >
-              <HoverBorderGradient
-                containerClassName="rounded-full"
-                className="flex items-center gap-2 bg-[hsl(var(--background))] hover:bg-[hsl(var(--primary))]/10 transition-colors text-[hsl(var(--foreground))] text-lg font-medium px-8 h-14"
+              <ShimmerButton
+                className="h-14 px-8 text-lg font-medium"
+                shimmerColor="hsl(var(--primary))"
+                shimmerSize="0.1em"
+                shimmerDuration="2.5s"
                 onClick={() => toast.success("Memulai Top Up", { description: "Mengarahkan ke halaman Top Up..." })}
               >
-                Top Up Sekarang
-                <ArrowRight className="h-5 w-5" />
-              </HoverBorderGradient>
+                <span className="flex items-center gap-2">
+                  Top Up Sekarang
+                  <ArrowRight className="h-5 w-5" />
+                </span>
+              </ShimmerButton>
               <Button 
                 size="lg" 
                 variant="outline" 

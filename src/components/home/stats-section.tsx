@@ -1,12 +1,13 @@
 "use client";
 
 import { Typography } from "@/components/typography";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 const stats = [
-  { label: "Pelanggan Aktif", value: "50K+" },
-  { label: "Transaksi Berhasil", value: "1M+" },
-  { label: "Rating Kepuasan", value: "4.9/5" },
-  { label: "Uptime Server", value: "99.9%" },
+  { label: "Pelanggan Aktif", value: 50, suffix: "K+" },
+  { label: "Transaksi Berhasil", value: 1, suffix: "M+" },
+  { label: "Rating Kepuasan", value: 4.9, suffix: "/5", decimalPlaces: 1 },
+  { label: "Uptime Server", value: 99.9, suffix: "%", decimalPlaces: 1 },
 ];
 
 export function StatsSection() {
@@ -20,8 +21,9 @@ export function StatsSection() {
               key={stat.label}
               className="flex flex-col items-center text-center px-4"
             >
-              <Typography.Heading level="h2" className="text-[hsl(var(--foreground))] mb-2 font-bold drop-shadow-sm">
-                {stat.value}
+              <Typography.Heading level="h2" className="text-[hsl(var(--foreground))] mb-2 font-bold drop-shadow-sm flex items-center justify-center">
+                <NumberTicker value={stat.value} decimalPlaces={stat.decimalPlaces || 0} />
+                <span>{stat.suffix}</span>
               </Typography.Heading>
               <Typography.Label className="text-[var(--color-gold)] font-medium tracking-widest uppercase">
                 {stat.label}

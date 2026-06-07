@@ -49,3 +49,31 @@ export async function getPopularGames() {
     return [];
   }
 }
+
+export async function getGameDetails(slug: string) {
+  try {
+    const game = await prisma.product.findUnique({
+      where: {
+        slug: slug,
+        isActive: true,
+      },
+      include: {
+        category: true,
+        items: {
+          where: {
+            isActive: true,
+          },
+          orderBy: [
+            { order: 'asc' },
+            { amount: 'asc' },
+            { price: 'asc' }
+          ]
+        }
+      }
+    });
+    return game;
+  } catch (error) {
+    console.error(`Failed to fetch game details for slug ${slug}:`, error);
+    return null;
+  }
+}
