@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useSettings } from "@/components/providers/settings-provider";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface LoadingScreenProps {
   message?: string;
@@ -11,6 +13,17 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
   const containerClasses = isOverlay
     ? "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[hsl(var(--background))] dark:bg-[#1a1c23] texture-overlay"
     : "min-h-[100dvh] w-full flex flex-col items-center justify-center bg-[hsl(var(--background))] dark:bg-[#1a1c23] texture-overlay";
+
+  let logoUrl = "/icons/logo.png";
+  try {
+    const { settings } = useSettings();
+    const siteLogo = settings["site_logo"];
+    if (siteLogo) {
+      logoUrl = siteLogo.startsWith("http") ? siteLogo : cloudinaryUrl(siteLogo);
+    }
+  } catch {
+    // If not wrapped in SettingsProvider, fallback to default
+  }
 
   return (
     <motion.div
@@ -46,7 +59,7 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
           {/* Subtle logo glow */}
           <div className="absolute inset-0 bg-[hsl(var(--primary))]/10 dark:bg-[hsl(var(--primary))]/30 blur-2xl rounded-full scale-[1.8] -z-10" />
           <img 
-            src="/icons/logo.png" 
+            src={logoUrl} 
             alt="MiqStore Logo" 
             className="w-20 h-auto sm:w-24 drop-shadow-[0_4px_16px_rgba(7,59,76,0.15)] dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)]" 
           />

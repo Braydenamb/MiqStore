@@ -14,12 +14,24 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
   const [activeTab, setActiveTab] = useState("website");
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState<Record<string, string>>(initialSettings);
+  const [banners, setBanners] = useState<{image: string, alt: string, link: string}[]>(() => {
+    try {
+      return JSON.parse(initialSettings["home_news_banners"] || "[]");
+    } catch {
+      return [];
+    }
+  });
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    const res = await saveAdminSettings(settings);
+    const payload = {
+      ...settings,
+      home_news_banners: JSON.stringify(banners),
+    };
+
+    const res = await saveAdminSettings(payload);
     
     if (res.success) {
       toast.success("Settings updated successfully");
@@ -181,6 +193,81 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                             defaultValue={settings["hero_banner"]}
                             onUpload={(publicId) => updateSetting("hero_banner", publicId)}
                           />
+                        </div>
+
+                        <UploadZone 
+                          label="Auth Page Left Character" 
+                          folder="Assets"
+                          recommendedAspect="Transparent PNG / Vertical"
+                          defaultValue={settings["auth_character_left"]}
+                          onUpload={(publicId) => updateSetting("auth_character_left", publicId)}
+                        />
+                        <UploadZone 
+                          label="Auth Page Right Character" 
+                          folder="Assets"
+                          recommendedAspect="Transparent PNG / Vertical"
+                          defaultValue={settings["auth_character_right"]}
+                          onUpload={(publicId) => updateSetting("auth_character_right", publicId)}
+                        />
+                        <UploadZone 
+                          label="Dashboard Promo Image" 
+                          folder="Assets"
+                          recommendedAspect="Any (Square preferred)"
+                          defaultValue={settings["dashboard_promo_image"]}
+                          onUpload={(publicId) => updateSetting("dashboard_promo_image", publicId)}
+                        />
+                      </div>
+                      
+                      <div className="mt-10 border-t border-[hsl(var(--border))] pt-8 space-y-6">
+                        <div>
+                          <h3 className="text-lg font-bold text-[hsl(var(--foreground))]">Home News Banners</h3>
+                          <p className="text-xs text-[hsl(var(--foreground))]/60 mt-1">Add banners that link to specific pages (e.g., promos, new games).</p>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          {banners.map((banner, idx) => (
+                            <div key={idx} className="bg-slate-900/30 border border-[hsl(var(--border))] p-4 rounded-xl flex flex-col md:flex-row gap-6">
+                              <div className="w-full md:w-1/3">
+                                <UploadZone 
+                                  label={`Banner Image ${idx + 1}`} 
+                                  folder="Assets"
+                                  recommendedAspect="21:9 or 3:1"
+                                  defaultValue={banner.image} 
+                                  onUpload={(id) => {
+                                    const newB = [...banners]; newB[idx].image = id; setBanners(newB);
+                                  }}
+                                />
+                              </div>
+                              <div className="w-full md:w-2/3 space-y-3">
+                                <div className="space-y-1">
+                                  <Label className="text-xs">Banner Title / Alt Text</Label>
+                                  <Input 
+                                    value={banner.alt} 
+                                    onChange={e => { const newB = [...banners]; newB[idx].alt = e.target.value; setBanners(newB); }} 
+                                    placeholder="e.g. Diskon Mobile Legends 50%" 
+                                    className="bg-slate-900/50"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-xs">Target Link</Label>
+                                  <Input 
+                                    value={banner.link} 
+                                    onChange={e => { const newB = [...banners]; newB[idx].link = e.target.value; setBanners(newB); }} 
+                                    placeholder="e.g. /games/mobile-legends" 
+                                    className="bg-slate-900/50"
+                                  />
+                                </div>
+                                <div className="flex justify-end pt-2">
+                                  <Button type="button" variant="destructive" size="sm" onClick={() => setBanners(banners.filter((_, i) => i !== idx))}>
+                                    Remove Banner
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          <Button type="button" variant="outline" onClick={() => setBanners([...banners, { image: "", alt: "", link: "" }])} className="w-full border-dashed border-2 bg-transparent hover:bg-slate-900/50 h-12 text-[hsl(var(--muted-foreground))]">
+                            + Add New Banner
+                          </Button>
                         </div>
                       </div>
                     </div>

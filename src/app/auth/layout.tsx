@@ -1,12 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useSettings } from "@/components/providers/settings-provider";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { settings } = useSettings();
+  
+  const leftChar = settings["auth_character_left"] 
+    ? (settings["auth_character_left"].startsWith("http") ? settings["auth_character_left"] : cloudinaryUrl(settings["auth_character_left"]))
+    : "/characters/knight.png";
+    
+  const rightChar = settings["auth_character_right"]
+    ? (settings["auth_character_right"].startsWith("http") ? settings["auth_character_right"] : cloudinaryUrl(settings["auth_character_right"]))
+    : "/characters/mascot.png";
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F0E2] relative overflow-hidden font-sans">
       
@@ -36,7 +48,7 @@ export default function AuthLayout({
           >
             <div className="absolute top-10 left-10 w-24 h-24 rounded-full bg-[var(--color-gold)]/20 blur-2xl" />
             <img 
-              src="/characters/knight.png" 
+              src={leftChar} 
               alt="Fantasy Knight" 
               className="w-[120%] h-auto object-contain absolute bottom-0 left-0 animate-float"
               style={{ filter: "drop-shadow(0 20px 40px rgba(7, 59, 76, 0.15))" }}
@@ -64,7 +76,7 @@ export default function AuthLayout({
           >
             <div className="absolute top-10 right-10 w-32 h-32 rounded-full bg-[hsl(var(--primary))]/10 blur-3xl" />
             <img 
-              src="/characters/mascot.png" 
+              src={rightChar} 
               alt="Anime Mascot" 
               className="w-[110%] h-auto object-contain absolute bottom-0 right-0 animate-float"
               style={{ animationDelay: "1.5s", filter: "drop-shadow(0 20px 40px rgba(7, 59, 76, 0.15))" }}

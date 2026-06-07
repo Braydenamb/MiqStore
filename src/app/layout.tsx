@@ -7,8 +7,9 @@ import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { PwaRegistry } from "@/components/pwa-registry";
 import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
-import { getSetting } from "@/lib/settings";
+import { getCachedSettings } from "@/lib/settings";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { SettingsProvider } from "@/components/providers/settings-provider";
 import "./globals.css";
 
 import { Outfit, Space_Grotesk } from "next/font/google";
@@ -94,13 +95,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteLogo = await getSetting("site_logo");
+  const settings = await getCachedSettings();
+  const siteLogo = settings["site_logo"];
   const logoUrl = siteLogo ? (siteLogo.startsWith("http") ? siteLogo : cloudinaryUrl(siteLogo)) : undefined;
 
   return (
     <html lang="id" suppressHydrationWarning>
       <body className={`min-h-screen bg-[hsl(var(--background))] font-sans antialiased ${outfit.variable} ${spaceGrotesk.variable}`}>
-        <Providers>
+        <SettingsProvider settings={settings}>
+          <Providers>
           <div className="relative flex min-h-screen flex-col">
             <Navbar logoUrl={logoUrl} />
             <main className="flex-1 pb-mobile-nav">{children}</main>
@@ -118,6 +121,7 @@ export default async function RootLayout({
           />
           <PwaRegistry />
         </Providers>
+        </SettingsProvider>
 
         {/* Midtrans Snap Script */}
         <Script

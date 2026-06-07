@@ -3,8 +3,15 @@
 import { motion } from "framer-motion";
 import { BrainCircuit, Sparkles, TrendingDown, ChevronRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/components/providers/settings-provider";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 export function AiInsights() {
+  const { settings } = useSettings();
+  const promoImage = settings["dashboard_promo_image"]
+    ? (settings["dashboard_promo_image"].startsWith("http") ? settings["dashboard_promo_image"] : cloudinaryUrl(settings["dashboard_promo_image"]))
+    : "/images/pubgm-logo.png";
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       
@@ -22,8 +29,8 @@ export function AiInsights() {
         </div>
         
         <div className="flex gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-slate-900/40 dark:bg-slate-900/80 shadow-inner border border-white/5 flex items-center justify-center shrink-0">
-            <img src="/images/pubgm-logo.png" alt="PUBG" className="h-10 w-10 object-contain drop-shadow-md" />
+          <div className="h-16 w-16 rounded-2xl bg-slate-900/40 dark:bg-slate-900/80 shadow-inner border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+            <img src={promoImage} alt="Promo" className="h-10 w-10 object-contain drop-shadow-md" />
           </div>
           <div>
             <h4 className="text-sm font-bold text-[hsl(var(--foreground))] leading-tight">PUBG UC Sedang Diskon!</h4>

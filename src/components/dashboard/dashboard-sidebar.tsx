@@ -5,8 +5,15 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Zap, CalendarCheck, CheckCircle2, Sparkles, Crown, Gamepad2, Gift } from "lucide-react";
+import { useSettings } from "@/components/providers/settings-provider";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 export function DashboardSidebar() {
+  const { settings } = useSettings();
+  const promoImage = settings["dashboard_promo_image"]
+    ? (settings["dashboard_promo_image"].startsWith("http") ? settings["dashboard_promo_image"] : cloudinaryUrl(settings["dashboard_promo_image"]))
+    : "/images/mlbb-logo.png";
+
   return (
     <div className="xl:w-80 shrink-0 flex flex-col gap-6">
       
@@ -21,10 +28,10 @@ export function DashboardSidebar() {
           </div>
           
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-white/10 p-4 group cursor-pointer">
-            <div className="absolute inset-0 bg-[url('/images/mlbb-logo.png')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
+            <div className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity blur-sm" style={{ backgroundImage: `url(${promoImage})` }} />
             <div className="relative z-10 flex items-center gap-4">
               <div className="h-12 w-12 rounded-xl bg-slate-900/60 shadow-lg border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                <img src="/images/mlbb-logo.png" alt="MLBB" className="h-full w-full object-cover p-2" />
+                <img src={promoImage} alt="Promo" className="h-full w-full object-cover p-2" />
               </div>
               <div className="flex-1">
                 <h4 className="text-sm font-bold text-white">Mobile Legends</h4>

@@ -8,6 +8,8 @@ import Image from "next/image";
 import { HOME_NEWS_BANNERS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/typography";
+import { useSettings } from "@/components/providers/settings-provider";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 const wrap = (min: number, max: number, v: number) => {
   const rangeSize = max - min;
@@ -46,7 +48,24 @@ function NewsImage({ src, alt }: { src: string, alt: string }) {
 
 export function NewsCarousel() {
   const [[page, direction], setPage] = useState([0, 0]);
-  const banners = HOME_NEWS_BANNERS;
+  const { settings } = useSettings();
+  
+  // Try to parse dynamic banners, fallback to constants
+  const banners = useMemo(() => {
+    try {
+      const dynamicStr = settings["home_news_banners"];
+      if (dynamicStr) {
+        const parsed = JSON.parse(dynamicStr);
+        if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((b: any) => ({
+            ...b,
+            image: b.image.startsWith("http") ? b.image : cloudinaryUrl(b.image)
+          }));
+        }
+      }
+    } catch {}
+    return HOME_NEWS_BANNERS;
+  }, [settings]);
 
   // We only have a few items, we use wrap to make it infinite
   const imageIndex = wrap(0, banners.length, page);
