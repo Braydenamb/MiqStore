@@ -6,6 +6,7 @@ import { StatsSection } from "@/components/home/stats-section";
 import { NewsCarousel } from "@/components/home/news-carousel";
 import { getSetting } from "@/lib/settings";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { getPopularGames } from "@/actions/public-games";
 
 export default async function HomePage() {
   // Simulasi pemanggilan API/Database Backend (misal: fetch daftar promo dari database)
@@ -14,6 +15,7 @@ export default async function HomePage() {
 
   // Fetch dynamic hero banner
   const heroBannerSetting = await getSetting("hero_banner");
+  const popularGames = await getPopularGames();
   const heroBannerUrl = heroBannerSetting 
     ? (heroBannerSetting.startsWith("http") ? heroBannerSetting : cloudinaryUrl(heroBannerSetting))
     : undefined;
@@ -23,7 +25,7 @@ export default async function HomePage() {
       <NewsCarousel />
       <HeroSection heroBannerUrl={heroBannerUrl} />
       <FeatureStrip />
-      <PopularGames />
+      <PopularGames initialGames={popularGames} />
       <PromoBanner />
       <StatsSection />
     </>

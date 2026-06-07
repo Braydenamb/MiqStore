@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CldUploadWidget } from "next-cloudinary";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { GallerySelectorModal } from "./GallerySelectorModal";
 
 interface MultiUploadZoneProps {
   label: string;
@@ -86,6 +87,17 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
           );
         }}
       </CldUploadWidget>
+
+      <GallerySelectorModal 
+        multiple={true}
+        onSelect={(id) => {
+          setItems(prev => {
+            const newItems = [...prev, id];
+            onUpdate(newItems);
+            return newItems;
+          });
+        }} 
+      />
 
       {items.length > 0 && (
         <div className="glass-card rounded-2xl p-4">

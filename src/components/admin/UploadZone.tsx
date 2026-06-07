@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CldUploadWidget } from "next-cloudinary";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { useState, useEffect } from "react";
+import { GallerySelectorModal } from "./GallerySelectorModal";
 
 interface UploadZoneProps {
   label: string;
@@ -116,6 +117,19 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
           );
         }}
       </CldUploadWidget>
+
+      <AnimatePresence>
+        {!preview && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+            <GallerySelectorModal 
+              onSelect={(id) => {
+                setPreview(id);
+                if (onUpload) onUpload(id);
+              }} 
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
