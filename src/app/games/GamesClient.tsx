@@ -62,12 +62,12 @@ export function GamesClient({ initialGames }: { initialGames: any[] }) {
             <select 
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="appearance-none bg-white border border-[hsl(var(--primary))]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] cursor-pointer shadow-sm hover:border-[hsl(var(--primary))]/40 transition-colors"
+              className="appearance-none bg-[hsl(var(--card))]/50 backdrop-blur-md border border-[hsl(var(--primary))]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] cursor-pointer shadow-sm hover:border-[hsl(var(--primary))]/40 transition-colors"
             >
-              <option>All Platforms</option>
-              <option>Mobile</option>
-              <option>PC</option>
-              <option>Console</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">All Platforms</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">Mobile</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">PC</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">Console</option>
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--primary))] pointer-events-none" />
           </div>
@@ -76,11 +76,11 @@ export function GamesClient({ initialGames }: { initialGames: any[] }) {
             <select 
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="appearance-none bg-white border border-[hsl(var(--primary))]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] cursor-pointer shadow-sm hover:border-[hsl(var(--primary))]/40 transition-colors"
+              className="appearance-none bg-[hsl(var(--card))]/50 backdrop-blur-md border border-[hsl(var(--primary))]/20 rounded-full py-2.5 pl-5 pr-10 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] cursor-pointer shadow-sm hover:border-[hsl(var(--primary))]/40 transition-colors"
             >
-              <option>Sort: Popular</option>
-              <option>A-Z</option>
-              <option>Newest</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">Sort: Popular</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">A-Z</option>
+              <option className="bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">Newest</option>
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--primary))] pointer-events-none" />
           </div>
