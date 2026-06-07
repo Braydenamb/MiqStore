@@ -1,4 +1,5 @@
 import { ShieldCheck, Zap } from "lucide-react";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface GameBannerProps {
   game: {
@@ -15,7 +16,7 @@ export function GameBanner({ game }: GameBannerProps) {
       {/* Background Banner with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 blur-[8px] scale-110"
-        style={{ backgroundImage: `url('${game.banner}')` }}
+        style={{ backgroundImage: game.banner ? `url('${game.banner.startsWith('http') ? game.banner : cloudinaryUrl(game.banner)}')` : 'none' }}
       />
       <div className="absolute inset-0 bg-black/40" />
       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))] via-transparent to-transparent" />
@@ -29,7 +30,7 @@ export function GameBanner({ game }: GameBannerProps) {
         <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-2xl bg-[hsl(var(--background))] p-1 shadow-2xl shrink-0 border border-white/20 relative overflow-hidden">
            <div 
              className="w-full h-full rounded-xl bg-cover bg-center"
-             style={{ backgroundImage: `url('${game.image}')` }}
+             style={{ backgroundImage: game.image ? `url('${game.image.startsWith('http') ? game.image : cloudinaryUrl(game.image)}')` : 'none' }}
            />
         </div>
         <div className="pb-2">

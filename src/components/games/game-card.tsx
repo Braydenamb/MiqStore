@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { MagicCard } from "@/components/ui/magic-card";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface GameCardProps {
   id: string;
@@ -60,7 +61,7 @@ export function GameCard({ slug, id, name, publisher, platform, category, popula
           <div className="relative w-full h-full z-0 transition-transform duration-500 ease-out group-hover:scale-110">
             {image && !imgError ? (
               <Image 
-                src={image} 
+                src={image.startsWith('http') ? image : cloudinaryUrl(image)} 
                 alt={name} 
                 fill 
                 className="object-cover opacity-90" 
