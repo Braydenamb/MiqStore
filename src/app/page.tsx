@@ -9,13 +9,11 @@ import { cloudinaryUrl } from "@/lib/cloudinary";
 import { getPopularGames } from "@/actions/public-games";
 
 export default async function HomePage() {
-  // Simulasi pemanggilan API/Database Backend (misal: fetch daftar promo dari database)
-  // Ini akan memicu file loading.tsx (Splash Screen) muncul selama 1.5 detik
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  // Fetch dynamic hero banner
-  const heroBannerSetting = await getSetting("hero_banner");
-  const popularGames = await getPopularGames();
+  // Fetch dynamic hero banner & popular games in parallel
+  const [heroBannerSetting, popularGames] = await Promise.all([
+    getSetting("hero_banner"),
+    getPopularGames(),
+  ]);
   const heroBannerUrl = heroBannerSetting 
     ? (heroBannerSetting.startsWith("http") ? heroBannerSetting : cloudinaryUrl(heroBannerSetting))
     : undefined;
