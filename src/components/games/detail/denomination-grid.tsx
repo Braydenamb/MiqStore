@@ -15,7 +15,7 @@ export function DenominationGrid({ products, selectedProduct, onSelectProduct, s
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[hsl(var(--card))]/40 backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-7 shadow-2xl">
       <StepBadge num={stepNum} title="Pilih Nominal" />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3">
         {products.map((product) => (
           <button
             key={product.id}

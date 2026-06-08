@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, User, Phone, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthCard } from "@/components/auth/auth-card";
 import { AuthInput } from "@/components/auth/auth-input";
@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [form, setForm] = useState({
     username: "",
+    phone: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -41,6 +42,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.username,
+          phone: form.phone.replace(/\D/g, ""),
           email: form.email,
           password: form.password,
         }),
@@ -103,6 +105,19 @@ export default function RegisterPage() {
             value={form.username}
             onChange={(e) => setForm({ ...form, username: e.target.value })}
             required
+            maskType="username"
+          />
+
+          <AuthInput
+            label="No. WhatsApp"
+            id="phone"
+            type="tel"
+            placeholder="0812-3456-7890"
+            icon={<Phone className="h-4 w-4" />}
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            required
+            maskType="phone"
           />
 
           <AuthInput
@@ -114,6 +129,7 @@ export default function RegisterPage() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
+            maskType="email"
           />
 
           <AuthInput

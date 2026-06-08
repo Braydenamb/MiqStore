@@ -35,7 +35,7 @@ export function PaymentMethodList({
               {paymentCategoryLabels[category] || category}
             </AccordionTrigger>
             <AccordionContent className="px-1 pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4">
                 {methods.map((pm) => (
                   <button
                     key={pm.id}

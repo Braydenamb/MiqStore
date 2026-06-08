@@ -56,7 +56,7 @@ function GameItem({ game, i }: { game: Game, i: number }) {
       transition={{ delay: i * 0.1 }}
       className="group cursor-pointer"
     >
-      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-slate-900">
+      <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-slate-900">
         {game.image && !imgError ? (
           <Image 
             src={game.image} 

@@ -202,8 +202,8 @@ export default function InvoicePage() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
-              variant="outline"
-              className="flex-1 h-12 rounded-xl border-gray-200 text-[hsl(var(--foreground))] hover:bg-gray-50 font-bold"
+              variant="ghost"
+              className="flex-1 h-12 rounded-xl text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-gray-50 font-bold"
               onClick={() => handleCopy(invoice.id)}
             >
               <Copy className="w-4 h-4 mr-2" /> Salin Invoice

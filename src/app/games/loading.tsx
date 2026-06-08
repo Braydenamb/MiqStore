@@ -16,12 +16,12 @@ export default function GamesLoading() {
             <div className="h-10 w-32 bg-gray-200/50 dark:bg-gray-800/50 rounded-full animate-pulse" />
           </div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="rounded-[20px] bg-white/50 dark:bg-gray-800/30 border border-white dark:border-gray-700 p-4 h-[280px] flex flex-col relative overflow-hidden animate-pulse">
+            <div key={i} className="rounded-2xl bg-white/50 dark:bg-gray-800/30 border border-white dark:border-gray-700 p-4 h-[280px] flex flex-col relative overflow-hidden animate-pulse">
               <div className="absolute inset-0 bg-gradient-to-tr from-gray-100 dark:from-gray-800/50 to-transparent" />
               <div className="relative z-10 flex-1 flex flex-col items-center text-center pt-8">
-                <div className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-gray-700 mb-4" />
+                <div className="w-16 h-16 rounded-xl bg-gray-200 dark:bg-gray-700 mb-4" />
                 <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded-md mb-2" />
                 <div className="h-3 w-20 bg-gray-200 dark:bg-gray-700 rounded-md" />
               </div>

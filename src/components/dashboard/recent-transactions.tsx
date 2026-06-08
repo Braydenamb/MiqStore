@@ -30,9 +30,9 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
       <div className="flex flex-col gap-3">
         {displayTransactions.length > 0 ? (
           displayTransactions.map((trx) => (
-            <div key={trx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-[hsl(var(--border))]/60 hover:border-[hsl(var(--border))] transition-colors group">
+            <div key={trx.id} className="flex items-center justify-between p-4 rounded-xl bg-white border border-[hsl(var(--border))]/60 hover:border-[hsl(var(--border))] transition-colors group">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[hsl(var(--primary))]/20 to-[hsl(var(--foreground))]/10 flex items-center justify-center font-bold text-[hsl(var(--foreground))] shadow-sm group-hover:scale-105 transition-transform">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[hsl(var(--primary))]/20 to-[hsl(var(--foreground))]/10 flex items-center justify-center font-bold text-[hsl(var(--foreground))] shadow-sm group-hover:scale-105 transition-transform">
                   {trx.game.substring(0, 1)}
                 </div>
                 <div>

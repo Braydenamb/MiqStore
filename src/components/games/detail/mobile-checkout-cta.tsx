@@ -27,20 +27,18 @@ export function MobileCheckoutCTA({
         className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-200 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]"
         style={{ paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}
       >
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Total Harga</p>
-            <div className="flex items-end gap-2">
-              <p className="text-xl font-extrabold text-[hsl(var(--primary))] truncate">
-                {chosenProduct ? formatCurrency(total) : "Rp 0"}
-              </p>
-            </div>
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Total Harga</p>
+            <p className="text-lg font-extrabold text-[hsl(var(--primary))]">
+              {chosenProduct ? formatCurrency(total) : "Rp 0"}
+            </p>
           </div>
           <Button
             size="lg"
             onClick={onCheckout}
             disabled={isSubmitting || !canCheckout}
-            className="shrink-0 w-[140px] h-12 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white font-bold text-sm transition-all disabled:opacity-50 shadow-md shadow-[hsl(var(--primary))]/20"
+            className="w-full h-14 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white font-bold text-base transition-all disabled:opacity-50 shadow-md shadow-[hsl(var(--primary))]/20"
           >
             {isSubmitting ? (
               <Loader2 className="h-5 w-5 animate-spin" />

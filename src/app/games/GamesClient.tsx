@@ -89,7 +89,7 @@ export function GamesClient({ initialGames }: { initialGames: any[] }) {
 
       {/* Games Grid */}
       {sortedGames.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
           {sortedGames.map((game, idx) => (
             <GameCard 
               key={game.id} 

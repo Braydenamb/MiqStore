@@ -235,7 +235,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
         <div className="p-6 border-b border-[hsl(var(--border))] flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900/30">
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
-            <Input placeholder="Search games..." className="h-10 pl-10 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl w-full text-[hsl(var(--foreground))]" />
+            <Input placeholder="e.g. Mobile Legends..." className="h-10 pl-10 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl w-full text-[hsl(var(--foreground))]" />
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button variant="outline" className="rounded-xl font-bold bg-slate-900/50 border-[hsl(var(--border))] text-[hsl(var(--foreground))] hover:bg-slate-800 hover:text-[hsl(var(--foreground))] w-full sm:w-auto">Filter: All</Button>

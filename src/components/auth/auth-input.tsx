@@ -6,18 +6,47 @@ export interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputEleme
   label: string;
   error?: string;
   icon?: React.ReactNode;
+  maskType?: "phone" | "username" | "email" | "none";
 }
 
 export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
-  ({ className, type, label, error, icon, ...props }, ref) => {
+  ({ className, type, label, error, icon, maskType = "none", onChange, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === "password";
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value = e.target.value;
+
+      if (maskType === "phone") {
+        // Keep only numbers
+        const cleaned = value.replace(/\D/g, "");
+        // Format as XXXX-XXXX-XXXX
+        const match = cleaned.match(/^(\d{0,4})(\d{0,4})(\d{0,5})$/);
+        if (match) {
+          value = !match[2]
+            ? match[1]
+            : `${match[1]}-${match[2]}${match[3] ? `-${match[3]}` : ""}`;
+        }
+      } else if (maskType === "username") {
+        // Lowercase, no spaces, only alphanumeric and underscore
+        value = value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+      } else if (maskType === "email") {
+        // Lowercase, no spaces
+        value = value.toLowerCase().replace(/\s/g, "");
+      }
+
+      e.target.value = value;
+      if (onChange) {
+        onChange(e);
+      }
+    };
+
     return (
       <div className="space-y-1.5 w-full">
-        <label className="text-xs font-bold text-[hsl(var(--foreground))] ml-1">
-          {label}
+        <label className="text-xs font-bold text-[hsl(var(--foreground))] ml-1 flex justify-between">
+          <span>{label}</span>
+          {maskType === "phone" && <span className="text-[hsl(var(--foreground))]/40 font-normal">Contoh: 0812-3456-7890</span>}
         </label>
         <div className="relative group">
           {icon && (
@@ -37,6 +66,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
               className
             )}
             ref={ref}
+            onChange={handleChange}
             {...props}
           />
           {isPassword && (

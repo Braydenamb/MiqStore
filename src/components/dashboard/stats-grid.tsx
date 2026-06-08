@@ -42,7 +42,7 @@ export function StatsGrid({ isLoading, totalTransactions = "0", totalSpent = 0, 
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm shrink-0"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl shadow-sm shrink-0"
                   style={{ backgroundColor: `color-mix(in srgb, ${stat.color} 15%, transparent)` }}
                 >
                   <stat.icon className="h-6 w-6" style={{ color: stat.color }} />

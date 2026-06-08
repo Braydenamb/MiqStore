@@ -64,7 +64,7 @@ export default function LoginPage() {
         {/* Social Login */}
         <Button 
           variant="outline" 
-          className="w-full gap-3 h-12 rounded-xl border-white/50 bg-white/40 hover:bg-white/80 hover:border-white transition-all premium-shadow font-bold text-[hsl(var(--foreground))]"
+          className="w-full gap-3 h-12 rounded-xl border-[hsl(var(--border))]/50 bg-transparent hover:bg-[hsl(var(--foreground))]/5 transition-all font-bold text-[hsl(var(--foreground))]"
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -114,6 +114,7 @@ export default function LoginPage() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
+            maskType="email"
           />
 
           <div className="space-y-1">

@@ -27,31 +27,31 @@
   --color-gold: #F7C873;
   --color-white: #ffffff;
   
-  /* Theme Variables - Sleek Dark Mode */
-  --background: 226 71% 5%; /* #020617 */
-  --foreground: 210 40% 98%; /* #f8fafc */
+  /* Theme Variables - Sleek Dark Mode (Desaturated) */
+  --background: 226 30% 5%; /* Less intense blue background */
+  --foreground: 210 40% 98%;
   
-  --primary: 226 100% 82%; /* Pastel Indigo #a5b4fc */
-  --primary-foreground: 226 71% 5%;
+  --primary: 226 70% 85%; /* Desaturated Pastel Indigo */
+  --primary-foreground: 226 30% 5%;
   
-  --secondary: 222 47% 11%; /* #0f172a */
+  --secondary: 222 30% 11%;
   --secondary-foreground: 210 40% 98%;
   
-  --accent: 239 84% 67%; /* #6366f1 */
+  --accent: 239 60% 70%; /* Desaturated Accent */
   --accent-foreground: 210 40% 98%;
   
-  --card: 222 47% 11%; /* #0f172a */
+  --card: 222 30% 11%;
   --card-foreground: 210 40% 98%;
   
-  --popover: 222 47% 11%;
+  --popover: 222 30% 11%;
   --popover-foreground: 210 40% 98%;
   
-  --muted: 215 28% 17%; /* #1e293b */
-  --muted-foreground: 215 20% 65%; /* #94a3b8 */
+  --muted: 215 15% 17%;
+  --muted-foreground: 215 20% 65%;
   
-  --border: 215 28% 17%;
-  --input: 215 28% 17%;
-  --ring: 226 100% 82%;
+  --border: 215 15% 17%;
+  --input: 215 15% 17%;
+  --ring: 226 70% 85%;
   
   --radius: 1.25rem; /* 20px */
 }

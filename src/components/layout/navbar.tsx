@@ -72,7 +72,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
               <input
                 type="text"
                 name="q"
-                placeholder="Search games..."
+                placeholder="e.g. Mobile Legends, Free Fire..."
                 className="h-10 w-64 rounded-full border border-[hsl(var(--border))] bg-white/5 pl-10 pr-4 text-sm text-[hsl(var(--foreground))] outline-none transition-all focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
               />
             </form>
@@ -222,7 +222,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
                   <input
                     type="text"
                     name="q"
-                    placeholder="Search games..."
+                    placeholder="e.g. Mobile Legends, Free Fire..."
                     className="h-12 w-full rounded-xl border border-[hsl(var(--border))] bg-white/5 pl-10 pr-4 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
                   />
                 </form>

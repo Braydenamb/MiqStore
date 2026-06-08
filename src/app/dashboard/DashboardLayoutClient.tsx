@@ -249,7 +249,7 @@ export default function DashboardLayoutClient({
               <input 
                 type="text" 
                 name="q"
-                placeholder="Cari game, voucher, dll..." 
+                placeholder="e.g. Mobile Legends, Steam Wallet..." 
                 className="h-11 w-72 rounded-full bg-white border border-[hsl(var(--border))] pl-11 pr-4 text-sm font-medium outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] transition-all shadow-sm"
               />
             </form>

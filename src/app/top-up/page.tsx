@@ -85,7 +85,7 @@ export default function TopUpPage() {
                 <Search className="absolute left-5 h-6 w-6 text-[hsl(var(--primary))]/50" />
                 <input 
                   type="text" 
-                  placeholder="Cari pulsa, e-wallet, subscription..." 
+                  placeholder="e.g. DANA, Telkomsel, Netflix..." 
                   className="w-full h-full pl-14 pr-4 bg-transparent outline-none text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--primary))]/40 font-medium"
                 />
                 <Button className="h-full rounded-none rounded-r-[20px] px-8 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] transition-colors text-white font-semibold">
