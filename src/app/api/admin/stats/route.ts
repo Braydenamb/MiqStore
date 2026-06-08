@@ -15,96 +15,104 @@ export async function GET() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 1. Overview Stats
-    // Today's Revenue
-    const todayRevenue = await prisma.transaction.aggregate({
-      where: {
-        status: "SUCCESS",
-        createdAt: { gte: today },
-      },
-      _sum: { total: true },
-      _count: { id: true },
+    // Build date ranges for last 7 days upfront
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const dStart = new Date();
+      dStart.setDate(dStart.getDate() - (6 - i));
+      dStart.setHours(0, 0, 0, 0);
+      const dEnd = new Date(dStart);
+      dEnd.setHours(23, 59, 59, 999);
+      return { dStart, dEnd };
     });
 
-    // New Users Today
-    const newUsers = await prisma.user.count({
-      where: {
-        createdAt: { gte: today },
-      },
+    // ── Run ALL queries in parallel — replaces two serial for-loops ──────────
+    const [
+      todayRevenue,
+      newUsers,
+      allTxToday,
+      recentTx,
+      topSalesRaw,
+      ...dailyRevenues
+    ] = await Promise.all([
+      // Today revenue & count
+      prisma.transaction.aggregate({
+        where: { status: "SUCCESS", createdAt: { gte: today } },
+        _sum: { total: true },
+        _count: { id: true },
+      }),
+      // New users today
+      prisma.user.count({ where: { createdAt: { gte: today } } }),
+      // All transactions today (for success rate)
+      prisma.transaction.count({ where: { createdAt: { gte: today } } }),
+      // Recent orders
+      prisma.transaction.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        include: {
+          user: { select: { name: true } },
+          product: { select: { name: true } },
+          productItem: { select: { name: true } },
+        },
+      }),
+      // Top sales groupBy
+      prisma.transaction.groupBy({
+        by: ["productId"],
+        where: { status: "SUCCESS" },
+        _sum: { quantity: true },
+        orderBy: { _sum: { quantity: "desc" } },
+        take: 5,
+      }),
+      // Last 7 days revenue — all 7 in parallel (was a serial for-loop!)
+      ...last7Days.map(({ dStart, dEnd }) =>
+        prisma.transaction.aggregate({
+          where: { status: "SUCCESS", createdAt: { gte: dStart, lte: dEnd } },
+          _sum: { total: true },
+        })
+      ),
+    ]);
+
+    // ── Resolve top product names in ONE batch query (not N serial lookups!) ──
+    const productIds = topSalesRaw
+      .filter((s) => s.productId)
+      .map((s) => s.productId as string);
+
+    const topProductDetails = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, name: true },
     });
 
-    // Success Rate (All Time or Today)
-    const allTxToday = await prisma.transaction.count({
-      where: { createdAt: { gte: today } },
-    });
+    const productMap = new Map(topProductDetails.map((p) => [p.id, p.name]));
+    const colors = [
+      "var(--liquid-purple)",
+      "var(--liquid-blue)",
+      "var(--liquid-cyan)",
+      "var(--liquid-pink)",
+      "var(--liquid-indigo)",
+    ];
+
+    const topProducts = topSalesRaw.map((s, i) => ({
+      name: productMap.get(s.productId ?? "") || "Unknown",
+      sales: s._sum.quantity || 0,
+      color: colors[i % colors.length],
+    }));
+
+    // ── Format results ────────────────────────────────────────────────────────
     const successTxToday = todayRevenue._count.id;
-    const successRate = allTxToday > 0 ? (successTxToday / allTxToday) * 100 : 0;
+    const successRate =
+      allTxToday > 0 ? (successTxToday / allTxToday) * 100 : 0;
 
-    // 2. Recent Orders
-    const recentTx = await prisma.transaction.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      include: {
-        user: { select: { name: true } },
-        product: { select: { name: true } },
-        productItem: { select: { name: true } },
-      },
-    });
-
+    const formatter = new Intl.DateTimeFormat("id-ID", { timeStyle: "short" });
     const formattedRecentOrders = recentTx.map((tx) => ({
       id: tx.invoiceId,
-      user: tx.user.name,
+      user: tx.user?.name || "Unknown",
       game: tx.product?.name || "Unknown Game",
       product: tx.productItem?.name || "Unknown Product",
       amount: tx.total,
       status: tx.status.toLowerCase(),
-      time: new Intl.DateTimeFormat('id-ID', { timeStyle: 'short' }).format(tx.createdAt) + " WIB",
+      time: formatter.format(tx.createdAt) + " WIB",
     }));
 
-    // 3. Top Products (Mocking the aggregation for now since SQLite/Prisma limits raw groupBy joins on relation)
-    // Actually Prisma can groupBy productItemId.
-    const topSales = await prisma.transaction.groupBy({
-      by: ['productId'],
-      where: { status: "SUCCESS" },
-      _sum: { quantity: true },
-      orderBy: { _sum: { quantity: 'desc' } },
-      take: 5,
-    });
-
-    const topProducts = [];
-    const colors = ["var(--liquid-purple)", "var(--liquid-blue)", "var(--liquid-cyan)", "var(--liquid-pink)", "var(--liquid-indigo)"];
-    for (let i = 0; i < topSales.length; i++) {
-      if (topSales[i].productId) {
-        const prod = await prisma.product.findUnique({ where: { id: topSales[i].productId } });
-        if (prod) {
-          topProducts.push({
-            name: prod.name,
-            sales: topSales[i]._sum.quantity || 0,
-            color: colors[i % colors.length],
-          });
-        }
-      }
-    }
-
-    // 4. Historical Revenue (last 7 days)
-    const historicalRevenue = [];
-    for (let i = 6; i >= 0; i--) {
-      const dStart = new Date();
-      dStart.setDate(dStart.getDate() - i);
-      dStart.setHours(0, 0, 0, 0);
-
-      const dEnd = new Date(dStart);
-      dEnd.setHours(23, 59, 59, 999);
-
-      const dayRev = await prisma.transaction.aggregate({
-        where: {
-          status: "SUCCESS",
-          createdAt: { gte: dStart, lte: dEnd },
-        },
-        _sum: { total: true },
-      });
-      historicalRevenue.push(dayRev._sum.total || 0);
-    }
+    const historicalRevenue = dailyRevenues.map((d) => d._sum.total || 0);
 
     return NextResponse.json({
       overview: {

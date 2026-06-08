@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -186,33 +187,41 @@ export async function getGamesStats() {
   }
 }
 
-export async function getCategories() {
-  try {
-    const categories = await prisma.category.findMany({
-      where: { isActive: true },
-      orderBy: { order: "asc" },
-      select: { id: true, name: true, slug: true },
-    });
-    return { success: true, data: categories };
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    return { success: false, error: msg, data: [] };
-  }
-}
+export const getCategories = unstable_cache(
+  async () => {
+    try {
+      const categories = await prisma.category.findMany({
+        where: { isActive: true },
+        orderBy: { order: "asc" },
+        select: { id: true, name: true, slug: true },
+      });
+      return { success: true, data: categories };
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: msg, data: [] as { id: string; name: string; slug: string }[] };
+    }
+  },
+  ["admin-categories"],
+  { revalidate: 60, tags: ["admin-categories"] }
+);
 
-export async function getProviders() {
-  try {
-    const providers = await prisma.provider.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true, slug: true },
-    });
-    return { success: true, data: providers };
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    return { success: false, error: msg, data: [] };
-  }
-}
+export const getProviders = unstable_cache(
+  async () => {
+    try {
+      const providers = await prisma.provider.findMany({
+        where: { isActive: true },
+        orderBy: { name: "asc" },
+        select: { id: true, name: true, slug: true },
+      });
+      return { success: true, data: providers };
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: msg, data: [] as { id: string; name: string; slug: string }[] };
+    }
+  },
+  ["admin-providers"],
+  { revalidate: 300, tags: ["admin-providers"] }  // Providers change rarely — 5 min cache
+);
 
 // ─── Write ────────────────────────────────────────────────────────────────────
 
@@ -239,6 +248,7 @@ export async function createGame(data: GameFormData) {
 
     revalidatePath("/admin/games");
     revalidatePath("/");
+    revalidateTag("admin-categories", "default");
     return { success: true, data: game };
   } catch (error: unknown) {
     if (
@@ -286,6 +296,7 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
 
     revalidatePath("/admin/games");
     revalidatePath(`/games/${game.slug}`);
+    revalidateTag("admin-categories", "default");
     return { success: true, data: game };
   } catch (error: unknown) {
     if (
@@ -308,6 +319,7 @@ export async function deleteGame(id: string) {
     await prisma.product.delete({ where: { id } });
     revalidatePath("/admin/games");
     revalidatePath("/");
+    revalidateTag("admin-categories", "default");
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";

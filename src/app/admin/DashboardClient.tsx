@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -85,6 +86,35 @@ interface DashboardData {
 }
 
 export default function DashboardClient({ initialData }: { initialData: DashboardData }) {
+  // ── Realtime polling: seed from SSR, refresh every 30s in background ───────
+  const { data } = useQuery({
+    queryKey: ["admin-dashboard-stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/stats");
+      if (!res.ok) throw new Error("Failed to fetch admin stats");
+      const json = await res.json();
+      // Map API response shape → DashboardData shape
+      return {
+        ...initialData,
+        revenueTodayStats: json.overview?.todayRevenue ?? initialData.revenueTodayStats,
+        ordersToday: json.overview?.todayTx ?? initialData.ordersToday,
+        successRateToday: Number(json.overview?.successRate ?? initialData.successRateToday),
+        recentOrders: json.recentOrders?.map((o: { id: string; user: string | null; game: string; product: string; amount: number; status: string; time: string }) => ({
+          id: o.id,
+          user: o.user ?? "Unknown",
+          game: o.game,
+          product: o.product,
+          total: o.amount,
+          status: o.status,
+          date: o.time,
+        })) ?? initialData.recentOrders,
+      } as DashboardData;
+    },
+    initialData,          // Render instantly from SSR, no loading flash
+    staleTime: 0,         // Always consider stale so it refetches on focus
+    refetchInterval: 30_000,  // Auto-refresh every 30s in background
+  });
+
   const {
     totalRevenue,
     totalOrders,
@@ -99,7 +129,7 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
     topProducts,
     recentUsers,
     chartData,
-  } = initialData;
+  } = data ?? initialData;
 
   const defaultLayout = [
     "revenue-chart",

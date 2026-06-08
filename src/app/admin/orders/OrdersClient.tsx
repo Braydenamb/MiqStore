@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, Filter, MoreHorizontal, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Search, ChevronDown, ChevronLeft, ChevronRight, Loader2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { getAdminOrders, updateOrderStatus } from "@/actions/admin-orders";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const statusStyles: Record<string, string> = {
   success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -34,60 +36,36 @@ type OrderData = {
 };
 
 export default function OrdersClient({ initialData }: { initialData: { orders: OrderData[], total: number, totalPages: number } }) {
-  const [orders, setOrders] = useState<OrderData[]>(initialData.orders);
-  const [total, setTotal] = useState(initialData.total);
-  const [totalPages, setTotalPages] = useState(initialData.totalPages);
-  
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Debounce search
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500);
-    return () => clearTimeout(handler);
-  }, [search]);
+  // Debounce search — avoids query on every keystroke
+  const debouncedSearch = useDebounce(search, 400);
 
-  // Fetch data when filters or page change
-  useEffect(() => {
-    // skip initial render fetch since we have initialData
-    if (page === 1 && debouncedSearch === "" && statusFilter === "all" && orders === initialData.orders) return;
-    
-    const fetchData = async () => {
-      setIsLoading(true);
+  // ── TanStack Query: cache + placeholderData prevents blank-table flash ──────
+  const { data, isFetching } = useQuery({
+    queryKey: ["admin-orders", page, debouncedSearch, statusFilter],
+    queryFn: async () => {
       const result = await getAdminOrders(page, 20, debouncedSearch, statusFilter);
-      if (result.success && result.data) {
-        setOrders(result.data.orders);
-        setTotal(result.data.total);
-        setTotalPages(result.data.totalPages);
-      } else {
-        toast.error("Gagal memuat pesanan");
-      }
-      setIsLoading(false);
-    };
-    
-    fetchData();
-  }, [debouncedSearch, statusFilter, page]);
+      if (!result.success || !result.data) throw new Error("Failed to fetch orders");
+      return result.data;
+    },
+    initialData: { orders: initialData.orders, total: initialData.total, totalPages: initialData.totalPages },
+    placeholderData: (prev) => prev, // Keep previous page data while fetching next
+    staleTime: 15_000,
+  });
 
-  // Reset page to 1 when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, statusFilter]);
+  const orders = data?.orders ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = data?.totalPages ?? 0;
 
   const handleStatusChange = async (dbId: string, newStatus: string) => {
-    // Optimistic update
-    setOrders(orders.map(o => o.dbId === dbId ? { ...o, status: newStatus } : o));
-    
     const result = await updateOrderStatus(dbId, newStatus);
     if (result.success) {
       toast.success(`Status updated to ${newStatus.toUpperCase()}`);
     } else {
       toast.error(result.error || "Gagal mengubah status");
-      // Revert if failed (optional, can just re-fetch)
     }
   };
 
@@ -130,9 +108,10 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
         </div>
 
         <div className="overflow-x-auto min-h-[300px] relative">
-          {isLoading && (
-            <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm z-10 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-[hsl(var(--primary))] animate-spin" />
+          {/* Subtle top-bar indicator instead of blocking overlay */}
+          {isFetching && (
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-[hsl(var(--primary))]/30 z-10 overflow-hidden rounded-t-lg">
+              <div className="h-full bg-[hsl(var(--primary))] animate-shimmer-slide" style={{ width: "40%" }} />
             </div>
           )}
           <table className="w-full text-sm text-left">
@@ -191,7 +170,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                   </td>
                 </tr>
               ))}
-              {orders.length === 0 && !isLoading && (
+              {orders.length === 0 && !isFetching && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
                     No orders found matching your filters.

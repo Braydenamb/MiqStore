@@ -68,13 +68,24 @@ export default async function AdminDashboardPage() {
         productItem: { select: { name: true } },
       },
     }),
-    // Top products by sales
-    prisma.transaction.groupBy({
-      by: ["productId"],
-      _count: { productId: true },
-      _sum: { total: true },
-      where: { status: "SUCCESS" },
-      orderBy: { _count: { productId: "desc" } },
+    // Top products by sales — 1 query with join instead of groupBy + serial findMany
+    prisma.product.findMany({
+      where: {
+        transactions: {
+          some: { status: "SUCCESS" },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        _count: { select: { transactions: true } },
+        transactions: {
+          where: { status: "SUCCESS" },
+          select: { total: true },
+        },
+      },
+      orderBy: { transactions: { _count: "desc" } },
       take: 5,
     }),
     // Recent users
@@ -108,23 +119,14 @@ export default async function AdminDashboardPage() {
     }),
   }));
 
-  // Fetch product names for top products
-  const topProductIds = topProductsRaw.map((p) => p.productId);
-  const products = await prisma.product.findMany({
-    where: { id: { in: topProductIds } },
-    select: { id: true, name: true, image: true },
-  });
-
-  const topProducts = topProductsRaw.map((p) => {
-    const product = products.find((prod) => prod.id === p.productId);
-    return {
-      id: p.productId,
-      name: product?.name || "Unknown",
-      image: product?.image || null,
-      sales: p._count.productId,
-      revenue: p._sum.total || 0,
-    };
-  });
+  // Map top products — already resolved via join, no extra query needed
+  const topProducts = topProductsRaw.map((p) => ({
+    id: p.id,
+    name: p.name,
+    image: p.image || null,
+    sales: p._count.transactions,
+    revenue: p.transactions.reduce((sum, tx) => sum + tx.total, 0),
+  }));
 
   // Calculate today's success rate
   const successRateToday =
