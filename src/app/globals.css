@@ -27,31 +27,31 @@
   --color-gold: #F7C873;
   --color-white: #ffffff;
   
-  /* Theme Variables - Sleek Dark Mode (Desaturated) */
-  --background: 226 30% 5%; /* Less intense blue background */
-  --foreground: 210 40% 98%;
+  /* Theme Variables - Sleek Dark Mode (Brighter & High Contrast) */
+  --background: 226 40% 10%; /* Brighter and richer dark blue */
+  --foreground: 0 0% 100%; /* Pure white text for high contrast */
   
-  --primary: 226 70% 85%; /* Desaturated Pastel Indigo */
-  --primary-foreground: 226 30% 5%;
+  --primary: 226 80% 88%; /* Brighter Pastel Indigo */
+  --primary-foreground: 226 50% 10%;
   
-  --secondary: 222 30% 11%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 226 35% 18%; /* Brighter secondary surfaces */
+  --secondary-foreground: 0 0% 100%;
   
-  --accent: 239 60% 70%; /* Desaturated Accent */
-  --accent-foreground: 210 40% 98%;
+  --accent: 239 70% 75%;
+  --accent-foreground: 0 0% 100%;
   
-  --card: 222 30% 11%;
-  --card-foreground: 210 40% 98%;
+  --card: 226 35% 16%; /* Brighter cards */
+  --card-foreground: 0 0% 100%;
   
-  --popover: 222 30% 11%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 226 35% 16%;
+  --popover-foreground: 0 0% 100%;
   
-  --muted: 215 15% 17%;
-  --muted-foreground: 215 20% 65%;
+  --muted: 226 25% 25%;
+  --muted-foreground: 226 20% 75%; /* Brighter muted text */
   
-  --border: 215 15% 17%;
-  --input: 215 15% 17%;
-  --ring: 226 70% 85%;
+  --border: 226 25% 25%;
+  --input: 226 25% 25%;
+  --ring: 226 80% 88%;
   
   --radius: 1.25rem; /* 20px */
 }

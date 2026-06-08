@@ -39,7 +39,7 @@ export function AuthCard({
         </Link>
       </div>
 
-      <div className="rounded-[28px] p-8 sm:p-10 bg-white/70 backdrop-blur-xl border border-white/40 premium-shadow">
+      <div className="rounded-[28px] p-8 sm:p-10 bg-[hsl(var(--card))]/40 backdrop-blur-xl border border-white/10 shadow-2xl">
         <div className="text-center mb-8">
           <h1 className="font-heading text-2xl sm:text-3xl font-bold text-[hsl(var(--foreground))] mb-2">
             {title}

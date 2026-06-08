@@ -20,7 +20,7 @@ export default function AuthLayout({
     : "/characters/mascot.png";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F0E2] relative overflow-hidden font-sans">
+    <div className="min-h-screen flex flex-col bg-[hsl(var(--background))] texture-overlay relative overflow-hidden font-sans">
       
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
