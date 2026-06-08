@@ -1,9 +1,5 @@
-import { getAdminProducts } from "@/actions/admin-products";
-import ProductsClient from "./ProductsClient";
+import { redirect } from "next/navigation";
 
-export default async function AdminProductsPage() {
-  const result = await getAdminProducts();
-  const initialProducts = result.success && result.data ? result.data : [];
-
-  return <ProductsClient initialProducts={initialProducts as any} />;
+export default function ProductsPage() {
+  redirect("/admin/games");
 }

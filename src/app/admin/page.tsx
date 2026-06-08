@@ -1,45 +1,98 @@
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "./DashboardClient";
 
-export const dynamic = "force-dynamic"; // Ensure fresh data on dashboard
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  // 1. Fetch Total Revenue (Success transactions)
-  const revenueAgg = await prisma.transaction.aggregate({
-    _sum: { total: true },
-    where: { status: "SUCCESS" },
-  });
-  const totalRevenue = revenueAgg._sum.total || 0;
+  // ── Today's range ──────────────────────────────────────────────────────────
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
 
-  // 2. Fetch Total Orders
-  const totalOrders = await prisma.transaction.count();
-
-  // 3. Fetch Total Users
-  const totalUsers = await prisma.user.count();
-
-  // 4. Fetch Pending Orders
-  const pendingOrders = await prisma.transaction.count({
-    where: { status: "PENDING" },
-  });
-
-  // 5. Fetch Recent Orders (last 5)
-  const recentTransactions = await prisma.transaction.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: {
-        select: { name: true, email: true },
+  // ── Parallel fetch all data ────────────────────────────────────────────────
+  const [
+    revenueAgg,
+    totalOrders,
+    totalUsers,
+    pendingOrders,
+    // Today's metrics
+    revenueTodayAgg,
+    ordersTodayCount,
+    successTodayCount,
+    // Catalog stats
+    totalGames,
+    totalItems,
+    // Recent transactions
+    recentTransactions,
+    // Top products
+    topProductsRaw,
+    // Recent users
+    recentUsers,
+  ] = await Promise.all([
+    // All-time revenue (SUCCESS)
+    prisma.transaction.aggregate({
+      _sum: { total: true },
+      where: { status: "SUCCESS" },
+    }),
+    // All-time orders
+    prisma.transaction.count(),
+    // All users
+    prisma.user.count(),
+    // Pending
+    prisma.transaction.count({ where: { status: "PENDING" } }),
+    // Today revenue
+    prisma.transaction.aggregate({
+      _sum: { total: true },
+      where: { status: "SUCCESS", createdAt: { gte: todayStart, lte: todayEnd } },
+    }),
+    // Today orders (all statuses)
+    prisma.transaction.count({
+      where: { createdAt: { gte: todayStart, lte: todayEnd } },
+    }),
+    // Today success orders
+    prisma.transaction.count({
+      where: { status: "SUCCESS", createdAt: { gte: todayStart, lte: todayEnd } },
+    }),
+    // Total games
+    prisma.product.count(),
+    // Total items
+    prisma.productItem.count(),
+    // Recent transactions
+    prisma.transaction.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: { select: { name: true, email: true } },
+        product: { select: { name: true } },
+        productItem: { select: { name: true } },
       },
-      product: {
-        select: { name: true },
+    }),
+    // Top products by sales
+    prisma.transaction.groupBy({
+      by: ["productId"],
+      _count: { productId: true },
+      _sum: { total: true },
+      where: { status: "SUCCESS" },
+      orderBy: { _count: { productId: "desc" } },
+      take: 5,
+    }),
+    // Recent users
+    prisma.user.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        role: true,
+        createdAt: true,
       },
-      productItem: {
-        select: { name: true },
-      },
-    },
-  });
+    }),
+  ]);
 
-  // Map transactions to the format expected by the client
+  // Map recent transactions
   const mappedRecentOrders = recentTransactions.map((tx) => ({
     id: tx.invoiceId,
     user: tx.user?.name || tx.user?.email || "Unknown User",
@@ -55,17 +108,7 @@ export default async function AdminDashboardPage() {
     }),
   }));
 
-  // 6. Fetch Top Products
-  const topProductsRaw = await prisma.transaction.groupBy({
-    by: ['productId'],
-    _count: { productId: true },
-    _sum: { total: true },
-    where: { status: "SUCCESS" },
-    orderBy: { _count: { productId: 'desc' } },
-    take: 5,
-  });
-
-  // Since groupBy doesn't include relations, we fetch product details separately
+  // Fetch product names for top products
   const topProductIds = topProductsRaw.map((p) => p.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: topProductIds } },
@@ -76,28 +119,20 @@ export default async function AdminDashboardPage() {
     const product = products.find((prod) => prod.id === p.productId);
     return {
       id: p.productId,
-      name: product?.name || "Unknown Product",
+      name: product?.name || "Unknown",
       image: product?.image || null,
       sales: p._count.productId,
       revenue: p._sum.total || 0,
     };
   });
 
-  // 7. Fetch Recent Users
-  const recentUsers = await prisma.user.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      avatar: true,
-      role: true,
-      createdAt: true,
-    },
-  });
+  // Calculate today's success rate
+  const successRateToday =
+    ordersTodayCount > 0
+      ? Math.round((successTodayCount / ordersTodayCount) * 1000) / 10
+      : 0;
 
-  // 8. Mock Chart Data (Last 7 Days)
+  // Mock chart data (Last 7 Days)
   const chartData = [
     { name: "Mon", revenue: 4000000 },
     { name: "Tue", revenue: 3000000 },
@@ -109,15 +144,24 @@ export default async function AdminDashboardPage() {
   ];
 
   const initialData = {
-    totalRevenue,
+    // All-time stats
+    totalRevenue: revenueAgg._sum.total || 0,
     totalOrders,
     totalUsers,
     pendingOrders,
+    // Today's stats
+    revenueTodayStats: revenueTodayAgg._sum.total || 0,
+    ordersToday: ordersTodayCount,
+    successRateToday,
+    // Catalog stats
+    totalGames,
+    totalItems,
+    // Lists
     recentOrders: mappedRecentOrders,
     topProducts,
-    recentUsers: recentUsers.map(u => ({
+    recentUsers: recentUsers.map((u) => ({
       ...u,
-      createdAt: u.createdAt.toISOString()
+      createdAt: u.createdAt.toISOString(),
     })),
     chartData,
   };
