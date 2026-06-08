@@ -12,16 +12,16 @@ import { cloudinaryUrl } from "@/lib/cloudinary";
 import { SettingsProvider } from "@/components/providers/settings-provider";
 import "./globals.css";
 
-import { Outfit, Space_Grotesk } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 
-const outfit = Outfit({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-inter",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-playfair",
 });
 
 export const viewport: Viewport = {
@@ -101,7 +101,7 @@ export default async function RootLayout({
 
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`min-h-screen bg-[hsl(var(--background))] font-sans antialiased ${outfit.variable} ${spaceGrotesk.variable}`}>
+      <body className={`min-h-screen bg-[hsl(var(--background))] font-sans antialiased ${inter.variable} ${playfair.variable}`}>
         <SettingsProvider settings={settings}>
           <Providers>
           <div className="relative flex min-h-screen flex-col">

@@ -6,8 +6,8 @@
 @import "../components/typography/effects.css";
 
 @theme {
-  --font-sans: var(--font-outfit), 'Outfit', sans-serif;
-  --font-heading: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  --font-sans: var(--font-inter), 'Inter', sans-serif;
+  --font-heading: var(--font-playfair), 'Playfair Display', serif;
   
   /* Magic UI Animations */
   --animate-marquee: marquee var(--duration) infinite linear;

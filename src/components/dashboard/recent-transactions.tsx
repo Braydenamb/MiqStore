@@ -23,7 +23,7 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
           <Receipt className="h-5 w-5 text-[hsl(var(--primary))]" />
           Transaksi Terakhir
         </h3>
-        <Button variant="ghost" className="text-sm font-bold text-[hsl(var(--primary))] hover:bg-[hsl(var(--border))]/30 hover:text-[hsl(var(--foreground))] rounded-xl h-9">
+        <Button variant="outline" className="text-sm font-bold border-white/10 hover:bg-white/5 rounded-xl h-9">
           Lihat Semua
         </Button>
       </div>
@@ -57,15 +57,43 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
             </div>
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center h-full flex-1">
-            <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center mb-4">
-              <ShoppingBag className="w-8 h-8 text-[hsl(var(--muted-foreground))]" />
+          <div className="flex flex-col h-full flex-1 justify-center py-4">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/10 mb-4">
+                <ShoppingBag className="w-6 h-6 text-emerald-500" />
+              </div>
+              <h4 className="font-bold text-[hsl(var(--foreground))] text-base mb-1">Mulai Top Up Pertamamu</h4>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mb-3">Dapatkan <span className="text-emerald-500 font-bold">Bonus Voucher 10%</span> untuk member baru!</p>
+              <Button asChild size="sm" className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20 px-6">
+                <Link href="/games">Klaim Promo & Top Up</Link>
+              </Button>
             </div>
-            <h4 className="font-bold text-[hsl(var(--foreground))] text-base mb-1">Belum ada transaksi</h4>
-            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6 max-w-[250px]">Yuk, mulai transaksi pertamamu dan nikmati berbagai promo menarik!</p>
-            <Button asChild className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20">
-              <Link href="/">Mulai Top Up</Link>
-            </Button>
+            
+            <div className="pt-4 border-t border-[hsl(var(--border))]/50">
+              <p className="text-[10px] font-bold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-3 flex items-center gap-1">
+                🔥 Top Up Terlaris Hari Ini
+              </p>
+              <div className="flex flex-col gap-2">
+                {[
+                  { name: "Mobile Legends", publisher: "Moonton", color: "bg-blue-500/20 text-blue-500" },
+                  { name: "PUBG Mobile", publisher: "Tencent", color: "bg-orange-500/20 text-orange-500" },
+                  { name: "Valorant", publisher: "Riot Games", color: "bg-red-500/20 text-red-500" },
+                ].map((game) => (
+                  <Link key={game.name} href={`/games`} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-800/30 transition-colors group border border-transparent hover:border-white/5">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${game.color}`}>
+                        {game.name[0]}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--primary))] transition-colors">{game.name}</p>
+                        <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{game.publisher}</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-[hsl(var(--muted-foreground))] opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

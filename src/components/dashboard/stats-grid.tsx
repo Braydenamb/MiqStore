@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { staggerContainer, staggerItem } from "@/lib/motion";
-import { Receipt, TrendingUp, Star } from "lucide-react";
+import { Receipt, TrendingUp, Star, Crown } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 // Decorative Sparkline Component
@@ -20,13 +20,15 @@ interface StatsGridProps {
   totalTransactions?: string | number;
   totalSpent?: number;
   rewardPoints?: string | number;
+  membership?: string;
 }
 
-export function StatsGrid({ isLoading, totalTransactions = "0", totalSpent = 0, rewardPoints = "0" }: StatsGridProps) {
+export function StatsGrid({ isLoading, totalTransactions = "0", totalSpent = 0, rewardPoints = "0", membership = "BRONZE" }: StatsGridProps) {
   const stats = [
+    { label: "Bulan ini", title: "Total Top Up", value: isLoading ? "..." : formatCurrency(totalSpent), icon: TrendingUp, color: "var(--liquid-blue)" },
     { label: "Transaksi", title: "Total Transaksi", value: isLoading ? "..." : totalTransactions, icon: Receipt, color: "var(--liquid-cyan)" },
-    { label: "Bulan ini", title: "Total Belanja", value: isLoading ? "..." : formatCurrency(totalSpent), icon: TrendingUp, color: "var(--liquid-blue)" },
-    { label: "Poin", title: "Poin Reward", value: isLoading ? "..." : rewardPoints, icon: Star, color: "var(--liquid-amber)" },
+    { label: "Poin", title: "Poin Member", value: isLoading ? "..." : rewardPoints, icon: Star, color: "var(--liquid-amber)" },
+    { label: "Level", title: "Membership", value: isLoading ? "..." : membership, icon: Crown, color: "var(--color-gold, #FFD700)" },
   ];
 
   return (
@@ -34,7 +36,7 @@ export function StatsGrid({ isLoading, totalTransactions = "0", totalSpent = 0, 
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-1 sm:grid-cols-3 gap-5"
+      className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
     >
       {stats.map((stat) => (
         <motion.div key={stat.label} variants={staggerItem}>

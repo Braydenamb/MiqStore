@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -90,7 +91,7 @@ export default function DashboardLayoutClient({
   return (
     <div className="flex min-h-screen bg-[hsl(var(--background))] texture-overlay text-[hsl(var(--foreground))]">
       {/* Sidebar */}
-      <aside className="sticky top-0 hidden lg:flex w-[280px] h-screen flex-col justify-between shrink-0 p-4 border-r border-[hsl(var(--border))]/50 overflow-y-auto no-scrollbar z-20 bg-white/40 backdrop-blur-xl">
+      <aside className="sticky top-0 hidden lg:flex w-[220px] h-screen flex-col justify-between shrink-0 p-4 border-r border-[hsl(var(--border))]/50 overflow-y-auto no-scrollbar z-20 bg-white/40 backdrop-blur-xl">
         <div className="flex flex-col gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 px-4 pt-2 group">
@@ -122,11 +123,14 @@ export default function DashboardLayoutClient({
             {currentTier.next !== "Max" && (
               <div className="mt-4 pt-3 border-t border-[hsl(var(--border))]">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-bold text-[hsl(var(--primary))]/70">XP {rewardPoints.toLocaleString("id-ID")} / {nextTierReq.toLocaleString("id-ID")}</span>
+                  <span className="text-[10px] font-bold text-[hsl(var(--primary))]/70">{rewardPoints.toLocaleString("id-ID")} / {nextTierReq.toLocaleString("id-ID")} XP</span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-[hsl(var(--primary))]/10 overflow-hidden">
                   <div className="h-full rounded-full bg-[hsl(var(--primary))]" style={{ width: `${progressPercent}%` }} />
                 </div>
+                <p className="text-[9px] text-[hsl(var(--muted-foreground))] mt-1.5 font-medium">
+                  {(nextTierReq - rewardPoints).toLocaleString("id-ID")} XP lagi menuju {currentTier.next}
+                </p>
               </div>
             )}
           </div>
@@ -243,15 +247,29 @@ export default function DashboardLayoutClient({
                 const q = formData.get("q")?.toString().trim();
                 if (q) window.location.href = `/games?q=${encodeURIComponent(q)}`;
               }}
-              className="relative hidden md:flex items-center"
+              className="relative hidden md:flex items-center group"
             >
-              <Search className="absolute left-4 h-4 w-4 text-[hsl(var(--primary))]/50" />
+              <Search className="absolute left-4 h-4 w-4 text-[hsl(var(--primary))]/50 group-focus-within:text-[hsl(var(--primary))] transition-colors" />
               <input 
+                id="search-input"
                 type="text" 
                 name="q"
-                placeholder="e.g. Mobile Legends, Steam Wallet..." 
-                className="h-11 w-72 rounded-full bg-white border border-[hsl(var(--border))] pl-11 pr-4 text-sm font-medium outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] transition-all shadow-sm"
+                placeholder="Cari game, voucher..." 
+                className="h-11 w-72 rounded-full bg-white border border-[hsl(var(--border))] pl-11 pr-14 text-sm font-medium outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))] transition-all shadow-sm"
               />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center justify-center border border-[hsl(var(--border))] rounded px-1.5 py-0.5 bg-[hsl(var(--muted))] text-[10px] font-bold text-[hsl(var(--muted-foreground))] pointer-events-none">
+                ⌘K
+              </div>
+              <script dangerouslySetInnerHTML={{
+                __html: `
+                  document.addEventListener('keydown', (e) => {
+                    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                      e.preventDefault();
+                      document.getElementById('search-input')?.focus();
+                    }
+                  });
+                `
+              }} />
             </form>
             
             <Button variant="ghost" size="icon" className="rounded-full relative text-[hsl(var(--foreground))] hover:bg-[hsl(var(--border))]/50 h-10 w-10">

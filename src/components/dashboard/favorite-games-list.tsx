@@ -57,7 +57,7 @@ function GameItem({ game, i }: { game: Game, i: number }) {
       transition={{ delay: i * 0.1 }}
       className="group cursor-pointer"
     >
-      <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-slate-900">
+      <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-3 shadow-sm group-hover:shadow-[0_0_20px_rgba(14,165,233,0.3)] transition-all duration-300 group-hover:-translate-y-1.5 bg-slate-900">
         {game.image && !imgError ? (
           <Image 
             src={game.image.startsWith('http') || game.image.startsWith('/') ? game.image : cloudinaryUrl(game.image)} 
@@ -76,8 +76,15 @@ function GameItem({ game, i }: { game: Game, i: number }) {
             </div>
           </>
         )}
+        
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-[2px]">
+          <span className="text-white font-bold text-xs bg-[hsl(var(--primary))] px-4 py-2 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-lg shadow-[hsl(var(--primary))]/20">
+            Top Up
+          </span>
+        </div>
       </div>
-      <h4 className="font-bold text-[hsl(var(--foreground))] text-sm truncate">{game.name}</h4>
+      <h4 className="font-bold text-[hsl(var(--foreground))] text-sm truncate group-hover:text-[hsl(var(--primary))] transition-colors">{game.name}</h4>
       <p className="text-[10px] font-medium text-[hsl(var(--foreground))]/50 truncate">{game.publisher}</p>
     </motion.div>
   );
@@ -93,7 +100,7 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
           <Heart className="h-5 w-5 text-red-500 fill-red-500" />
           Game Favorit
         </h3>
-        <Button variant="ghost" className="text-sm font-bold text-[hsl(var(--primary))] hover:bg-[hsl(var(--border))]/30 hover:text-[hsl(var(--foreground))] rounded-xl h-9">
+        <Button variant="outline" className="text-sm font-bold border-white/10 hover:bg-white/5 rounded-xl h-9">
           Lihat Semua
         </Button>
       </div>
