@@ -33,3 +33,10 @@ You must never attempt to view or read the `.env` file using any tools (e.g., `v
 ## 6. Dependency Management & Deployment
 **Ensure lockfile synchronization.**
 Whenever dependencies are added, updated, or removed in `package.json`, ensure that `pnpm-lock.yaml` is correctly updated. This prevents deployment failures on platforms like Vercel. Always use `pnpm` exclusively for this project.
+
+## 7. State Management & Performance
+**Strict separation of Server and Client fetching.**
+- **Server Components:** Use `Promise.all` for parallel fetching. NEVER use serial DB queries or `for`-loops for data fetching. For data that changes rarely (like Categories or Games list), wrap Server Actions with `unstable_cache` and use `revalidateTag(tag, "default")` to invalidate.
+- **Client Components:** NEVER use `useEffect` + `useState` for data fetching. ALWAYS use `@tanstack/react-query` (`useQuery`, `useMutation`).
+- **Realtime Dashboards:** For pages requiring live data (like Admin Dashboard or User Dashboard), pass `initialData` from the Server Component to `useQuery`, and configure `refetchInterval` (e.g. 30 seconds) so data silently updates in the background.
+- **Lists and Filters:** Use `placeholderData: (prev) => prev` in `useQuery` for tables/lists so the UI does not flash blank when users change search filters or pagination.

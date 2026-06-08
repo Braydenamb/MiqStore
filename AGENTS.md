@@ -23,12 +23,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Development Rules
 - **No `any`**: Strictly enforce TypeScript types. Use `unknown` if the type is truly dynamic, and narrow it down with type guards.
 - **Mobile First**: All layouts must be responsive, starting from mobile designs and scaling up to desktop. The majority of top-up users will be on mobile devices.
-- **Server Actions**: Use Server Actions for all form submissions and data mutations. Keep them organized in a dedicated `actions/` directory or co-located with their features.
+- **Server Actions**: Use Server Actions for all form submissions and data mutations. Keep them organized in a dedicated `actions/` directory or co-located with their features. Wrap read actions with `unstable_cache` where appropriate to prevent excessive DB hits.
 - **SEO Optimized**: Implement dynamic metadata, proper heading hierarchies, semantic HTML, and generate sitemaps/robots.txt.
+- **Performance First**: NEVER run serial database queries in loops. Use `Promise.all` for parallel fetching. For client-side data fetching and caching, ALWAYS use `@tanstack/react-query` (do not use raw `useEffect` fetches). Use `placeholderData` for smooth filter transitions.
 - **Clean Architecture**: Separate concerns into clear layers:
   - `components/`: Pure, reusable UI components.
   - `lib/`: Business logic, domain models, and utilities.
-  - `services/` or `actions/`: External API calls and database interactions.
+  - `actions/`: External API calls, Database interactions, and Server Actions.
 
 ## Design System (Aesthetic)
 - **Liquid Glass**: Implement glassmorphism using Tailwind's `backdrop-blur`, semi-transparent backgrounds (e.g., `bg-white/10` or `bg-slate-900/40`), and subtle borders (`border-white/20`).
