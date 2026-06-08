@@ -1,7 +1,8 @@
 "use client";
 
-import { Receipt, ArrowRight } from "lucide-react";
+import { Receipt, ArrowRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Transaction {
   id: string;
@@ -16,7 +17,7 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
   const displayTransactions = transactions || [];
 
   return (
-    <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-[24px] p-6 sm:p-8 shadow-sm">
+    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px] p-6 sm:p-8 shadow-lg shadow-black/20 flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] flex items-center gap-2">
           <Receipt className="h-5 w-5 text-[hsl(var(--primary))]" />
@@ -56,8 +57,15 @@ export function RecentTransactions({ transactions }: { transactions?: Transactio
             </div>
           ))
         ) : (
-          <div className="text-center py-8">
-            <p className="text-sm text-[hsl(var(--foreground))]/60">Belum ada transaksi.</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center h-full flex-1">
+            <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center mb-4">
+              <ShoppingBag className="w-8 h-8 text-[hsl(var(--muted-foreground))]" />
+            </div>
+            <h4 className="font-bold text-[hsl(var(--foreground))] text-base mb-1">Belum ada transaksi</h4>
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6 max-w-[250px]">Yuk, mulai transaksi pertamamu dan nikmati berbagai promo menarik!</p>
+            <Button asChild className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20">
+              <Link href="/">Mulai Top Up</Link>
+            </Button>
           </div>
         )}
       </div>

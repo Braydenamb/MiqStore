@@ -4,8 +4,9 @@ import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const game = await getGameDetails(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const game = await getGameDetails(slug);
   
   if (!game) {
     return {
@@ -31,8 +32,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function GameDetailPage({ params }: { params: { slug: string } }) {
-  const game = await getGameDetails(params.slug);
+export default async function GameDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const game = await getGameDetails(slug);
   
   if (!game) {
     // GameDetailClient handles the not found UI gracefully

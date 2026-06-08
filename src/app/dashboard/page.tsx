@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 // import { MembershipUpgradeCard } from "@/components/dashboard/membership-upgrade-card";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { FavoriteGamesList } from "@/components/dashboard/favorite-games-list";
+import { PromoWidget } from "@/components/dashboard/promo-widget";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -50,6 +51,9 @@ export default function DashboardPage() {
         <RecentTransactions transactions={data?.recentTransactions} />
         <FavoriteGamesList games={data?.favoriteGames} />
       </div>
+
+      {/* Promo Widget */}
+      <PromoWidget />
     </div>
   );
 }

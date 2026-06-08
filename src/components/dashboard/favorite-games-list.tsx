@@ -6,6 +6,7 @@ import { Heart, ArrowRight, Gamepad2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface Game {
   id: string;
@@ -59,11 +60,12 @@ function GameItem({ game, i }: { game: Game, i: number }) {
       <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-slate-900">
         {game.image && !imgError ? (
           <Image 
-            src={game.image} 
+            src={game.image.startsWith('http') || game.image.startsWith('/') ? game.image : cloudinaryUrl(game.image)} 
             alt={game.name} 
             fill
             className="object-cover opacity-90 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-300"
             onError={() => setImgError(true)}
+            unoptimized={game.image.startsWith('http')}
           />
         ) : (
           <>
@@ -85,7 +87,7 @@ export function FavoriteGamesList({ games }: { games?: Game[] }) {
   const displayGames = games && games.length > 0 ? games : FAVORITE_GAMES;
 
   return (
-    <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-[24px] p-6 sm:p-8 shadow-sm">
+    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px] p-6 sm:p-8 shadow-lg shadow-black/20">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-heading font-bold text-lg text-[hsl(var(--foreground))] flex items-center gap-2">
           <Heart className="h-5 w-5 text-red-500 fill-red-500" />
