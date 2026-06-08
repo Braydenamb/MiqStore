@@ -1,27 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Search,
-  Filter,
-  Download,
-  Gamepad2,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Search, Gamepad2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "@/hooks/use-debounce";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-
-import { useQuery } from "@tanstack/react-query";
 
 interface Transaction {
   id: string;
@@ -35,12 +19,20 @@ interface Transaction {
   createdAt: string;
 }
 
-const statusMap = {
-  SUCCESS: { label: "Sukses", variant: "success" as const, icon: CheckCircle2, color: "text-green-400" },
-  PROCESSING: { label: "Proses", variant: "warning" as const, icon: Clock, color: "text-amber-400" },
-  PENDING: { label: "Pending", variant: "warning" as const, icon: Clock, color: "text-amber-400" },
-  FAILED: { label: "Gagal", variant: "destructive" as const, icon: XCircle, color: "text-red-400" },
+const statusConfig = {
+  SUCCESS: { label: "Berhasil", className: "bg-emerald-500/10 text-emerald-600" },
+  PROCESSING: { label: "Diproses", className: "bg-blue-500/10 text-blue-600" },
+  PENDING: { label: "Pending", className: "bg-amber-500/10 text-amber-600" },
+  FAILED: { label: "Gagal", className: "bg-red-500/10 text-red-600" },
 };
+
+const statusOptions = [
+  { value: "all", label: "Semua" },
+  { value: "success", label: "Berhasil" },
+  { value: "processing", label: "Diproses" },
+  { value: "pending", label: "Pending" },
+  { value: "failed", label: "Gagal" },
+];
 
 export default function TransactionsPage() {
   const [search, setSearch] = useState("");
@@ -48,185 +40,166 @@ export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  const { data, isLoading } = useQuery({
+  const debouncedSearch = useDebounce(search, 400);
+
+  const { data, isFetching } = useQuery({
     queryKey: ["transactions", page, perPage, statusFilter],
     queryFn: async () => {
       const url = new URL("/api/transactions", window.location.origin);
       url.searchParams.set("page", page.toString());
       url.searchParams.set("per_page", perPage.toString());
-      if (statusFilter !== "all") {
-        url.searchParams.set("status", statusFilter);
-      }
+      if (statusFilter !== "all") url.searchParams.set("status", statusFilter);
       const res = await fetch(url.toString());
       if (!res.ok) throw new Error("Failed to fetch transactions");
       return res.json();
     },
+    placeholderData: (prev) => prev,
+    staleTime: 15_000,
   });
 
-  const transactions: Transaction[] = data?.data || [];
-  const meta = data?.meta || { total: 0, totalPages: 1 };
-  const totalPages = meta.totalPages;
+  const transactions: Transaction[] = data?.data ?? [];
+  const meta = data?.meta ?? { total: 0, totalPages: 1 };
 
-  const filtered = transactions.filter((tx) => {
-    if (!search) return true;
-    return (
-      tx.game.toLowerCase().includes(search.toLowerCase()) ||
-      tx.invoiceId.toLowerCase().includes(search.toLowerCase())
-    );
-  });
+  // Client-side search filter
+  const filtered = debouncedSearch
+    ? transactions.filter(
+        (tx) =>
+          tx.game.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          tx.invoiceId.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+    : transactions;
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-extrabold text-[hsl(var(--foreground))]">
-          Riwayat Transaksi
-        </h1>
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">
-          Semua transaksi kamu ada di sini
+    <div className="space-y-5">
+      {/* Header */}
+      <div>
+        <h1 className="text-xl font-bold text-[hsl(var(--foreground))]">Transaksi</h1>
+        <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">
+          Riwayat pembelian kamu
         </p>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="flex flex-col sm:flex-row gap-3"
-      >
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
-          <Input
-            placeholder="e.g. INV-12345, Mobile Legends..."
+      <div className="space-y-2">
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+          <input
+            type="text"
+            placeholder="Cari game atau nomor invoice..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-10"
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="w-full h-10 rounded-xl bg-[hsl(var(--muted))] border border-[hsl(var(--border))] pl-10 pr-4 text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] outline-none focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]/30 transition-all"
           />
         </div>
-        <Select
-          value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          className="w-full sm:w-40"
-        >
-          <option value="all">Semua Status</option>
-          <option value="success">Sukses</option>
-          <option value="processing">Diproses</option>
-          <option value="pending">Pending</option>
-          <option value="failed">Gagal</option>
-        </Select>
-        <Button variant="outline" className="gap-2 shrink-0">
-          <Download className="h-4 w-4" />
-          Export
-        </Button>
-      </motion.div>
 
-      {/* Transaction List */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <Card>
-          <CardContent className="p-0">
-            {/* Table Header (Desktop) */}
-            <div className="hidden sm:grid grid-cols-[1fr_120px_100px_100px_80px] gap-4 border-b border-[hsl(var(--border))] px-4 py-3 text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider">
-              <span>Transaksi</span>
-              <span>Pembayaran</span>
-              <span className="text-right">Harga</span>
-              <span>Tanggal</span>
-              <span>Status</span>
-            </div>
+        {/* Status filter chips */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          {statusOptions.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                setStatusFilter(opt.value);
+                setPage(1);
+              }}
+              className={cn(
+                "shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors",
+                statusFilter === opt.value
+                  ? "bg-[hsl(var(--primary))] text-white border-[hsl(var(--primary))]"
+                  : "bg-transparent text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))] hover:border-[hsl(var(--primary))]/50"
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-            {isLoading ? (
-              <div className="flex justify-center p-8 text-[hsl(var(--muted-foreground))]">Memuat transaksi...</div>
-            ) : filtered.length > 0 ? (
-              filtered.map((tx) => {
-                const st = statusMap[tx.status] || statusMap.PENDING;
-                return (
-                  <div
-                    key={tx.id}
-                    className="grid sm:grid-cols-[1fr_120px_100px_100px_80px] gap-2 sm:gap-4 items-center border-b border-[hsl(var(--border))] px-4 py-3 last:border-0 hover:bg-[hsl(var(--muted))] transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500/10 shrink-0">
-                        <Gamepad2 className="h-4 w-4 text-purple-400" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold truncate">{tx.game}</p>
-                        <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                          {tx.product} • {tx.invoiceId}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{tx.paymentMethod}</span>
-                    <span className="text-sm font-semibold text-right">{formatCurrency(tx.total)}</span>
-                    <span className="text-xs text-[hsl(var(--muted-foreground))]">
-                      {new Date(tx.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
-                    </span>
-                    <Badge variant={st.variant} className="text-[10px] w-fit justify-self-start sm:justify-self-auto">
-                      {st.label}
-                    </Badge>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-                <div className="relative mb-6">
-                  <div className="absolute inset-0 bg-[var(--color-gold)]/20 blur-2xl rounded-full" />
-                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[hsl(var(--secondary))]/5 border border-[hsl(var(--foreground))]/10">
-                    <Search className="h-10 w-10 text-[hsl(var(--foreground))]/30" />
-                  </div>
+      {/* Loading bar */}
+      {isFetching && (
+        <div className="h-0.5 rounded-full bg-[hsl(var(--primary))]/20 overflow-hidden">
+          <div className="h-full w-1/3 bg-[hsl(var(--primary))] animate-shimmer-slide" />
+        </div>
+      )}
+
+      {/* Transaction list */}
+      {filtered.length > 0 ? (
+        <div className="space-y-2">
+          {filtered.map((tx) => {
+            const st = statusConfig[tx.status] ?? statusConfig.PENDING;
+            return (
+              <div
+                key={tx.id}
+                className="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))]/60"
+              >
+                <div className="h-10 w-10 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center shrink-0">
+                  <Gamepad2 className="h-4.5 w-4.5 text-[hsl(var(--primary))]" />
                 </div>
-                <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">
-                  Tidak Ada Transaksi
-                </h3>
-                <p className="text-sm text-[hsl(var(--muted-foreground))] max-w-sm mb-6 leading-relaxed">
-                  {search ? `Tidak ada transaksi yang cocok dengan pencarian "${search}". Coba gunakan kata kunci lain.` : "Sepertinya kamu belum pernah melakukan transaksi apa pun. Ayo mulai top up pertamamu sekarang!"}
-                </p>
-                {!search && (
-                  <Button className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] text-white rounded-full px-8 h-12 shadow-lg shadow-[hsl(var(--primary))]/20 transition-all">
-                    Mulai Belanja
-                  </Button>
-                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[hsl(var(--foreground))] truncate">{tx.game}</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] truncate mt-0.5">
+                    {tx.product} · {tx.paymentMethod}
+                  </p>
+                  <p className="text-[10px] text-[hsl(var(--muted-foreground))]/70 mt-0.5">
+                    {new Date(tx.createdAt).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <span className="text-sm font-bold text-[hsl(var(--foreground))]">
+                    {formatCurrency(tx.total)}
+                  </span>
+                  <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", st.className)}>
+                    {st.label}
+                  </span>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center py-16 text-center">
+          <div className="h-12 w-12 rounded-2xl bg-[hsl(var(--muted))] flex items-center justify-center mb-3">
+            <Gamepad2 className="h-6 w-6 text-[hsl(var(--muted-foreground))]" />
+          </div>
+          <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+            {debouncedSearch ? "Tidak ada hasil" : "Belum ada transaksi"}
+          </p>
+          <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+            {debouncedSearch
+              ? `Tidak ada transaksi untuk "${debouncedSearch}"`
+              : "Transaksimu akan muncul di sini"}
+          </p>
+        </div>
+      )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+      {meta.totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-[hsl(var(--muted-foreground))]">
-            Menampilkan {filtered.length > 0 ? (page - 1) * perPage + 1 : 0}-{Math.min(page * perPage, meta.total)} dari {meta.total}
+            Halaman {page} dari {meta.totalPages}
           </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
+          <div className="flex gap-2">
+            <button
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
+              className="h-8 w-8 flex items-center justify-center rounded-lg border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] disabled:opacity-40 hover:border-[hsl(var(--primary))]/50 transition-colors"
             >
               <ChevronLeft className="h-4 w-4" />
-            </Button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <Button
-                key={i}
-                variant={page === i + 1 ? "default" : "outline"}
-                size="icon"
-                onClick={() => setPage(i + 1)}
-                className="h-8 w-8 text-xs"
-              >
-                {i + 1}
-              </Button>
-            ))}
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={page >= totalPages}
+            </button>
+            <button
+              disabled={page >= meta.totalPages}
               onClick={() => setPage(page + 1)}
+              className="h-8 w-8 flex items-center justify-center rounded-lg border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] disabled:opacity-40 hover:border-[hsl(var(--primary))]/50 transition-colors"
             >
               <ChevronRight className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
         </div>
       )}

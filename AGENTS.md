@@ -58,8 +58,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Features to Avoid (Out of Scope for MVP)
 Do NOT implement or suggest the following features as they will slow down development. Disable or hide them if they exist in templates:
+- Voucher/Coupon System — **REMOVED**. Discounts are applied directly on product pages (new user discount, event-based discount shown inline on product). No voucher input fields, no voucher management page.
 - Wallet System
-- Loyalty Programs
+- Loyalty Programs / XP / Membership Tiers
 - AI Integrations
 - Affiliate Systems
 - Multi-supplier Integrations
@@ -67,3 +68,15 @@ Do NOT implement or suggest the following features as they will slow down develo
 - Chat Systems
 - Ranking Systems
 - Live Feed
+- Notification system (bell icon) — do not show unless real notifications exist
+
+## Dashboard UX Philosophy
+> **"A regular user only cares about 3 things: top up, check order status, logout."**
+
+- Remove anything that is not directly actionable for those 3 goals
+- No stats cards showing numbers users don't care about (Total Transaksi bulan ini, Poin Member, dll)
+- No marketing widgets with fake/static data
+- **Mobile bottom navigation** is the primary nav for dashboard (4 tabs: Beranda, Transaksi, Profil, Keluar)
+- Desktop sidebar: compact, logo + nav links + logout only. No upsell cards.
+- Max content width `max-w-3xl` — readable on any screen size
+- Status filter on transaction list: horizontal pill chips (not dropdown)
