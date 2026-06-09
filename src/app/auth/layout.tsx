@@ -20,7 +20,7 @@ export default function AuthLayout({
     : "/characters/mascot.png";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(var(--background))] texture-overlay relative overflow-hidden font-sans">
+    <div className="h-full flex-1 flex flex-col bg-[hsl(var(--background))] texture-overlay relative overflow-hidden font-sans">
       
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -36,7 +36,7 @@ export default function AuthLayout({
         <div className="absolute inset-0 texture-overlay opacity-30" />
       </div>
 
-      <main className="flex-1 flex items-center justify-center relative z-10 px-4 py-12 md:py-20 lg:py-0 min-h-[calc(100vh-80px)]">
+      <main className="flex-1 flex items-center justify-center relative z-10 px-4 py-8 lg:py-0 min-h-[calc(100vh-80px)]">
         <div className="w-full max-w-[1400px] mx-auto flex items-center justify-center lg:justify-between px-4 sm:px-6 lg:px-12 relative">
           
           {/* Left Decorative Illustration (Desktop Only) */}
@@ -44,7 +44,7 @@ export default function AuthLayout({
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="hidden lg:flex flex-col items-center justify-center w-[400px] relative h-[600px]"
+            className="hidden lg:flex flex-col items-center justify-center w-[400px] relative h-[80vh] max-h-[600px]"
           >
             <div className="absolute top-10 left-10 w-24 h-24 rounded-full bg-[var(--color-gold)]/20 blur-2xl" />
             <img 
@@ -72,7 +72,7 @@ export default function AuthLayout({
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="hidden lg:flex flex-col items-center justify-center w-[400px] relative h-[600px]"
+            className="hidden lg:flex flex-col items-center justify-center w-[400px] relative h-[80vh] max-h-[600px]"
           >
             <div className="absolute top-10 right-10 w-32 h-32 rounded-full bg-[hsl(var(--primary))]/10 blur-3xl" />
             <img 
