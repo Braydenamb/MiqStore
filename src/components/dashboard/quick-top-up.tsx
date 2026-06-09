@@ -12,18 +12,18 @@ const games = [
 
 export function QuickTopUp() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">Top Up Game</h2>
+        <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Top Up Game</h2>
         <Link
           href="/games"
-          className="text-xs font-medium text-[hsl(var(--primary))] hover:underline"
+          className="text-base font-medium text-[hsl(var(--primary))] hover:underline"
         >
           Semua Game →
         </Link>
       </div>
 
-      <div className="grid grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-4 gap-4">
         {games.map((game) => (
           <Link
             key={game.id}
@@ -38,7 +38,7 @@ export function QuickTopUp() {
                 className="object-cover"
               />
             </div>
-            <span className="text-[10px] sm:text-xs font-medium text-[hsl(var(--muted-foreground))] text-center leading-tight truncate w-full text-center group-hover:text-[hsl(var(--foreground))] transition-colors">
+            <span className="text-sm sm:text-base font-medium text-[hsl(var(--muted-foreground))] text-center leading-tight truncate w-full group-hover:text-[hsl(var(--foreground))] transition-colors">
               {game.name}
             </span>
           </Link>

@@ -23,13 +23,13 @@ export default function DashboardPage() {
   const firstName = session?.user?.name?.split(" ")[0] || "kamu";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {/* Greeting */}
       <div>
-        <h1 className="text-xl font-bold text-[hsl(var(--foreground))]">
+        <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">
           Halo, {firstName}! 👋
         </h1>
-        <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">
+        <p className="text-lg text-[hsl(var(--muted-foreground))] mt-1">
           Mau top up game apa hari ini?
         </p>
       </div>

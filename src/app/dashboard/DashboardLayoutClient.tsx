@@ -44,9 +44,9 @@ export default function DashboardLayoutClient({
           <img
             src={logoUrl || "/icons/logo.png"}
             alt="MiqStore Logo"
-            className="h-7 w-auto object-contain"
+            className="h-10 w-auto object-contain"
           />
-          <span className="font-heading text-xl font-bold tracking-tight text-[hsl(var(--foreground))]">
+          <span className="font-heading text-3xl font-bold tracking-tight text-[hsl(var(--foreground))]">
             {APP_NAME}
           </span>
         </Link>
@@ -60,13 +60,13 @@ export default function DashboardLayoutClient({
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex items-center gap-4 rounded-xl px-5 py-4 text-lg font-medium transition-colors",
                   isActive
                     ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-semibold"
                     : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
                 )}
               >
-                <link.icon className="h-4 w-4 shrink-0" />
+                <link.icon className="h-6 w-6 shrink-0" />
                 {link.label}
               </Link>
             );
@@ -76,13 +76,13 @@ export default function DashboardLayoutClient({
             <Link
               href="/admin"
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors mt-2",
+                "flex items-center gap-4 rounded-xl px-5 py-4 text-lg font-medium transition-colors mt-2",
                 pathname.startsWith("/admin")
                   ? "bg-red-50 text-red-600 font-semibold"
                   : "text-red-400 hover:bg-red-50 hover:text-red-600"
               )}
             >
-              <ShieldAlert className="h-4 w-4 shrink-0" />
+              <ShieldAlert className="h-6 w-6 shrink-0" />
               Admin Panel
             </Link>
           )}
@@ -92,9 +92,9 @@ export default function DashboardLayoutClient({
         <div className="p-3 border-t border-[hsl(var(--border))]/50">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[hsl(var(--muted-foreground))] hover:bg-red-50 hover:text-red-500 transition-colors"
+            className="flex w-full items-center gap-4 rounded-xl px-5 py-4 text-lg font-medium text-[hsl(var(--muted-foreground))] hover:bg-red-50 hover:text-red-500 transition-colors"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
+            <LogOut className="h-6 w-6 shrink-0" />
             Keluar
           </button>
         </div>
@@ -103,13 +103,13 @@ export default function DashboardLayoutClient({
       {/* ── Main Content ─────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top header */}
-        <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 h-14 border-b border-[hsl(var(--border))]/50 bg-[hsl(var(--background))]/95 backdrop-blur-md shrink-0">
+        <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-8 h-20 border-b border-[hsl(var(--border))]/50 bg-[hsl(var(--background))]/95 backdrop-blur-md shrink-0">
           {/* Mobile: Logo */}
           <Link href="/" className="flex items-center gap-2 lg:hidden">
             <img
               src={logoUrl || "/icons/logo.png"}
               alt="MiqStore Logo"
-              className="h-7 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
             <span className="font-heading font-bold text-[hsl(var(--foreground))]">{APP_NAME}</span>
           </Link>
@@ -119,14 +119,14 @@ export default function DashboardLayoutClient({
 
           {/* Right: avatar */}
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-[hsl(var(--primary))] text-white font-bold text-sm flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full bg-[hsl(var(--primary))] text-white font-bold text-lg flex items-center justify-center">
               {session?.user?.name?.[0]?.toUpperCase() || "M"}
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-8 max-w-3xl w-full mx-auto">
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-12 max-w-5xl w-full mx-auto">
           {children}
         </main>
       </div>
