@@ -94,8 +94,6 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
               </Button>
             </motion.div>
           </div>
-
-          </div>
         </div>
       </div>
     </section>
