@@ -7,7 +7,7 @@ import { Gamepad2, Twitter, Instagram, Facebook } from "lucide-react";
 export function Footer({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
   
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/auth")) return null;
 
   return (
     <footer className="bg-[hsl(var(--secondary))] text-white pt-16 pb-8 border-t border-[hsl(var(--primary))]/30">
