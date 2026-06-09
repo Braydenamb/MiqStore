@@ -13,7 +13,7 @@
 
 import { prisma } from "@/lib/prisma";
 // import { debitWallet } from "./wallet"; // OUT OF SCOPE
-import { calculateFraudScore } from "./ai-brain";
+// ai-brain removed
 import { logger, metrics, tracing } from "../telemetry";
 import { eventBus } from "./event-bus";
 import { registerSystemSubscribers } from "./subscribers";
@@ -130,17 +130,7 @@ export async function createTransaction(
 ): Promise<TransactionRecord> {
   const span = tracing.startSpan("create_transaction");
 
-  // 🚨 AI Risk Engine Check
-  const riskAnalysis = await calculateFraudScore(input.userId);
-  if (riskAnalysis.isSuspicious) {
-    logger.warn(`Transaction blocked for user ${input.userId} by AI Risk Engine`, {
-      fraudScore: riskAnalysis.score,
-      reasons: riskAnalysis.reasons
-    });
-    metrics.increment("fraud_blocks");
-    span.end("error");
-    throw new Error("Transaction declined due to unusual activity. Please contact support.");
-  }
+  // Risk Engine check removed
 
   const invoiceId = generateInvoiceId();
   const fee = calculateFee(input.price, input.paymentMethod);

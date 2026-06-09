@@ -50,12 +50,10 @@ type Game = {
   banner: string | null;
   gallery: string[];
   categoryId: string;
-  providerId: string | null;
   gameType: string | null;
   publisher: string | null;
   updatedAt: Date;
   category: { id: string; name: string; slug: string };
-  provider: { id: string; name: string } | null;
   _count: { items: number; transactions: number };
   activeItemCount: number;
 };
@@ -186,7 +184,6 @@ const initialFormState: GameFormData = {
   isActive: true,
   isPopular: false,
   categoryId: "",
-  providerId: "",
   gameType: "mobile",
   publisher: "",
   image: "",
@@ -220,7 +217,6 @@ export default function GamesClient({ initialGames, stats, categories, providers
       isActive: game.isActive,
       isPopular: game.isPopular,
       categoryId: game.categoryId,
-      providerId: game.providerId || "",
       gameType: game.gameType || "mobile",
       publisher: game.publisher || "",
       image: game.image || "",
@@ -288,7 +284,6 @@ export default function GamesClient({ initialGames, stats, categories, providers
               name: "Unknown",
               slug: "",
             },
-            provider: providers.find((p) => p.id === formData.providerId) ?? null,
             _count: { items: 0, transactions: 0 },
             activeItemCount: 0,
           } as unknown as Game,
@@ -441,23 +436,6 @@ export default function GamesClient({ initialGames, stats, categories, providers
                         {categories.map((c) => (
                           <option key={c.id} value={c.id}>
                             {c.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-bold text-[hsl(var(--foreground))]">
-                        Provider
-                      </label>
-                      <select
-                        value={formData.providerId || ""}
-                        onChange={(e) => setFormData({ ...formData, providerId: e.target.value })}
-                        className="w-full h-12 px-3 bg-slate-900/50 border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] rounded-xl text-sm text-[hsl(var(--foreground))] outline-none"
-                      >
-                        <option value="">Manual</option>
-                        {providers.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
                           </option>
                         ))}
                       </select>

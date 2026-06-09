@@ -90,9 +90,9 @@ model User {
   balanceHistory BalanceHistory[]
   reviews        Review[]
   notifications  Notification[]
-  userPromos     UserPromo[]
   favoriteGames  FavoriteGame[]
   apiKeys        ApiKey[]
+  auditLogs      AdminAuditLog[]
 
   @@index([email])
   @@index([role])
@@ -166,7 +166,6 @@ model Category {
 model Product {
   id          String   @id @default(uuid())
   categoryId  String
-  providerId  String?
   name        String
   slug        String   @unique
   publisher   String?
@@ -177,6 +176,7 @@ model Product {
   color       String?
   fields      Json?    @db.JsonB
   gameType    String? // mobile, pc, console
+  tags        String[] @default([]) // Array of strings for richer search (e.g. "moba", "esports")
   isActive    Boolean  @default(true)
   isPopular   Boolean  @default(false)
   order       Int      @default(0)
@@ -184,7 +184,6 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   category      Category       @relation(fields: [categoryId], references: [id])
-  provider      Provider?      @relation(fields: [providerId], references: [id])
   items         ProductItem[]
   transactions  Transaction[]
   reviews       Review[]
@@ -199,7 +198,6 @@ model Product {
 model ProductItem {
   id            String   @id @default(uuid())
   productId     String
-  providerCode  String? // Provider's product code (e.g., DigiFlazz SKU)
   name          String
   description   String?  @db.Text
   amount        Int // Nominal amount (e.g., 86 diamonds)
@@ -212,11 +210,11 @@ model ProductItem {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product      Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
   transactions Transaction[]
+  providerMaps ProviderProductMap[]
 
   @@index([productId, isActive])
-  @@index([providerCode])
   @@map("product_items")
 }
 
@@ -233,9 +231,31 @@ model Provider {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products Product[]
+  productMaps  ProviderProductMap[]
+  transactions Transaction[]
 
   @@map("providers")
+}
+
+// ─── PROVIDER PRODUCT MAP ────────────────────────
+
+model ProviderProductMap {
+  id                  String   @id @default(uuid())
+  productItemId       String
+  providerId          String
+  providerProductCode String // Provider's SKU for this specific item
+  costPrice           Int // Capital/Wholesale cost from this provider
+  isAvailable         Boolean  @default(true)
+  priority            Int      @default(0) // Tie-breaker if prices are equal
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  productItem ProductItem @relation(fields: [productItemId], references: [id], onDelete: Cascade)
+  provider    Provider    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([productItemId, providerId])
+  @@index([productItemId, isAvailable])
+  @@map("provider_product_maps")
 }
 
 // ─── TRANSACTIONS ────────────────────────────────
@@ -246,8 +266,10 @@ model Transaction {
   userId        String
   productId     String
   productItemId String
+  providerId    String? // Which provider fulfilled this order
   quantity      Int               @default(1)
-  price         Int // Product price
+  price         Int // Selling price
+  costPrice     Int? // Wholesale cost at the time of transaction
   fee           Int               @default(0) // Payment fee
   discount      Int               @default(0) // Discount amount
   total         Int // Final amount to pay
@@ -264,6 +286,7 @@ model Transaction {
   user        User        @relation(fields: [userId], references: [id])
   product     Product     @relation(fields: [productId], references: [id])
   productItem ProductItem @relation(fields: [productItemId], references: [id])
+  provider    Provider?   @relation(fields: [providerId], references: [id])
   payment     Payment?
 
   @@index([invoiceId])
@@ -332,43 +355,24 @@ model BalanceHistory {
   @@map("balance_histories")
 }
 
-// ─── PROMOS ──────────────────────────────────────
+// ─── ADMIN AUDIT ─────────────────────────────────
 
-model PromoCode {
-  id            String   @id @default(uuid())
-  code          String   @unique
-  name          String
-  description   String?  @db.Text
-  discountType  String // percent, flat
-  discountValue Int // e.g., 10 for 10% or 5000 for Rp5000
-  minPurchase   Int      @default(0)
-  maxDiscount   Int? // Max discount for percentage type
-  maxUsage      Int? // Total usage limit
-  usedCount     Int      @default(0)
-  startDate     DateTime
-  endDate       DateTime
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model AdminAuditLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String // e.g., UPDATE_PRICE, CREATE_PRODUCT
+  entity    String // e.g., PRODUCT_ITEM
+  entityId  String
+  oldValues Json?    @db.JsonB
+  newValues Json?    @db.JsonB
+  createdAt DateTime @default(now())
 
-  userPromos UserPromo[]
+  admin User @relation(fields: [adminId], references: [id])
 
-  @@index([code])
-  @@index([isActive, startDate, endDate])
-  @@map("promo_codes")
-}
-
-model UserPromo {
-  id          String   @id @default(uuid())
-  userId      String
-  promoCodeId String
-  usedAt      DateTime @default(now())
-
-  user      User      @relation(fields: [userId], references: [id])
-  promoCode PromoCode @relation(fields: [promoCodeId], references: [id])
-
-  @@unique([userId, promoCodeId])
-  @@map("user_promos")
+  @@index([adminId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
 }
 
 // ─── REVIEWS ─────────────────────────────────────

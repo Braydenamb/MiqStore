@@ -43,7 +43,6 @@ export default async function GameItemsPage({ params }: Props) {
         ...item,
         originalPrice: item.originalPrice ?? null,
         resellerPrice: item.resellerPrice ?? null,
-        providerCode: item.providerCode ?? null,
         description: item.description ?? null,
         salesCount: item._count.transactions,
       }))}

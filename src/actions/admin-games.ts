@@ -105,7 +105,6 @@ export async function getGames(filters: GameFilters = {}) {
         take: pageSize,
         include: {
           category: { select: { id: true, name: true, slug: true } },
-          provider: { select: { id: true, name: true } },
           _count: {
             select: {
               items: true,
@@ -154,7 +153,6 @@ export async function getGameById(id: string) {
       where: { id },
       include: {
         category: true,
-        provider: true,
         items: {
           orderBy: { order: "asc" },
         },
@@ -232,7 +230,6 @@ export async function createGame(data: GameFormData) {
     const game = await prisma.product.create({
       data: {
         categoryId,
-        providerId: data.providerId || null,
         name: data.name,
         slug: data.slug,
         description: data.description || null,
@@ -272,9 +269,6 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
       where: { id },
       data: {
         ...(data.categoryId && { categoryId: data.categoryId }),
-        ...(data.providerId !== undefined && {
-          providerId: data.providerId || null,
-        }),
         ...(data.name !== undefined && { name: data.name }),
         ...(data.slug !== undefined && { slug: data.slug }),
         ...(data.description !== undefined && {

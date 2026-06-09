@@ -41,7 +41,6 @@ async function main() {
       name: 'Mobile Legends',
       slug: 'mobile-legends',
       categoryId: catGames.id,
-      providerId: apigames.id,
       publisher: 'Moonton',
       image: '/images/games/mlbb.webp',
       banner: '/images/games/mlbb-banner.webp',
@@ -58,7 +57,6 @@ async function main() {
       name: 'PUBG Mobile',
       slug: 'pubg-mobile',
       categoryId: catGames.id,
-      providerId: apigames.id,
       publisher: 'Tencent',
       image: '/images/games/pubgm.webp',
       banner: '/images/games/pubgm-banner.webp',
@@ -77,21 +75,18 @@ async function main() {
         name: '86 Diamonds',
         amount: 86,
         price: 24000,
-        providerCode: 'mlbb_86',
       },
       {
         productId: mlbb.id,
         name: '172 Diamonds',
         amount: 172,
         price: 48000,
-        providerCode: 'mlbb_172',
       },
       {
         productId: mlbb.id,
         name: 'Weekly Diamond Pass',
         amount: 1,
         price: 27500,
-        providerCode: 'mlbb_wdp',
         isPopular: true,
       },
       {
@@ -99,14 +94,12 @@ async function main() {
         name: '60 UC',
         amount: 60,
         price: 15000,
-        providerCode: 'pubgm_60',
       },
       {
         productId: pubgm.id,
         name: '325 UC',
         amount: 325,
         price: 75000,
-        providerCode: 'pubgm_325',
       }
     ]
   })

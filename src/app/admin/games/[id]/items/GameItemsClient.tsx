@@ -57,7 +57,6 @@ interface Item {
   price: number;
   originalPrice: number | null;
   resellerPrice: number | null;
-  providerCode: string | null;
   isActive: boolean;
   isPopular: boolean;
   order: number;
@@ -181,7 +180,6 @@ const emptyForm = {
   price: 0,
   originalPrice: "",
   resellerPrice: "",
-  providerCode: "",
   isActive: true,
   isPopular: false,
 };
@@ -206,7 +204,6 @@ function ItemFormModal({
           price: editItem.price,
           originalPrice: editItem.originalPrice?.toString() || "",
           resellerPrice: editItem.resellerPrice?.toString() || "",
-          providerCode: editItem.providerCode || "",
           isActive: editItem.isActive,
           isPopular: editItem.isPopular,
         }
@@ -232,7 +229,6 @@ function ItemFormModal({
       price: Number(form.price),
       originalPrice: form.originalPrice ? Number(form.originalPrice) : undefined,
       resellerPrice: form.resellerPrice ? Number(form.resellerPrice) : undefined,
-      providerCode: form.providerCode || undefined,
       isActive: form.isActive,
       isPopular: form.isPopular,
     };
@@ -246,7 +242,6 @@ function ItemFormModal({
             ...res.data,
             originalPrice: res.data.originalPrice ?? null,
             resellerPrice: res.data.resellerPrice ?? null,
-            providerCode: res.data.providerCode ?? null,
             description: res.data.description ?? null,
             salesCount: editItem.salesCount,
           },
@@ -264,7 +259,6 @@ function ItemFormModal({
             ...res.data,
             originalPrice: res.data.originalPrice ?? null,
             resellerPrice: res.data.resellerPrice ?? null,
-            providerCode: res.data.providerCode ?? null,
             description: res.data.description ?? null,
             salesCount: 0,
           },
@@ -337,17 +331,6 @@ function ItemFormModal({
                 onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
                 placeholder="86"
                 className="h-11 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-bold text-[hsl(var(--foreground))]">
-                Provider Code
-              </label>
-              <Input
-                value={form.providerCode}
-                onChange={(e) => setForm({ ...form, providerCode: e.target.value })}
-                placeholder="SKU / kode"
-                className="h-11 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl font-mono text-sm"
               />
             </div>
           </div>
@@ -467,9 +450,7 @@ export default function GameItemsClient({ game, initialItems }: Props) {
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
       const matchQ =
-        !searchQ ||
-        item.name.toLowerCase().includes(searchQ.toLowerCase()) ||
-        item.providerCode?.toLowerCase().includes(searchQ.toLowerCase());
+        item.name.toLowerCase().includes(searchQ.toLowerCase());
       const matchStatus =
         filterStatus === "all" ||
         (filterStatus === "active" ? item.isActive : !item.isActive);
@@ -697,7 +678,6 @@ export default function GameItemsClient({ game, initialItems }: Props) {
                 <th className="px-5 py-4">Item</th>
                 <th className="px-5 py-4 text-right">Harga</th>
                 <th className="px-5 py-4 text-right hidden sm:table-cell">Harga Asli</th>
-                <th className="px-5 py-4 hidden lg:table-cell">Provider Code</th>
                 <th className="px-5 py-4 text-center hidden sm:table-cell">Penjualan</th>
                 <th className="px-5 py-4">Status</th>
                 <th className="px-5 py-4 text-right">Aksi</th>
@@ -761,12 +741,6 @@ export default function GameItemsClient({ game, initialItems }: Props) {
 
                   <td className="px-5 py-3.5 text-right text-[hsl(var(--muted-foreground))] line-through text-sm hidden sm:table-cell">
                     {item.originalPrice ? formatCurrency(item.originalPrice) : "—"}
-                  </td>
-
-                  <td className="px-5 py-3.5 hidden lg:table-cell">
-                    <span className="font-mono text-xs text-[hsl(var(--muted-foreground))] bg-slate-800/50 px-2 py-0.5 rounded">
-                      {item.providerCode || "—"}
-                    </span>
                   </td>
 
                   <td className="px-5 py-3.5 text-center hidden sm:table-cell">

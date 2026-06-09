@@ -13,7 +13,6 @@ export interface ItemFormData {
   price: number;
   originalPrice?: number;
   resellerPrice?: number;
-  providerCode?: string;
   isActive: boolean;
   isPopular: boolean;
   order?: number;
@@ -73,7 +72,6 @@ export async function createItem(data: ItemFormData) {
         price: data.price,
         originalPrice: data.originalPrice || null,
         resellerPrice: data.resellerPrice || null,
-        providerCode: data.providerCode || null,
         isActive: data.isActive,
         isPopular: data.isPopular,
         order: data.order ?? (lastItem?.order ?? 0) + 1,
@@ -105,9 +103,6 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
         }),
         ...(data.resellerPrice !== undefined && {
           resellerPrice: data.resellerPrice || null,
-        }),
-        ...(data.providerCode !== undefined && {
-          providerCode: data.providerCode || null,
         }),
         ...(data.isActive !== undefined && { isActive: data.isActive }),
         ...(data.isPopular !== undefined && { isPopular: data.isPopular }),
