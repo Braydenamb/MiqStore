@@ -26,10 +26,10 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 gap-12 items-center justify-center max-w-3xl mx-auto">
           
-          {/* Left Content */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          {/* Main Content */}
+          <div className="flex flex-col items-center text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -95,49 +95,6 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
             </motion.div>
           </div>
 
-          {/* Right Visuals */}
-          <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
-            
-
-            {/* Main Visual Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 w-full max-w-[400px] aspect-video animate-float flex items-center justify-center rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-slate-900/50 backdrop-blur-sm"
-            >
-              {!imgError ? (
-                <Image 
-                  src={heroBannerUrl || cloudinaryUrl("Games/Mobile legends/banner")} 
-                  alt="Gaming Experience" 
-                  fill
-                  className="object-cover"
-                  onError={() => setImgError(true)}
-                  priority
-                />
-              ) : (
-                <Gamepad2 className="w-24 h-24 text-[hsl(var(--primary))]/30" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))]/90 to-transparent pointer-events-none" />
-            </motion.div>
-
-            {/* Floating Card */}
-            <div className="absolute bottom-[10%] right-[10%] z-20">
-              <div className="bg-[hsl(var(--popover))]/80 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-white/10">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))]">
-                  <ShieldCheck className="h-6 w-6" />
-                </div>
-                <div>
-                  <Typography.Heading level="h4" className="font-bold leading-tight text-[hsl(var(--foreground))]">
-                    Proses Instan
-                  </Typography.Heading>
-                  <Typography.Body size="sm" className="font-medium text-[hsl(var(--muted-foreground))]">
-                    Aman & Terpercaya
-                  </Typography.Body>
-                </div>
-              </div>
-            </div>
-            
           </div>
         </div>
       </div>
