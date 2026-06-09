@@ -57,9 +57,9 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
           <input
             type={inputType}
             className={cn(
-              "flex h-12 w-full rounded-xl border border-white/50 bg-white/50 px-4 py-2 text-sm font-medium text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))]/30 outline-none transition-all duration-300",
-              "focus:bg-white focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10",
-              "hover:border-white hover:bg-white/70",
+              "flex h-12 w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-md px-4 py-2 text-sm font-medium text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))]/30 outline-none transition-all duration-300",
+              "focus:bg-white/10 focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/20",
+              "hover:border-white/20 hover:bg-white/10",
               icon && "pl-10",
               isPassword && "pr-10",
               error && "border-red-500/50 focus:border-red-500 focus:ring-red-500/10 bg-red-50/50",
