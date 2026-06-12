@@ -49,7 +49,7 @@ export function GalleryClient({ initialAssets }: { initialAssets: CloudinaryAsse
     }
   };
 
-  const handleUploadSuccess = (result: any) => {
+  const handleUploadSuccess = (result: { info?: { public_id?: string } | string }) => {
     if (result?.info && typeof result.info === "object" && "public_id" in result.info) {
       toast.success("Asset uploaded successfully");
       router.refresh(); // Refresh the page to fetch new assets

@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Gamepad2,
-  Package,
   LayoutGrid,
   Receipt,
-  Wallet,
   Users,
   Images,
   Settings,
@@ -19,7 +18,6 @@ import {
   ChevronDown,
   Shield,
   Activity,
-  Tag,
   Layers,
   Zap,
 } from "lucide-react";
@@ -41,41 +39,40 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
   {
-    label: "Catalog",
+    label: "Katalog",
     icon: Layers,
     items: [
       { label: "Games", href: "/admin/games", icon: Gamepad2 },
-      { label: "Categories", href: "/admin/categories", icon: LayoutGrid },
+      { label: "Kategori", href: "/admin/categories", icon: LayoutGrid },
     ],
   },
   {
-    label: "Transactions",
+    label: "Transaksi",
     icon: Receipt,
     items: [
-      { label: "Orders", href: "/admin/orders", icon: Receipt },
-      { label: "Payments", href: "/admin/payments", icon: Wallet },
+      { label: "Pesanan", href: "/admin/orders", icon: Receipt },
     ],
   },
   {
-    label: "Customers",
+    label: "Pengguna",
     icon: Users,
     items: [
-      { label: "Users", href: "/admin/users", icon: Users },
+      { label: "Daftar User", href: "/admin/users", icon: Users },
     ],
   },
   {
-    label: "Content",
+    label: "Konten",
     icon: Images,
     items: [
-      { label: "Gallery & Media", href: "/admin/gallery", icon: Images },
+      { label: "Galeri & Media", href: "/admin/gallery", icon: Images },
     ],
   },
   {
-    label: "System",
+    label: "Sistem",
     icon: Shield,
     items: [
-      { label: "Settings", href: "/admin/settings", icon: Settings },
-      { label: "Activity Logs", href: "/admin/system/logs", icon: Activity },
+      { label: "Pengaturan", href: "/admin/settings", icon: Settings },
+      { label: "Log Aktivitas", href: "/admin/system/logs", icon: Activity },
     ],
   },
 ];
@@ -85,11 +82,13 @@ function NavGroupSection({
   collapsed,
   pathname,
   defaultOpen,
+  onNavigate,
 }: {
   group: NavGroup;
   collapsed: boolean;
   pathname: string;
   defaultOpen: boolean;
+  onNavigate?: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const GroupIcon = group.icon;
@@ -101,7 +100,6 @@ function NavGroupSection({
   );
 
   if (collapsed) {
-    // In collapsed mode, render items directly without section labels
     return (
       <div className="space-y-1">
         {group.items.map((item) => {
@@ -114,6 +112,7 @@ function NavGroupSection({
               key={item.href}
               href={item.href}
               title={item.label}
+              onClick={onNavigate}
               className={cn(
                 "relative flex items-center justify-center h-10 w-10 mx-auto rounded-xl transition-colors group",
                 isActive
@@ -145,7 +144,6 @@ function NavGroupSection({
 
   return (
     <div>
-      {/* Group Header */}
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
@@ -186,6 +184,7 @@ function NavGroupSection({
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={onNavigate}
                     className={cn(
                       "relative flex items-center gap-3 px-3 py-2 rounded-xl transition-colors group",
                       isActive
@@ -239,13 +238,14 @@ function NavGroupSection({
 export function AdminSidebar({
   collapsed,
   setCollapsed,
+  onNavigate,
 }: {
   collapsed: boolean;
   setCollapsed: (v: boolean) => void;
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
-  // Determine which groups should be open by default
   const defaultOpenGroups = navGroups.map((group) =>
     group.items.some(
       (item) =>
@@ -253,6 +253,10 @@ export function AdminSidebar({
         (item.href !== "/admin" && pathname.startsWith(item.href))
     )
   );
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" });
+  };
 
   return (
     <aside
@@ -277,7 +281,7 @@ export function AdminSidebar({
       </Button>
 
       {/* Logo */}
-      <div className="h-20 flex items-center px-6 border-b border-[hsl(var(--border))] shrink-0">
+      <div className="h-16 flex items-center px-6 border-b border-[hsl(var(--border))] shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[hsl(var(--primary))]/10 border border-[hsl(var(--primary))]/20 flex items-center justify-center shrink-0">
             <Zap className="h-5 w-5 text-[hsl(var(--primary))]" />
@@ -288,7 +292,7 @@ export function AdminSidebar({
                 MiqAdmin
               </span>
               <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest">
-                Operation System
+                Panel Admin
               </span>
             </div>
           )}
@@ -299,6 +303,7 @@ export function AdminSidebar({
       <div className="px-3 pt-4 pb-2">
         <Link
           href="/admin"
+          onClick={onNavigate}
           className={cn(
             "relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group",
             collapsed ? "justify-center" : "",
@@ -349,6 +354,7 @@ export function AdminSidebar({
             collapsed={collapsed}
             pathname={pathname}
             defaultOpen={defaultOpenGroups[index] || index === 0}
+            onNavigate={onNavigate}
           />
         ))}
       </div>
@@ -356,13 +362,14 @@ export function AdminSidebar({
       {/* Bottom: Logout */}
       <div className="p-3 border-t border-[hsl(var(--border))] shrink-0">
         <button
+          onClick={handleLogout}
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-gray-400 hover:bg-red-500/10 hover:text-red-500",
             collapsed ? "justify-center" : ""
           )}
         >
           <LogOut className="h-5 w-5 shrink-0" />
-          {!collapsed && <span className="text-sm font-medium">Logout</span>}
+          {!collapsed && <span className="text-sm font-medium">Keluar</span>}
         </button>
       </div>
     </aside>

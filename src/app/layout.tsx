@@ -105,8 +105,15 @@ export default async function RootLayout({
         <SettingsProvider settings={settings}>
           <Providers>
           <div className="relative flex min-h-screen flex-col">
+            {/* Skip to main content — keyboard/screen-reader accessibility */}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-xl focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[hsl(var(--primary-foreground))] focus:shadow-lg"
+            >
+              Skip to content
+            </a>
             <Navbar logoUrl={logoUrl} />
-            <main className="flex-1 pb-mobile-nav">{children}</main>
+            <main id="main-content" className="flex-1 pb-mobile-nav" tabIndex={-1}>{children}</main>
             <Footer logoUrl={logoUrl} />
             <BottomNavbar />
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, ChevronDown, ChevronLeft, ChevronRight, Loader2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,9 +36,11 @@ type OrderData = {
 };
 
 export default function OrdersClient({ initialData }: { initialData: { orders: OrderData[], total: number, totalPages: number } }) {
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
+  const [confirmDialog, setConfirmDialog] = useState<{ dbId: string; newStatus: string; prevStatus: string } | null>(null);
 
   // Debounce search — avoids query on every keystroke
   const debouncedSearch = useDebounce(search, 400);
@@ -56,17 +58,36 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
     staleTime: 15_000,
   });
 
+  const statusMutation = useMutation({
+    mutationFn: ({ dbId, newStatus }: { dbId: string; newStatus: string }) =>
+      updateOrderStatus(dbId, newStatus),
+    onSuccess: (result, vars) => {
+      if (result.success) {
+        toast.success(`Status berhasil diubah ke ${vars.newStatus.toUpperCase()}`);
+        queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+      } else {
+        toast.error(result.error || "Gagal mengubah status");
+      }
+    },
+  });
+
   const orders = data?.orders ?? [];
   const total = data?.total ?? 0;
   const totalPages = data?.totalPages ?? 0;
 
-  const handleStatusChange = async (dbId: string, newStatus: string) => {
-    const result = await updateOrderStatus(dbId, newStatus);
-    if (result.success) {
-      toast.success(`Status updated to ${newStatus.toUpperCase()}`);
-    } else {
-      toast.error(result.error || "Gagal mengubah status");
-    }
+  const handleStatusSelect = (dbId: string, newStatus: string, prevStatus: string) => {
+    if (newStatus === prevStatus) return;
+    setConfirmDialog({ dbId, newStatus, prevStatus });
+  };
+
+  const confirmStatusChange = () => {
+    if (!confirmDialog) return;
+    statusMutation.mutate({ dbId: confirmDialog.dbId, newStatus: confirmDialog.newStatus });
+    setConfirmDialog(null);
+  };
+
+  const cancelStatusChange = () => {
+    setConfirmDialog(null);
   };
 
   return (
@@ -148,7 +169,7 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
                     <div className="relative inline-block w-full">
                       <select
                         value={order.status}
-                        onChange={(e) => handleStatusChange(order.dbId, e.target.value)}
+                        onChange={(e) => handleStatusSelect(order.dbId, e.target.value, order.status)}
                         className={cn(
                           "appearance-none border font-bold uppercase tracking-wider text-[10px] px-2 py-1 rounded-full cursor-pointer outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[hsl(var(--primary))] transition-shadow pr-6",
                           statusStyles[order.status] || statusStyles.pending
@@ -173,17 +194,37 @@ export default function OrdersClient({ initialData }: { initialData: { orders: O
               {orders.length === 0 && !isFetching && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                    No orders found matching your filters.
+                    Tidak ada pesanan yang cocok dengan filter.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+
+        {/* Confirmation Dialog */}
+        {confirmDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+            <div className="w-full max-w-sm bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-2xl p-6 shadow-2xl">
+              <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">Konfirmasi Perubahan Status</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6">
+                Ubah status dari <strong className="text-[hsl(var(--foreground))]">{confirmDialog.prevStatus.toUpperCase()}</strong> ke <strong className="text-[hsl(var(--foreground))]">{confirmDialog.newStatus.toUpperCase()}</strong>?
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={cancelStatusChange} className="rounded-xl border-[hsl(var(--border))] bg-transparent">
+                  Batal
+                </Button>
+                <Button onClick={confirmStatusChange} className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-bold rounded-xl">
+                  Ya, Ubah
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         
         {totalPages > 1 && (
           <div className="p-4 border-t border-[hsl(var(--border))] flex items-center justify-between text-sm text-[hsl(var(--muted-foreground))] bg-slate-900/30">
-            Showing {orders.length} of {total} entries
+            Menampilkan {orders.length} dari {total} pesanan
             <div className="flex gap-1">
               <Button 
                 variant="outline" 

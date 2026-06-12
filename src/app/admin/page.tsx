@@ -10,6 +10,17 @@ export default async function AdminDashboardPage() {
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
 
+  // ── Last 7 days range for chart ──────────────────────────────────────────
+  const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    d.setHours(0, 0, 0, 0);
+    const end = new Date(d);
+    end.setHours(23, 59, 59, 999);
+    return { start: d, end, label: dayNames[d.getDay()] };
+  });
+
   // ── Parallel fetch all data ────────────────────────────────────────────────
   const [
     revenueAgg,
@@ -29,6 +40,8 @@ export default async function AdminDashboardPage() {
     topProductsRaw,
     // Recent users
     recentUsers,
+    // Last 7 days revenue (all in parallel)
+    ...dailyRevenues
   ] = await Promise.all([
     // All-time revenue (SUCCESS)
     prisma.transaction.aggregate({
@@ -101,6 +114,13 @@ export default async function AdminDashboardPage() {
         createdAt: true,
       },
     }),
+    // Last 7 days revenue — all 7 in parallel
+    ...last7Days.map(({ start, end }) =>
+      prisma.transaction.aggregate({
+        _sum: { total: true },
+        where: { status: "SUCCESS", createdAt: { gte: start, lte: end } },
+      })
+    ),
   ]);
 
   // Map recent transactions
@@ -134,16 +154,11 @@ export default async function AdminDashboardPage() {
       ? Math.round((successTodayCount / ordersTodayCount) * 1000) / 10
       : 0;
 
-  // Mock chart data (Last 7 Days)
-  const chartData = [
-    { name: "Mon", revenue: 4000000 },
-    { name: "Tue", revenue: 3000000 },
-    { name: "Wed", revenue: 5000000 },
-    { name: "Thu", revenue: 2780000 },
-    { name: "Fri", revenue: 6890000 },
-    { name: "Sat", revenue: 8390000 },
-    { name: "Sun", revenue: 9490000 },
-  ];
+  // Real chart data from DB
+  const chartData = last7Days.map((day, i) => ({
+    name: day.label,
+    revenue: dailyRevenues[i]?._sum?.total || 0,
+  }));
 
   const initialData = {
     // All-time stats

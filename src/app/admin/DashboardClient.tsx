@@ -5,15 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Users,
-  Wallet,
   Receipt,
-  TrendingUp,
   Clock,
   Gamepad2,
   Package,
   CheckCircle2,
-  ArrowUpRight,
-  ArrowDownRight,
+  Wallet,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -69,6 +66,11 @@ interface RecentOrder {
   date: string;
 }
 
+interface ChartPoint {
+  name: string;
+  revenue: number;
+}
+
 interface DashboardData {
   totalRevenue: number;
   totalOrders: number;
@@ -82,7 +84,7 @@ interface DashboardData {
   recentOrders: RecentOrder[];
   topProducts: TopProduct[];
   recentUsers: RecentUser[];
-  chartData: { name: string; revenue: number }[];
+  chartData: ChartPoint[];
 }
 
 export default function DashboardClient({ initialData }: { initialData: DashboardData }) {
@@ -93,9 +95,25 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
       const res = await fetch("/api/admin/stats");
       if (!res.ok) throw new Error("Failed to fetch admin stats");
       const json = await res.json();
-      // Map API response shape → DashboardData shape
+
+      // Build updated chart data from API's historicalRevenue
+      const apiChartData = json.historicalRevenue
+        ? json.historicalRevenue.map((val: number, i: number) => ({
+            name: initialData.chartData[i]?.name ?? "",
+            revenue: val,
+          }))
+        : initialData.chartData;
+
       return {
-        ...initialData,
+        totalRevenue: initialData.totalRevenue,
+        totalOrders: initialData.totalOrders,
+        totalUsers: initialData.totalUsers,
+        pendingOrders: initialData.pendingOrders,
+        totalGames: initialData.totalGames,
+        totalItems: initialData.totalItems,
+        topProducts: initialData.topProducts,
+        recentUsers: initialData.recentUsers,
+        // Updated from API
         revenueTodayStats: json.overview?.todayRevenue ?? initialData.revenueTodayStats,
         ordersToday: json.overview?.todayTx ?? initialData.ordersToday,
         successRateToday: Number(json.overview?.successRate ?? initialData.successRateToday),
@@ -108,6 +126,7 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
           status: o.status,
           date: o.time,
         })) ?? initialData.recentOrders,
+        chartData: apiChartData,
       } as DashboardData;
     },
     initialData,          // Render instantly from SSR, no loading flash
@@ -151,7 +170,7 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
         if (Array.isArray(parsed) && parsed.length === defaultLayout.length) {
           setLayout(parsed);
         }
-      } catch (e) {}
+      } catch { /* ignore parse errors */ }
     }
   }, []);
 
@@ -172,45 +191,6 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
       });
     }
   };
-
-  const stats = [
-    { 
-      title: "Total Revenue", 
-      value: formatCurrency(totalRevenue), 
-      trend: "+12.5%", 
-      trendUp: true, 
-      icon: Wallet,
-      color: "text-emerald-400",
-      bg: "bg-emerald-400/10"
-    },
-    { 
-      title: "Total Orders", 
-      value: totalOrders.toLocaleString(), 
-      trend: "+5.2%", 
-      trendUp: true, 
-      icon: Receipt,
-      color: "text-[hsl(var(--primary))]",
-      bg: "bg-[hsl(var(--primary))]/10"
-    },
-    { 
-      title: "Total Users", 
-      value: totalUsers.toLocaleString(), 
-      trend: "+18.1%", 
-      trendUp: true, 
-      icon: Users,
-      color: "text-blue-400",
-      bg: "bg-blue-400/10"
-    },
-    { 
-      title: "Pending Orders", 
-      value: pendingOrders.toLocaleString(), 
-      trend: "-2.4%", 
-      trendUp: false, 
-      icon: Clock,
-      color: "text-amber-400",
-      bg: "bg-amber-400/10"
-    },
-  ];
 
   const today = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -247,11 +227,11 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
         <div className="relative z-10 flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
           <div className="max-w-xl">
             <p className="text-[hsl(var(--primary))] font-bold text-sm mb-2">{today}</p>
-            <h1 className="text-2xl sm:text-3xl font-extrabold font-heading mb-2">Welcome back, Admin! 👋</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold font-heading mb-2">Dashboard Admin</h1>
             <p className="text-[hsl(var(--foreground))]/70 text-sm leading-relaxed">
               Ada{" "}
               <strong className="text-amber-400">{pendingOrders} pesanan pending</strong>{" "}
-              yang perlu perhatianmu hari ini.
+              yang perlu ditangani hari ini.
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
@@ -272,7 +252,7 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
         </div>
       </motion.div>
 
-      {/* Today's Business Metrics */}
+      {/* Today's Metrics — the only stats admins care about */}
       <div>
         <h2 className="text-xs font-bold text-[hsl(var(--muted-foreground))] uppercase tracking-widest mb-3 px-1">
           Hari Ini
@@ -280,36 +260,32 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             {
-              label: "Revenue Hari Ini",
+              label: "Pendapatan",
               value: formatCurrency(revenueTodayStats),
               icon: Wallet,
               color: "text-emerald-400",
               bg: "bg-emerald-400/10",
-              trend: null,
             },
             {
-              label: "Orders Hari Ini",
+              label: "Total Pesanan",
               value: ordersToday.toLocaleString(),
               icon: Receipt,
               color: "text-[hsl(var(--primary))]",
               bg: "bg-[hsl(var(--primary))]/10",
-              trend: null,
             },
             {
-              label: "Success Rate",
+              label: "Tingkat Sukses",
               value: `${successRateToday}%`,
               icon: CheckCircle2,
               color: successRateToday >= 95 ? "text-emerald-400" : "text-amber-400",
               bg: successRateToday >= 95 ? "bg-emerald-400/10" : "bg-amber-400/10",
-              trend: null,
             },
             {
-              label: "Pending Payment",
+              label: "Pending",
               value: pendingOrders.toLocaleString(),
               icon: Clock,
               color: pendingOrders > 0 ? "text-amber-400" : "text-slate-400",
               bg: pendingOrders > 0 ? "bg-amber-400/10" : "bg-slate-400/10",
-              trend: null,
             },
           ].map((s, i) => (
             <motion.div
@@ -332,54 +308,46 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
         </div>
       </div>
 
-      {/* All-Time Stats + Catalog */}
+      {/* Overview — Compact Summary */}
       <div>
         <h2 className="text-xs font-bold text-[hsl(var(--muted-foreground))] uppercase tracking-widest mb-3 px-1">
-          Semua Waktu
+          Ringkasan
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-sm rounded-2xl overflow-hidden">
+          {[
+            { label: "Total Pendapatan", value: formatCurrency(totalRevenue), icon: Wallet, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+            { label: "Total Pesanan", value: totalOrders.toLocaleString(), icon: Receipt, color: "text-[hsl(var(--primary))]", bg: "bg-[hsl(var(--primary))]/10" },
+            { label: "Total User", value: totalUsers.toLocaleString(), icon: Users, color: "text-blue-400", bg: "bg-blue-400/10" },
+            { label: "Games", value: totalGames.toLocaleString(), icon: Gamepad2, color: "text-violet-400", bg: "bg-violet-400/10", href: "/admin/games" },
+            { label: "Total Item", value: totalItems.toLocaleString(), icon: Package, color: "text-cyan-400", bg: "bg-cyan-400/10", href: "/admin/games" },
+          ].map((s, i) => {
+            const content = (
+              <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-sm rounded-2xl overflow-hidden hover:border-[hsl(var(--primary))]/30 transition-colors">
                 <CardContent className="p-5">
-                  <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center mb-3", stat.bg)}>
-                    <stat.icon className={cn("w-4.5 h-4.5", stat.color)} />
+                  <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center mb-3", s.bg)}>
+                    <s.icon className={cn("w-4.5 h-4.5", s.color)} />
                   </div>
-                  <p className="text-lg font-extrabold text-[hsl(var(--foreground))]">{stat.value}</p>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]/80 mt-0.5">{stat.title}</p>
+                  <p className="text-lg font-extrabold text-[hsl(var(--foreground))]">{s.value}</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]/80 mt-0.5">{s.label}</p>
                 </CardContent>
               </Card>
-            </motion.div>
-          ))}
-          {/* Catalog metrics */}
-          {[
-            { title: "Games", value: totalGames.toLocaleString(), icon: Gamepad2, color: "text-violet-400", bg: "bg-violet-400/10", href: "/admin/games" },
-            { title: "Total Items", value: totalItems.toLocaleString(), icon: Package, color: "text-cyan-400", bg: "bg-cyan-400/10", href: "/admin/games" },
-          ].map((s, i) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: (stats.length + i) * 0.05 }}
-            >
-              <Link href={s.href}>
-                <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-sm rounded-2xl overflow-hidden hover:border-[hsl(var(--primary))]/30 transition-colors cursor-pointer">
-                  <CardContent className="p-5">
-                    <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center mb-3", s.bg)}>
-                      <s.icon className={cn("w-4.5 h-4.5", s.color)} />
-                    </div>
-                    <p className="text-lg font-extrabold text-[hsl(var(--foreground))]">{s.value}</p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]/80 mt-0.5">{s.title}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            </motion.div>
-          ))}
+            );
+
+            return (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                {"href" in s && s.href ? (
+                  <Link href={s.href}>{content}</Link>
+                ) : (
+                  content
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 

@@ -133,7 +133,7 @@ function ActionDropdown({
               onClick={() => setOpen(false)}
             >
               <ExternalLink className="w-4 h-4" />
-              View Store Page
+              Lihat Halaman Toko
             </Link>
             <Link
               href={`/admin/games/${game.id}/items`}
@@ -141,23 +141,23 @@ function ActionDropdown({
               onClick={() => setOpen(false)}
             >
               <Package className="w-4 h-4" />
-              Manage Items
+              Kelola Item
             </Link>
             <button
               onClick={() => { onEdit(); setOpen(false); }}
               className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[hsl(var(--foreground))]/70 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors"
             >
               <Edit2 className="w-4 h-4" />
-              Edit Game
+              Ubah Game
             </button>
             <button
               onClick={() => { onToggleStatus(); setOpen(false); }}
               className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[hsl(var(--foreground))]/70 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors"
             >
               {game.isActive ? (
-                <><XCircle className="w-4 h-4" /> Deactivate</>
+                <><XCircle className="w-4 h-4" /> Nonaktifkan</>
               ) : (
-                <><CheckCircle2 className="w-4 h-4" /> Activate</>
+                <><CheckCircle2 className="w-4 h-4" /> Aktifkan</>
               )}
             </button>
             <div className="my-1 border-t border-[hsl(var(--border))]" />
@@ -166,7 +166,7 @@ function ActionDropdown({
               className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
-              Delete Game
+              Hapus Game
             </button>
           </motion.div>
         )}
@@ -323,7 +323,7 @@ export default function GamesClient({ initialGames, stats, categories, providers
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 glass-card p-6 rounded-3xl">
         <div>
           <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">
-            Games Management
+            Manajemen Games
           </h1>
           <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">
             Kelola semua game, kategori, dan status ketersediaan.
@@ -334,10 +334,10 @@ export default function GamesClient({ initialGames, stats, categories, providers
           className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20 transition-all h-12 px-6"
         >
           {isFormOpen && !editingId ? (
-            "Cancel"
+            "Batal"
           ) : (
             <>
-              <Plus className="w-5 h-5 mr-2" /> Add Game
+              <Plus className="w-5 h-5 mr-2" /> Tambah Game
             </>
           )}
         </Button>
@@ -347,9 +347,9 @@ export default function GamesClient({ initialGames, stats, categories, providers
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: "Total Games", value: stats.total, color: "text-[hsl(var(--primary))]", bg: "bg-[hsl(var(--primary))]/10" },
-          { label: "Active", value: stats.active, color: "text-emerald-400", bg: "bg-emerald-400/10" },
-          { label: "Inactive", value: stats.inactive, color: "text-slate-400", bg: "bg-slate-400/10" },
-          { label: "Total Items", value: stats.totalItems, color: "text-amber-400", bg: "bg-amber-400/10" },
+          { label: "Aktif", value: stats.active, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+          { label: "Nonaktif", value: stats.inactive, color: "text-slate-400", bg: "bg-slate-400/10" },
+          { label: "Total Item", value: stats.totalItems, color: "text-amber-400", bg: "bg-amber-400/10" },
         ].map((s) => (
           <div
             key={s.label}
@@ -377,12 +377,12 @@ export default function GamesClient({ initialGames, stats, categories, providers
           >
             <div className="glass-card p-6 sm:p-8 rounded-3xl">
               <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] mb-6">
-                {editingId ? "Edit Game" : "Tambah Game Baru"}
+                {editingId ? "Ubah Game" : "Tambah Game Baru"}
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left: Text Fields */}
                 <div className="space-y-4">
-                  {/* Name */}
+                  {/* Nama */}
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-[hsl(var(--foreground))]">
                       Nama Game <span className="text-red-400">*</span>
@@ -442,7 +442,7 @@ export default function GamesClient({ initialGames, stats, categories, providers
                     </div>
                   </div>
 
-                  {/* Game Type */}
+                  {/* Tipe Game */}
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-[hsl(var(--foreground))]">
                       Tipe Game
@@ -465,7 +465,7 @@ export default function GamesClient({ initialGames, stats, categories, providers
                     </div>
                   </div>
 
-                  {/* Description */}
+                  {/* Deskripsi */}
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-[hsl(var(--foreground))]">
                       Deskripsi
@@ -487,7 +487,7 @@ export default function GamesClient({ initialGames, stats, categories, providers
                         onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                         className="w-4 h-4 accent-[hsl(var(--primary))]"
                       />
-                      <span className="text-sm font-bold text-[hsl(var(--foreground))]">Active</span>
+                      <span className="text-sm font-bold text-[hsl(var(--foreground))]">Aktif</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -496,7 +496,7 @@ export default function GamesClient({ initialGames, stats, categories, providers
                         onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
                         className="w-4 h-4 accent-[hsl(var(--primary))]"
                       />
-                      <span className="text-sm font-bold text-[hsl(var(--foreground))]">Popular</span>
+                      <span className="text-sm font-bold text-[hsl(var(--foreground))]">Populer</span>
                     </label>
                   </div>
                 </div>
@@ -526,7 +526,7 @@ export default function GamesClient({ initialGames, stats, categories, providers
                       onClick={resetForm}
                       className="rounded-xl border-[hsl(var(--border))] bg-transparent"
                     >
-                      Cancel
+                      Batal
                     </Button>
                     <Button
                       onClick={handleSubmit}
@@ -566,8 +566,8 @@ export default function GamesClient({ initialGames, stats, categories, providers
             className="h-10 px-3 bg-slate-900/50 border border-[hsl(var(--border))] rounded-xl text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--primary))]"
           >
             <option value="all">Semua Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Nonaktif</option>
           </select>
 
           {/* Category Filter */}
@@ -592,11 +592,11 @@ export default function GamesClient({ initialGames, stats, categories, providers
               <tr>
                 <th className="px-5 py-4">Game</th>
                 <th className="px-5 py-4 hidden lg:table-cell">Kategori</th>
-                <th className="px-5 py-4 text-center">Items</th>
-                <th className="px-5 py-4 hidden sm:table-cell text-center">Active Items</th>
-                <th className="px-5 py-4 hidden xl:table-cell">Last Updated</th>
+                <th className="px-5 py-4 text-center">Item</th>
+                <th className="px-5 py-4 hidden sm:table-cell text-center">Item Aktif</th>
+                <th className="px-5 py-4 hidden xl:table-cell">Terakhir Diubah</th>
                 <th className="px-5 py-4">Status</th>
-                <th className="px-5 py-4 text-right">Actions</th>
+                <th className="px-5 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[hsl(var(--border))]">
@@ -707,14 +707,14 @@ export default function GamesClient({ initialGames, stats, categories, providers
                         variant="outline"
                         className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs"
                       >
-                        <CheckCircle2 className="w-3 h-3 mr-1" /> Active
+                        <CheckCircle2 className="w-3 h-3 mr-1" /> Aktif
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
                         className="bg-slate-500/10 text-slate-400 border-slate-500/20 text-xs"
                       >
-                        <XCircle className="w-3 h-3 mr-1" /> Inactive
+                        <XCircle className="w-3 h-3 mr-1" /> Nonaktif
                       </Badge>
                     )}
                   </td>
@@ -728,23 +728,13 @@ export default function GamesClient({ initialGames, stats, categories, providers
                         size="icon"
                         asChild
                         className="h-8 w-8 text-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]/80 hover:bg-[hsl(var(--primary))]/10 rounded-lg"
-                        title="Manage Items"
+                        title="Kelola Item"
                       >
                         <Link href={`/admin/games/${game.id}/items`}>
                           <Package className="w-4 h-4" />
                         </Link>
                       </Button>
-                      {/* Quick: Edit */}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(game)}
-                        className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-500/20 rounded-lg"
-                        title="Edit Game"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      {/* More dropdown */}
+                      {/* More dropdown — edit is inside */}
                       <ActionDropdown
                         game={game}
                         onEdit={() => handleEdit(game)}

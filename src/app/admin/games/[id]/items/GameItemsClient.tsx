@@ -288,7 +288,7 @@ function ItemFormModal({
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold font-heading text-[hsl(var(--foreground))]">
-            {editItem ? "Edit Item" : "Tambah Item Baru"}
+            {editItem ? "Ubah Item" : "Tambah Item Baru"}
           </h3>
           <button
             onClick={onClose}
@@ -400,7 +400,7 @@ function ItemFormModal({
                 onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
                 className="w-4 h-4 accent-[hsl(var(--primary))]"
               />
-              <span className="text-sm font-bold text-[hsl(var(--foreground))]">Active</span>
+              <span className="text-sm font-bold text-[hsl(var(--foreground))]">Aktif</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -409,7 +409,7 @@ function ItemFormModal({
                 onChange={(e) => setForm({ ...form, isPopular: e.target.checked })}
                 className="w-4 h-4 accent-amber-400"
               />
-              <span className="text-sm font-bold text-[hsl(var(--foreground))]">Popular</span>
+              <span className="text-sm font-bold text-[hsl(var(--foreground))]">Populer</span>
             </label>
           </div>
         </div>
@@ -612,17 +612,17 @@ export default function GameItemsClient({ game, initialItems }: Props) {
           onClick={() => openModal()}
           className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20 h-12 px-6"
         >
-          <Plus className="w-5 h-5 mr-2" /> Add Item
+          <Plus className="w-5 h-5 mr-2" /> Tambah Item
         </Button>
       </div>
 
       {/* ── Stats ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total Items", value: items.length, color: "text-[hsl(var(--primary))]", bg: "bg-[hsl(var(--primary))]/10", icon: Package },
-          { label: "Active", value: activeCount, color: "text-emerald-400", bg: "bg-emerald-400/10", icon: CheckCircle2 },
-          { label: "Inactive", value: items.length - activeCount, color: "text-slate-400", bg: "bg-slate-400/10", icon: XCircle },
-          { label: "Total Sales", value: items.reduce((s, i) => s + i.salesCount, 0), color: "text-amber-400", bg: "bg-amber-400/10", icon: BarChart2 },
+          { label: "Total Item", value: items.length, color: "text-[hsl(var(--primary))]", bg: "bg-[hsl(var(--primary))]/10", icon: Package },
+          { label: "Aktif", value: activeCount, color: "text-emerald-400", bg: "bg-emerald-400/10", icon: CheckCircle2 },
+          { label: "Nonaktif", value: items.length - activeCount, color: "text-slate-400", bg: "bg-slate-400/10", icon: XCircle },
+          { label: "Total Penjualan", value: items.reduce((s, i) => s + i.salesCount, 0), color: "text-amber-400", bg: "bg-amber-400/10", icon: BarChart2 },
         ].map((s) => {
           const Icon = s.icon;
           return (
@@ -648,7 +648,7 @@ export default function GameItemsClient({ game, initialItems }: Props) {
             <Input
               value={searchQ}
               onChange={(e) => setSearchQ(e.target.value)}
-              placeholder="Cari item atau provider code..."
+              placeholder="Cari item..."
               className="h-10 pl-10 bg-slate-900/50 border-[hsl(var(--border))] rounded-xl w-full text-[hsl(var(--foreground))]"
             />
           </div>
@@ -658,8 +658,8 @@ export default function GameItemsClient({ game, initialItems }: Props) {
             className="h-10 px-3 bg-slate-900/50 border border-[hsl(var(--border))] rounded-xl text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--primary))]"
           >
             <option value="all">Semua Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Nonaktif</option>
           </select>
         </div>
 
@@ -698,7 +698,7 @@ export default function GameItemsClient({ game, initialItems }: Props) {
                         onClick={() => openModal()}
                         className="mt-4 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-xl font-bold"
                       >
-                        <Plus className="w-4 h-4 mr-2" /> Add Item
+                        <Plus className="w-4 h-4 mr-2" /> Tambah Item
                       </Button>
                     )}
                   </td>
@@ -753,11 +753,11 @@ export default function GameItemsClient({ game, initialItems }: Props) {
                   <td className="px-5 py-3.5">
                     {item.isActive ? (
                       <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs">
-                        <CheckCircle2 className="w-3 h-3 mr-1" /> Active
+                        <CheckCircle2 className="w-3 h-3 mr-1" /> Aktif
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="bg-slate-500/10 text-slate-400 border-slate-500/20 text-xs">
-                        <XCircle className="w-3 h-3 mr-1" /> Inactive
+                        <XCircle className="w-3 h-3 mr-1" /> Nonaktif
                       </Badge>
                     )}
                   </td>

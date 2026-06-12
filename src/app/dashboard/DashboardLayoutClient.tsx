@@ -37,8 +37,19 @@ export default function DashboardLayoutClient({
 
   return (
     <div className="flex min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
+      {/* Skip to content — keyboard/screen-reader accessibility */}
+      <a
+        href="#dashboard-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-xl focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[hsl(var(--primary-foreground))] focus:shadow-lg"
+      >
+        Skip to content
+      </a>
+
       {/* ── Sidebar (desktop only) ───────────────────────────────── */}
-      <aside className="sticky top-0 hidden lg:flex w-[200px] h-screen flex-col shrink-0 border-r border-[hsl(var(--border))]/50 bg-[hsl(var(--background))] overflow-y-auto">
+      <aside
+        className="sticky top-0 hidden lg:flex w-[200px] h-screen flex-col shrink-0 border-r border-[hsl(var(--border))]/50 bg-[hsl(var(--background))] overflow-y-auto"
+        aria-label="Dashboard sidebar"
+      >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 px-5 py-5 border-b border-[hsl(var(--border))]/50">
           <img
@@ -52,13 +63,14 @@ export default function DashboardLayoutClient({
         </Link>
 
         {/* Nav */}
-        <nav className="flex flex-col gap-0.5 p-3 flex-1">
+        <nav className="flex flex-col gap-0.5 p-3 flex-1" aria-label="Dashboard navigation">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-4 rounded-xl px-5 py-4 text-lg font-medium transition-colors",
                   isActive
@@ -126,42 +138,10 @@ export default function DashboardLayoutClient({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-12 max-w-5xl w-full mx-auto">
+        <main id="dashboard-content" className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-4 lg:pb-12 max-w-5xl w-full mx-auto" tabIndex={-1}>
           {children}
         </main>
       </div>
-
-      {/* ── Bottom Navigation (mobile only) ─────────────────────── */}
-      <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[hsl(var(--background))]/95 backdrop-blur-md border-t border-[hsl(var(--border))]/60 flex items-center"
-        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-      >
-        {navLinks.map((link) => {
-          const isActive = pathname === link.href;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "flex-1 flex flex-col items-center gap-1.5 py-3 text-[11px] font-medium transition-colors",
-                isActive
-                  ? "text-[hsl(var(--primary))]"
-                  : "text-[hsl(var(--muted-foreground))]"
-              )}
-            >
-              <link.icon className={cn("h-5 w-5 sm:h-6 sm:w-5", isActive && "text-[hsl(var(--primary))]")} />
-              {link.label}
-            </Link>
-          );
-        })}
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex-1 flex flex-col items-center gap-1.5 py-3 text-[11px] font-medium text-[hsl(var(--muted-foreground))] hover:text-red-500 transition-colors"
-        >
-          <LogOut className="h-5 w-5" />
-          Keluar
-        </button>
-      </nav>
     </div>
   );
 }

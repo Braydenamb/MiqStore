@@ -22,15 +22,12 @@ const tabs = [
 export function BottomNavbar() {
   const pathname = usePathname();
 
-  // Hide on admin and dashboard pages (except when the user is explicitly on a dashboard subpage handled by bottom nav)
-  // Wait, if it's hidden on dashboard, they can't see the bottom nav on transactions/favorites/account!
-  // Let's modify the hide logic so it shows on specific mobile dashboard pages.
-  const isHidden = pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/dashboard");
+  const isHidden = pathname.startsWith("/admin") || pathname.startsWith("/auth");
   
   if (isHidden) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden" aria-label="Main navigation">
       {/* Floating Glass backdrop */}
       <div
         className="mx-auto max-w-md px-4 pb-4"

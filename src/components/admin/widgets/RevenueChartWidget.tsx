@@ -2,7 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { formatCurrency } from "@/lib/utils";
 
-export function RevenueChartWidget({ chartData }: { chartData: any[] }) {
+interface ChartPoint {
+  name: string;
+  revenue: number;
+}
+
+export function RevenueChartWidget({ chartData }: { chartData: ChartPoint[] }) {
   return (
     <Card className="h-full bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-sm rounded-2xl overflow-hidden flex flex-col">
       <CardHeader className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] px-6 py-5">

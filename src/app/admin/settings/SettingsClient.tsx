@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Globe, CreditCard, Key, Settings as SettingsIcon, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Save, Globe, Image as ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,9 +34,9 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
     const res = await saveAdminSettings(payload);
     
     if (res.success) {
-      toast.success("Settings updated successfully");
+      toast.success("Pengaturan berhasil diperbarui");
     } else {
-      toast.error(res.error || "Failed to update settings");
+      toast.error(res.error || "Gagal memperbarui pengaturan");
     }
     setIsLoading(false);
   };
@@ -50,8 +50,8 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
       
       {/* Header */}
       <div className="bg-[hsl(var(--card))] p-6 rounded-3xl shadow-sm border border-[hsl(var(--border))]">
-        <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Store Settings</h1>
-        <p className="text-sm text-[hsl(var(--foreground))]/60 mt-1">Configure your marketplace platform.</p>
+        <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))]">Pengaturan Toko</h1>
+        <p className="text-sm text-[hsl(var(--foreground))]/60 mt-1">Konfigurasi tampilan dan informasi toko Anda.</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -65,7 +65,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                 activeTab === "website" ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--foreground))]" : "text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium"
               }`}
             >
-              <Globe className={`w-5 h-5 ${activeTab === "website" ? "text-[hsl(var(--primary))]" : ""}`} /> Website Settings
+              <Globe className={`w-5 h-5 ${activeTab === "website" ? "text-[hsl(var(--primary))]" : ""}`} /> Informasi Toko
             </button>
             <button 
               onClick={() => setActiveTab("media")}
@@ -73,16 +73,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                 activeTab === "media" ? "bg-[hsl(var(--primary))]/10 text-[hsl(var(--foreground))]" : "text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium"
               }`}
             >
-              <ImageIcon className={`w-5 h-5 ${activeTab === "media" ? "text-[hsl(var(--primary))]" : ""}`} /> Media & Assets
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
-              <CreditCard className="w-5 h-5" /> Payment Gateways
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
-              <Key className="w-5 h-5" /> API & Reseller
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-[hsl(var(--foreground))]/60 hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] font-medium rounded-xl transition-colors">
-              <SettingsIcon className="w-5 h-5" /> Advanced
+              <ImageIcon className={`w-5 h-5 ${activeTab === "media" ? "text-[hsl(var(--primary))]" : ""}`} /> Media & Aset
             </button>
           </div>
         </div>
@@ -103,11 +94,11 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                     className="space-y-8"
                   >
                     <div className="space-y-6">
-                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">General Information</h2>
+                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Informasi Umum</h2>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Store Name</Label>
+                          <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Nama Toko</Label>
                           <Input 
                             value={settings["store_name"] || "MiqStore"} 
                             onChange={(e) => updateSetting("store_name", e.target.value)}
@@ -115,7 +106,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Support Email</Label>
+                          <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Email Dukungan</Label>
                           <Input 
                             type="email"
                             value={settings["store_email"] || "support@miqstore.com"} 
@@ -126,7 +117,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Store Description (SEO)</Label>
+                        <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Deskripsi Toko (SEO)</Label>
                         <textarea 
                           value={settings["store_description"] || "Platform top up game tercepat, termurah, dan terpercaya."}
                           onChange={(e) => updateSetting("store_description", e.target.value)}
@@ -136,7 +127,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                     </div>
 
                     <div className="space-y-6">
-                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Appearance</h2>
+                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Tampilan</h2>
                       
                       <div className="flex items-center space-x-2">
                         <input 
@@ -147,10 +138,10 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                           className="w-4 h-4 rounded border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer" 
                         />
                         <label htmlFor="maintenance" className="text-sm font-bold text-[hsl(var(--foreground))] cursor-pointer">
-                          Enable Maintenance Mode
+                          Mode Maintenance
                         </label>
                       </div>
-                      <p className="text-xs text-[hsl(var(--foreground))]/50 -mt-2 ml-6">When active, only admins can access the store front.</p>
+                      <p className="text-xs text-[hsl(var(--foreground))]/50 -mt-2 ml-6">Saat aktif, hanya admin yang bisa mengakses toko.</p>
                     </div>
                   </motion.div>
                 )}
@@ -165,8 +156,8 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                     className="space-y-8"
                   >
                     <div className="space-y-6">
-                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Site Media & Assets</h2>
-                      <p className="text-sm text-[hsl(var(--foreground))]/60 mb-6">Manage global images like logos and banners. These are uploaded securely to Cloudinary.</p>
+                      <h2 className="text-lg font-bold font-heading text-[hsl(var(--foreground))] border-b border-[hsl(var(--border))] pb-2">Media & Aset Situs</h2>
+                      <p className="text-sm text-[hsl(var(--foreground))]/60 mb-6">Kelola gambar global seperti logo dan banner. Semua diunggah dengan aman ke Cloudinary.</p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <UploadZone 
@@ -337,7 +328,7 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
             <div className="p-6 sm:px-8 sm:py-6 bg-[hsl(var(--secondary))]/30 border-t border-[hsl(var(--border))] flex justify-end mt-4">
               <Button type="submit" disabled={isLoading} className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))] text-white font-bold rounded-xl shadow-lg shadow-[hsl(var(--primary))]/20 transition-all h-12 px-8">
                 {isLoading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
-                Save Settings
+                Simpan Pengaturan
               </Button>
             </div>
           </form>

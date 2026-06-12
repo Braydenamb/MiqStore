@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Gamepad2, ArrowRight } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { Gamepad2 } from "lucide-react";
+import { formatCurrency, cn } from "@/lib/utils";
 
 interface Transaction {
   id: string;

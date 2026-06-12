@@ -20,14 +20,17 @@ export function SortableWidget({ id, children, className = "" }: { id: string; c
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative group ${className}`}>
-      {/* Drag Handle */}
+    <div ref={setNodeRef} style={style} className={`relative group ${className}`} role="region" aria-label={`Draggable widget: ${id}`}>
+      {/* Drag Handle — always visible on touch/mobile, hover-reveal on desktop */}
       <div 
         {...attributes} 
         {...listeners}
-        className="absolute top-2 right-2 z-20 p-2 bg-[hsl(var(--card))]/80 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing shadow-sm border border-[hsl(var(--border))]"
+        role="button"
+        aria-label={`Reorder ${id} widget. Use arrow keys to move.`}
+        tabIndex={0}
+        className="absolute top-2 right-2 z-20 p-2 bg-[hsl(var(--card))]/80 backdrop-blur-sm rounded-lg opacity-60 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity cursor-grab active:cursor-grabbing shadow-sm border border-[hsl(var(--border))]"
       >
-        <GripHorizontal className="w-4 h-4 text-[hsl(var(--foreground))]/50" />
+        <GripHorizontal className="w-4 h-4 text-[hsl(var(--foreground))]/50" aria-hidden="true" />
       </div>
       {children}
     </div>
