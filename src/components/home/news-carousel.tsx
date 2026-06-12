@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Gamepad2, Newspaper } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gamepad2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { HOME_NEWS_BANNERS, type NewsBanner } from "@/lib/constants";
@@ -15,13 +15,17 @@ const wrap = (min: number, max: number, v: number) => {
   return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
 
-function NewsThumbnail({ src, alt }: { src: string; alt: string }) {
+const swipeConfidenceThreshold = 10000;
+const swipePower = (offset: number, velocity: number) =>
+  Math.abs(offset) * velocity;
+
+function SlideImage({ src, alt }: { src: string; alt: string }) {
   const [error, setError] = useState(false);
 
   if (error) {
     return (
-      <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
-        <Gamepad2 className="w-8 h-8 text-white/20" />
+      <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
+        <Gamepad2 className="w-16 h-16 text-white/15" />
       </div>
     );
   }
@@ -31,7 +35,8 @@ function NewsThumbnail({ src, alt }: { src: string; alt: string }) {
       src={src}
       alt={alt}
       fill
-      sizes="160px"
+      sizes="(max-width: 1440px) 100vw, 1440px"
+      priority
       className="object-cover"
       draggable={false}
       onError={() => setError(true)}
@@ -89,115 +94,102 @@ export function NewsCarousel() {
   return (
     <section className="relative w-full">
       <div className="mx-auto max-w-[1440px] lg:px-6 lg:pt-6">
-        <div className="flex items-stretch bg-gray-900/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+        {/* Compact carousel container */}
+        <div className="relative w-full h-[180px] sm:h-[200px] lg:h-[220px] bg-gray-900 lg:rounded-2xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.5)]">
 
-          {/* ── Left: Label + Thumbnail ── */}
-          <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-3.5 border-r border-white/10 shrink-0">
-            {/* News icon label */}
-            <div className="hidden sm:flex items-center gap-2 shrink-0">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-400/20">
-                <Newspaper className="w-4 h-4 text-blue-300" />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-blue-200/80 whitespace-nowrap">
-                Info<br />Terbaru
-              </span>
-            </div>
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={page}
+              custom={direction}
+              variants={{
+                enter: (d: number) => ({
+                  x: d > 0 ? "100%" : "-100%",
+                  opacity: 1,
+                }),
+                center: { x: 0, opacity: 1 },
+                exit: (d: number) => ({
+                  x: d < 0 ? "100%" : "-100%",
+                  opacity: 1,
+                }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={1}
+              onDragEnd={(_e, { offset, velocity }) => {
+                const swipe = swipePower(offset.x, velocity.x);
+                if (swipe < -swipeConfidenceThreshold) paginate(1);
+                else if (swipe > swipeConfidenceThreshold) paginate(-1);
+              }}
+              className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+            >
+              <Link
+                href={banners[imageIndex].link}
+                className="block w-full h-full relative"
+                draggable={false}
+              >
+                <SlideImage
+                  src={banners[imageIndex].image}
+                  alt={banners[imageIndex].alt}
+                />
 
-            {/* Thumbnail with swipe animation */}
-            <div className="relative w-20 h-14 sm:w-24 sm:h-16 rounded-lg overflow-hidden shrink-0 ring-1 ring-white/10">
-              <AnimatePresence initial={false} custom={direction}>
-                <motion.div
-                  key={page}
-                  custom={direction}
-                  variants={{
-                    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 1 }),
-                    center: { x: 0, opacity: 1 },
-                    exit: (d: number) => ({ x: d < 0 ? "100%" : "-100%", opacity: 1 }),
-                  }}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.15 } }}
-                  className="absolute inset-0"
-                >
-                  <NewsThumbnail src={banners[imageIndex].image} alt={banners[imageIndex].alt} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent pointer-events-none" />
+
+                {/* Text content - left aligned */}
+                <div className="absolute inset-0 flex items-center pointer-events-none">
+                  <div className="px-5 sm:px-8 lg:px-10 max-w-lg">
+                    <div className="inline-block bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-2">
+                      Info Terbaru
+                    </div>
+                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white drop-shadow-lg leading-snug line-clamp-2">
+                      {banners[imageIndex].alt}
+                    </h3>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation arrows */}
+          <div className="absolute inset-y-0 left-2 right-2 sm:left-3 sm:right-3 flex items-center justify-between z-30 pointer-events-none">
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => paginate(-1)}
+              className="pointer-events-auto rounded-full w-8 h-8 lg:w-9 lg:h-9 bg-black/30 backdrop-blur-xl text-white border border-white/15 hover:bg-black/50 hover:scale-105 transition-all opacity-80 hover:opacity-100"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => paginate(1)}
+              className="pointer-events-auto rounded-full w-8 h-8 lg:w-9 lg:h-9 bg-black/30 backdrop-blur-xl text-white border border-white/15 hover:bg-black/50 hover:scale-105 transition-all opacity-80 hover:opacity-100"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
 
-          {/* ── Right: Content + Controls ── */}
-          <div className="flex items-center justify-between flex-1 min-w-0 px-4 py-3 sm:px-5 sm:py-3.5 gap-3">
-            {/* Animated text content */}
-            <div className="relative flex-1 min-w-0 overflow-hidden h-[2.5rem] sm:h-[2.75rem]">
-              <AnimatePresence initial={false} custom={direction}>
-                <motion.div
-                  key={page}
-                  custom={direction}
-                  variants={{
-                    enter: (d: number) => ({ y: d > 0 ? "100%" : "-100%", opacity: 0 }),
-                    center: { y: 0, opacity: 1 },
-                    exit: (d: number) => ({ y: d < 0 ? "100%" : "-100%", opacity: 0 }),
-                  }}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ y: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                  className="absolute inset-0 flex items-center"
-                >
-                  <Link
-                    href={banners[imageIndex].link}
-                    className="block w-full min-w-0 group/link"
-                    draggable={false}
-                  >
-                    <p className="text-sm sm:text-base font-semibold text-white/90 group-hover/link:text-white truncate transition-colors leading-snug">
-                      {banners[imageIndex].alt}
-                    </p>
-                    <p className="text-[11px] sm:text-xs text-white/40 mt-0.5 truncate">
-                      Klik untuk selengkapnya
-                    </p>
-                  </Link>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Nav arrows + dots */}
-            <div className="flex items-center gap-2 shrink-0">
-              {/* Progress dots */}
-              <div className="hidden sm:flex gap-1 items-center">
-                {banners.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => goTo(idx)}
-                    className={`transition-all duration-500 rounded-full h-1 ${
-                      idx === imageIndex
-                        ? "w-5 bg-[var(--color-gold)] shadow-[0_0_6px_rgba(234,179,8,0.4)]"
-                        : "w-1.5 bg-white/25 hover:bg-white/40"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Arrow buttons */}
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => paginate(-1)}
-                  className="w-7 h-7 rounded-full bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10 transition-all"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => paginate(1)}
-                  className="w-7 h-7 rounded-full bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10 transition-all"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
+          {/* Progress dots - bottom center */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
+            {banners.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => goTo(idx)}
+                className={`transition-all duration-500 rounded-full h-1 ${
+                  idx === imageIndex
+                    ? "w-5 bg-[var(--color-gold)] shadow-[0_0_6px_rgba(234,179,8,0.4)]"
+                    : "w-1.5 bg-white/30 hover:bg-white/50"
+                }`}
+              />
+            ))}
           </div>
 
         </div>
