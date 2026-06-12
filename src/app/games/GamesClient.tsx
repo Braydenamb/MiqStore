@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, Gamepad2 } from "lucide-react";
 import { GameCard } from "@/components/games/game-card";
 import { useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function GamesClient({ initialGames }: { initialGames: any[] }) {
   const searchParams = useSearchParams();
@@ -51,11 +52,47 @@ export function GamesClient({ initialGames }: { initialGames: any[] }) {
           </motion.p>
         </div>
 
+        {/* Mobile: horizontal scrollable pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex md:hidden overflow-x-auto gap-2 pb-2 -mx-4 px-4 scrollbar-none"
+        >
+          {["All Platforms", "Mobile", "PC", "Console"].map((p) => (
+            <button
+              key={p}
+              onClick={() => setFilter(p)}
+              className={cn(
+                "shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-colors",
+                filter === p
+                  ? "bg-[hsl(var(--primary))] text-white border-transparent"
+                  : "border-[hsl(var(--border))] text-[hsl(var(--foreground))]/70 hover:border-[hsl(var(--primary))]/40"
+              )}
+            >
+              {p}
+            </button>
+          ))}
+          <div className="shrink-0 relative">
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="appearance-none bg-[hsl(var(--card))]/50 backdrop-blur-md border border-[hsl(var(--primary))]/20 rounded-full py-2 pl-4 pr-8 text-sm font-medium text-[hsl(var(--foreground))] focus:outline-none focus:border-[hsl(var(--primary))] cursor-pointer"
+            >
+              <option>Popular</option>
+              <option>A-Z</option>
+              <option>Newest</option>
+            </select>
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[hsl(var(--primary))] pointer-events-none" />
+          </div>
+        </motion.div>
+
+        {/* Desktop: dropdowns */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex items-center gap-4"
+          className="hidden md:flex items-center gap-4"
         >
           {/* Filters */}
           <div className="relative">

@@ -12,7 +12,7 @@ interface GameBannerProps {
 
 export function GameBanner({ game }: GameBannerProps) {
   return (
-    <div className="w-full relative overflow-hidden pt-24 pb-16 lg:pt-32 lg:pb-24 bg-black">
+    <div className="w-full relative overflow-hidden pt-20 pb-10 sm:pt-24 sm:pb-14 lg:pt-32 lg:pb-24 bg-black">
       {/* Background Banner with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 blur-[8px] scale-110"

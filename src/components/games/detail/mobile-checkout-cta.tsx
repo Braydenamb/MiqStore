@@ -24,7 +24,7 @@ export function MobileCheckoutCTA({
       <motion.div 
         initial={{ y: 100 }} 
         animate={{ y: 0 }} 
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-200 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]"
+        className="fixed bottom-[76px] left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-200 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]"
         style={{ paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex flex-col gap-3">

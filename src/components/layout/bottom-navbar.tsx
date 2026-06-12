@@ -25,7 +25,7 @@ export function BottomNavbar() {
   // Hide on admin and dashboard pages (except when the user is explicitly on a dashboard subpage handled by bottom nav)
   // Wait, if it's hidden on dashboard, they can't see the bottom nav on transactions/favorites/account!
   // Let's modify the hide logic so it shows on specific mobile dashboard pages.
-  const isHidden = pathname.startsWith("/admin") || pathname.startsWith("/auth");
+  const isHidden = pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/dashboard");
   
   if (isHidden) return null;
 

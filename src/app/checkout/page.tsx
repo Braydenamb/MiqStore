@@ -113,14 +113,15 @@ export default function CheckoutPage() {
         toast.error("Sistem pembayaran belum siap. Silakan refresh halaman.");
         setIsProcessing(false);
       }
-    } catch (error: any) {
-      toast.error(error.message || "Terjadi kesalahan jaringan");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Terjadi kesalahan jaringan";
+      toast.error(message);
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay pt-24 pb-32 lg:pb-16 font-sans">
+    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay pt-24 pb-40 lg:pb-16 font-sans">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 relative z-10">
         
         {/* Header */}
@@ -229,6 +230,30 @@ export default function CheckoutPage() {
           </div>
 
         </motion.div>
+      </div>
+
+      {/* Mobile Sticky Checkout CTA */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)]"
+        style={{ paddingBottom: "calc(12px + env(safe-area-inset-bottom, 0px))" }}
+      >
+        <div className="mx-auto max-w-2xl px-4 pt-3 pb-1 flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total</p>
+            <p className="text-lg font-extrabold text-[hsl(var(--primary))] tabular-nums">{formatCurrency(total)}</p>
+          </div>
+          <Button
+            className="shrink-0 h-12 px-8 rounded-xl text-base font-bold bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white shadow-md transition-all disabled:opacity-50"
+            disabled={!isAgreed || isProcessing}
+            onClick={handlePay}
+          >
+            {isProcessing ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              "Bayar Sekarang"
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

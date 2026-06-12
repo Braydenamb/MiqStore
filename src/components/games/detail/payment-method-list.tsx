@@ -41,7 +41,7 @@ export function PaymentMethodList({
                     key={pm.id}
                     onClick={() => onSelectPayment(pm.id)}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl border p-3 transition-all duration-200 cursor-pointer text-left backdrop-blur-sm",
+                      "flex items-center gap-3 rounded-xl border p-4 sm:p-3 transition-all duration-200 cursor-pointer text-left backdrop-blur-sm",
                       selectedPayment === pm.id
                         ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))]/20 shadow-lg transform scale-[1.01]"
                         : "border-white/10 bg-black/20 hover:border-[hsl(var(--primary))]/50 hover:bg-[hsl(var(--primary))]/10"
@@ -52,7 +52,7 @@ export function PaymentMethodList({
                     </div>
                     <div className="text-left flex-1 min-w-0">
                       <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">{pm.name}</p>
-                      <p className="text-[10px] text-[hsl(var(--foreground))]/50 font-medium mt-0.5">
+                      <p className="text-xs text-[hsl(var(--foreground))]/50 font-medium mt-0.5">
                         {pm.fee === 0 ? "Bebas Biaya Admin" : pm.feeType === "flat" ? `+${formatCurrency(pm.fee)}` : `+${pm.fee}%`}
                       </p>
                     </div>

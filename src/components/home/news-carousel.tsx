@@ -178,17 +178,21 @@ export function NewsCarousel() {
           </div>
 
           {/* Progress dots - bottom center */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-30">
             {banners.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => goTo(idx)}
-                className={`transition-all duration-500 rounded-full h-1 ${
-                  idx === imageIndex
-                    ? "w-5 bg-[var(--color-gold)] shadow-[0_0_6px_rgba(234,179,8,0.4)]"
-                    : "w-1.5 bg-white/30 hover:bg-white/50"
-                }`}
-              />
+                className="p-1.5 -m-1.5 flex items-center justify-center"
+              >
+                <div
+                  className={`transition-all duration-500 rounded-full h-1.5 ${
+                    idx === imageIndex
+                      ? "w-6 bg-[var(--color-gold)] shadow-[0_0_6px_rgba(234,179,8,0.4)]"
+                      : "w-2 bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              </button>
             ))}
           </div>
 

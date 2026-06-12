@@ -131,7 +131,7 @@ export function GameDetailClient({ game, products }: { game: any, products: any[
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay text-[hsl(var(--foreground))] pb-32 lg:pb-16 font-sans">
+    <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay text-[hsl(var(--foreground))] pb-44 lg:pb-16 font-sans">
       <GameBanner game={game} />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-8 relative z-20">

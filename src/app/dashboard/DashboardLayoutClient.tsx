@@ -132,7 +132,10 @@ export default function DashboardLayoutClient({
       </div>
 
       {/* ── Bottom Navigation (mobile only) ─────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[hsl(var(--background))]/95 backdrop-blur-md border-t border-[hsl(var(--border))]/60 flex items-center">
+      <nav
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[hsl(var(--background))]/95 backdrop-blur-md border-t border-[hsl(var(--border))]/60 flex items-center"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           return (
@@ -140,20 +143,20 @@ export default function DashboardLayoutClient({
               key={link.href}
               href={link.href}
               className={cn(
-                "flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors",
+                "flex-1 flex flex-col items-center gap-1.5 py-3 text-[11px] font-medium transition-colors",
                 isActive
                   ? "text-[hsl(var(--primary))]"
                   : "text-[hsl(var(--muted-foreground))]"
               )}
             >
-              <link.icon className={cn("h-5 w-5", isActive && "text-[hsl(var(--primary))]")} />
+              <link.icon className={cn("h-5 w-5 sm:h-6 sm:w-5", isActive && "text-[hsl(var(--primary))]")} />
               {link.label}
             </Link>
           );
         })}
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium text-[hsl(var(--muted-foreground))] hover:text-red-500 transition-colors"
+          className="flex-1 flex flex-col items-center gap-1.5 py-3 text-[11px] font-medium text-[hsl(var(--muted-foreground))] hover:text-red-500 transition-colors"
         >
           <LogOut className="h-5 w-5" />
           Keluar
