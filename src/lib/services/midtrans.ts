@@ -23,6 +23,7 @@ export interface MidtransSnapRequest {
   itemName: string;
   itemCategory: string;
   itemQuantity?: number;
+  paymentMethod?: string;
 }
 
 export interface MidtransSnapResponse {
@@ -96,7 +97,22 @@ export async function createSnapTransaction(
   request: MidtransSnapRequest
 ): Promise<MidtransSnapResponse> {
   try {
-    const snapPayload = {
+    const paymentMethodMap: Record<string, string[]> = {
+      "qris": ["qris", "gopay"],
+      "gopay": ["gopay"],
+      "shopeepay": ["shopeepay"],
+      "bca-va": ["bca_va"],
+      "bni-va": ["bni_va"],
+      "bri-va": ["bri_va"],
+      "mandiri-va": ["echannel"],
+      "indomaret": ["indomaret"],
+      "alfamart": ["alfamart"],
+      // For ovo/dana or others without direct snap mapping, we'll just not filter
+    };
+
+    const enabledPayments = request.paymentMethod ? paymentMethodMap[request.paymentMethod] : undefined;
+
+    const snapPayload: any = {
       transaction_details: {
         order_id: request.orderId,
         gross_amount: request.amount,
@@ -125,6 +141,10 @@ export async function createSnapTransaction(
         duration: 24,
       },
     };
+
+    if (enabledPayments && enabledPayments.length > 0) {
+      snapPayload.enabled_payments = enabledPayments;
+    }
 
     const response = await fetch(`${MIDTRANS_CONFIG.baseUrl}/snap/v1/transactions`, {
       method: "POST",

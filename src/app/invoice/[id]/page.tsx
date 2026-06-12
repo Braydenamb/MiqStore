@@ -232,6 +232,23 @@ export default function InvoicePage() {
     }
   };
 
+  /* ─── Cancel Invoice ─── */
+  const handleCancel = async () => {
+    if (!confirm("Apakah kamu yakin ingin membatalkan pesanan ini?")) return;
+    
+    try {
+      const res = await fetch(`/api/invoice/${invoiceId}/cancel`, { method: "POST" });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Gagal membatalkan pesanan");
+      
+      toast.success("Pesanan berhasil dibatalkan");
+      const fresh = await fetchInvoice();
+      if (fresh) setInvoice(fresh);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Terjadi kesalahan");
+    }
+  };
+
   /* ─── Loading Skeleton ─── */
   if (isLoading) {
     return (
@@ -483,6 +500,22 @@ export default function InvoicePage() {
                   <Gamepad2 className="w-4 h-4 mr-2" /> Beli Game Lain
                 </Link>
               </Button>
+            ) : currentStatus === "pending" ? (
+              <div className="flex w-full gap-3 flex-col sm:flex-row">
+                <Button
+                  className="flex-1 h-12 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 font-bold"
+                  variant="outline"
+                  onClick={handleCancel}
+                >
+                  <XCircle className="w-4 h-4 mr-2" /> Batalkan Pesanan
+                </Button>
+                <Button
+                  className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold"
+                  asChild
+                >
+                  <Link href="/games">Beli Game Lain</Link>
+                </Button>
+              </div>
             ) : (
               <Button
                 className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold"

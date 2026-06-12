@@ -45,28 +45,6 @@ function clearCheckoutStorage() {
   try { sessionStorage.removeItem(CHECKOUT_STORAGE_KEY); } catch { /* noop */ }
 }
 
-/* ─── Countdown Timer ─── */
-function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState(15 * 60);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const m = Math.floor(timeLeft / 60).toString().padStart(2, "0");
-  const s = (timeLeft % 60).toString().padStart(2, "0");
-
-  return (
-    <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-bold text-lg bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
-      <Clock className="w-5 h-5 text-[hsl(var(--primary))]" />
-      <span className="tabular-nums">{m}:{s}</span>
-    </div>
-  );
-}
-
 /* ─── Main Component ─── */
 export default function CheckoutPage() {
   const router = useRouter();
@@ -246,13 +224,16 @@ export default function CheckoutPage() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
-          {/* Timer Card */}
+          {/* Expiry Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Selesaikan dalam</p>
-              <p className="text-xs text-gray-400">Pesanan akan dibatalkan otomatis jika melewati batas waktu.</p>
+              <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Masa Berlaku Pesanan</p>
+              <p className="text-xs text-gray-400">Pesanan akan dibatalkan otomatis setelah 24 jam.</p>
             </div>
-            <CountdownTimer />
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-bold text-sm bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+              <Clock className="w-4 h-4 text-[hsl(var(--primary))]" />
+              <span>Berlaku 24 Jam</span>
+            </div>
           </div>
 
           {/* Order Summary */}

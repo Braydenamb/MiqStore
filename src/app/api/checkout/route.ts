@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
       itemName: `${parsed.data.gameName} - ${parsed.data.productName}`,
       itemCategory: "Digital Goods",
       itemQuantity: 1,
+      paymentMethod: parsed.data.paymentMethod,
     });
 
     // 3. Return Snap Token to Frontend
