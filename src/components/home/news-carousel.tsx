@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Gamepad2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gamepad2, Newspaper } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { HOME_NEWS_BANNERS } from "@/lib/constants";
+import { HOME_NEWS_BANNERS, type NewsBanner } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Typography } from "@/components/typography";
 import { useSettings } from "@/components/providers/settings-provider";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 
@@ -16,29 +15,23 @@ const wrap = (min: number, max: number, v: number) => {
   return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
 
-const swipeConfidenceThreshold = 10000;
-const swipePower = (offset: number, velocity: number) => {
-  return Math.abs(offset) * velocity;
-};
-
-function NewsImage({ src, alt }: { src: string, alt: string }) {
+function NewsThumbnail({ src, alt }: { src: string; alt: string }) {
   const [error, setError] = useState(false);
-  
+
   if (error) {
     return (
-      <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
-        <Gamepad2 className="w-32 h-32 text-white/20" />
+      <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+        <Gamepad2 className="w-8 h-8 text-white/20" />
       </div>
     );
   }
 
   return (
-    <Image 
-      src={src} 
-      alt={alt} 
+    <Image
+      src={src}
+      alt={alt}
       fill
-      sizes="(max-width: 1440px) 100vw, 1440px"
-      priority
+      sizes="160px"
       className="object-cover"
       draggable={false}
       onError={() => setError(true)}
@@ -49,151 +42,162 @@ function NewsImage({ src, alt }: { src: string, alt: string }) {
 export function NewsCarousel() {
   const [[page, direction], setPage] = useState([0, 0]);
   const { settings } = useSettings();
-  
-  // Try to parse dynamic banners, fallback to constants
+
   const banners = useMemo(() => {
     try {
       const dynamicStr = settings["home_news_banners"];
       if (dynamicStr) {
         const parsed = JSON.parse(dynamicStr);
         if (parsed && Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((b: any) => ({
+          return parsed.map((b: NewsBanner) => ({
             ...b,
-            image: b.image.startsWith("http") ? b.image : cloudinaryUrl(b.image)
+            image: b.image.startsWith("http") ? b.image : cloudinaryUrl(b.image),
           }));
         }
       }
-    } catch {}
+    } catch {
+      // fallback
+    }
     return HOME_NEWS_BANNERS;
   }, [settings]);
 
-  // We only have a few items, we use wrap to make it infinite
   const imageIndex = wrap(0, banners.length, page);
 
-  const paginate = useCallback((newDirection: number) => {
-    setPage([page + newDirection, newDirection]);
-  }, [page]);
+  const paginate = useCallback(
+    (newDirection: number) => {
+      setPage([page + newDirection, newDirection]);
+    },
+    [page],
+  );
 
-  // Auto move every 5 seconds
+  const goTo = useCallback(
+    (idx: number) => {
+      const dir = idx > imageIndex ? 1 : -1;
+      setPage([idx, dir]);
+    },
+    [imageIndex],
+  );
+
+  // Auto-scroll every 5 seconds
   useEffect(() => {
-    const timer = setInterval(() => {
-      paginate(1);
-    }, 5000);
+    const timer = setInterval(() => paginate(1), 5000);
     return () => clearInterval(timer);
   }, [paginate]);
 
   if (!banners || banners.length === 0) return null;
 
   return (
-    <section className="relative w-full overflow-hidden bg-transparent">
-      {/* 
-        Container Edge-to-Edge on Mobile, 
-        Rounded Container on lg screens 
-      */}
+    <section className="relative w-full">
       <div className="mx-auto max-w-[1440px] lg:px-6 lg:pt-6">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] bg-gray-900 lg:rounded-[32px] overflow-hidden group shadow-2xl">
-          
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={page}
-              custom={direction}
-              variants={{
-                enter: (direction: number) => {
-                  return {
-                    x: direction > 0 ? "100%" : "-100%",
-                    opacity: 1
-                  };
-                },
-                center: {
-                  zIndex: 1,
-                  x: 0,
-                  opacity: 1
-                },
-                exit: (direction: number) => {
-                  return {
-                    zIndex: 0,
-                    x: direction < 0 ? "100%" : "-100%",
-                    opacity: 1
-                  };
-                }
-              }}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 }
-              }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={1}
-              onDragEnd={(e, { offset, velocity }) => {
-                const swipe = swipePower(offset.x, velocity.x);
-                if (swipe < -swipeConfidenceThreshold) {
-                  paginate(1);
-                } else if (swipe > swipeConfidenceThreshold) {
-                  paginate(-1);
-                }
-              }}
-              className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
-            >
-              <Link href={banners[imageIndex].link} className="block w-full h-full relative" draggable={false}>
-                <NewsImage src={banners[imageIndex].image} alt={banners[imageIndex].alt} />
-                
-                {/* Premium Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d34]/90 via-[#0b1d34]/20 to-transparent pointer-events-none" />
-                
-                {/* Text Content */}
-                <div className="absolute bottom-6 left-6 right-6 lg:bottom-12 lg:left-12 lg:right-12 pointer-events-none">
-                  <div>
-                    <div className="inline-block bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
-                      Info Terbaru
-                    </div>
-                    <Typography.Heading level="h3" className="text-2xl sm:text-3xl lg:text-5xl font-extrabold text-white drop-shadow-xl max-w-3xl leading-tight">
-                      {banners[imageIndex].alt}
-                    </Typography.Heading>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          </AnimatePresence>
+        <div className="flex items-stretch bg-gray-900/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
 
-          {/* Navigation Controls (Liquid Glass) */}
-          <div className="absolute inset-y-0 left-2 right-2 sm:left-4 sm:right-4 flex items-center justify-between z-30 pointer-events-none">
-            <Button 
-              variant="secondary" 
-              size="icon" 
-              onClick={() => paginate(-1)}
-              className="pointer-events-auto rounded-full w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl text-white border border-white/20 hover:bg-white/20 hover:scale-110 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.3)] opacity-90 hover:opacity-100"
-            >
-              <ChevronLeft className="h-5 w-5 lg:h-6 lg:w-6" />
-            </Button>
-            <Button 
-              variant="secondary" 
-              size="icon" 
-              onClick={() => paginate(1)}
-              className="pointer-events-auto rounded-full w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl text-white border border-white/20 hover:bg-white/20 hover:scale-110 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.3)] opacity-90 hover:opacity-100"
-            >
-              <ChevronRight className="h-5 w-5 lg:h-6 lg:w-6" />
-            </Button>
+          {/* ── Left: Label + Thumbnail ── */}
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-3.5 border-r border-white/10 shrink-0">
+            {/* News icon label */}
+            <div className="hidden sm:flex items-center gap-2 shrink-0">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-400/20">
+                <Newspaper className="w-4 h-4 text-blue-300" />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-blue-200/80 whitespace-nowrap">
+                Info<br />Terbaru
+              </span>
+            </div>
+
+            {/* Thumbnail with swipe animation */}
+            <div className="relative w-20 h-14 sm:w-24 sm:h-16 rounded-lg overflow-hidden shrink-0 ring-1 ring-white/10">
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={page}
+                  custom={direction}
+                  variants={{
+                    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 1 }),
+                    center: { x: 0, opacity: 1 },
+                    exit: (d: number) => ({ x: d < 0 ? "100%" : "-100%", opacity: 1 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.15 } }}
+                  className="absolute inset-0"
+                >
+                  <NewsThumbnail src={banners[imageIndex].image} alt={banners[imageIndex].alt} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
 
-          {/* Minimalist Progress Indicators */}
-          <div className="absolute bottom-4 right-6 lg:bottom-8 lg:right-12 flex gap-2 z-30">
-            {banners.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  const direction = idx > imageIndex ? 1 : -1;
-                  setPage([idx, direction]);
-                }}
-                className={`transition-all duration-500 rounded-full h-1.5 lg:h-2 ${
-                  idx === imageIndex 
-                    ? "w-8 lg:w-12 bg-[var(--color-gold)] shadow-[0_0_10px_rgba(234,179,8,0.5)]" 
-                    : "w-2 bg-white/30 hover:bg-white/50"
-                }`}
-              />
-            ))}
+          {/* ── Right: Content + Controls ── */}
+          <div className="flex items-center justify-between flex-1 min-w-0 px-4 py-3 sm:px-5 sm:py-3.5 gap-3">
+            {/* Animated text content */}
+            <div className="relative flex-1 min-w-0 overflow-hidden h-[2.5rem] sm:h-[2.75rem]">
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={page}
+                  custom={direction}
+                  variants={{
+                    enter: (d: number) => ({ y: d > 0 ? "100%" : "-100%", opacity: 0 }),
+                    center: { y: 0, opacity: 1 },
+                    exit: (d: number) => ({ y: d < 0 ? "100%" : "-100%", opacity: 0 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ y: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
+                  className="absolute inset-0 flex items-center"
+                >
+                  <Link
+                    href={banners[imageIndex].link}
+                    className="block w-full min-w-0 group/link"
+                    draggable={false}
+                  >
+                    <p className="text-sm sm:text-base font-semibold text-white/90 group-hover/link:text-white truncate transition-colors leading-snug">
+                      {banners[imageIndex].alt}
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-white/40 mt-0.5 truncate">
+                      Klik untuk selengkapnya
+                    </p>
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Nav arrows + dots */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Progress dots */}
+              <div className="hidden sm:flex gap-1 items-center">
+                {banners.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => goTo(idx)}
+                    className={`transition-all duration-500 rounded-full h-1 ${
+                      idx === imageIndex
+                        ? "w-5 bg-[var(--color-gold)] shadow-[0_0_6px_rgba(234,179,8,0.4)]"
+                        : "w-1.5 bg-white/25 hover:bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Arrow buttons */}
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => paginate(-1)}
+                  className="w-7 h-7 rounded-full bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10 transition-all"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => paginate(1)}
+                  className="w-7 h-7 rounded-full bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10 transition-all"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
           </div>
 
         </div>
