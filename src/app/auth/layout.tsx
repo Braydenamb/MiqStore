@@ -19,6 +19,12 @@ export default function AuthLayout({
     ? (settings["auth_character_right"].startsWith("http") ? settings["auth_character_right"] : cloudinaryUrl(settings["auth_character_right"]))
     : "/characters/mascot.png";
 
+  // Dimension settings (with defaults)
+  const leftWidth = settings["auth_character_left_width"] || "120";
+  const leftHeight = settings["auth_character_left_height"] || "80";
+  const rightWidth = settings["auth_character_right_width"] || "110";
+  const rightHeight = settings["auth_character_right_height"] || "80";
+
   return (
     <div className="h-full flex-1 flex flex-col bg-[hsl(var(--background))] texture-overlay relative overflow-hidden font-sans">
       
@@ -50,8 +56,12 @@ export default function AuthLayout({
             <img 
               src={leftChar} 
               alt="Fantasy Knight" 
-              className="w-[120%] h-auto object-contain absolute bottom-0 left-0 animate-float"
-              style={{ filter: "drop-shadow(0 20px 40px rgba(7, 59, 76, 0.15))" }}
+              className="h-auto object-contain absolute bottom-0 left-0 animate-float"
+              style={{ 
+                width: `${leftWidth}%`,
+                maxHeight: `${leftHeight}vh`,
+                filter: "drop-shadow(0 20px 40px rgba(7, 59, 76, 0.15))" 
+              }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
@@ -78,8 +88,13 @@ export default function AuthLayout({
             <img 
               src={rightChar} 
               alt="Anime Mascot" 
-              className="w-[110%] h-auto object-contain absolute bottom-0 right-0 animate-float"
-              style={{ animationDelay: "1.5s", filter: "drop-shadow(0 20px 40px rgba(7, 59, 76, 0.15))" }}
+              className="h-auto object-contain absolute bottom-0 right-0 animate-float"
+              style={{ 
+                width: `${rightWidth}%`,
+                maxHeight: `${rightHeight}vh`,
+                animationDelay: "1.5s", 
+                filter: "drop-shadow(0 20px 40px rgba(7, 59, 76, 0.15))" 
+              }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

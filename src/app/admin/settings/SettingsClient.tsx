@@ -195,20 +195,77 @@ export default function SettingsClient({ initialSettings }: { initialSettings: R
                           />
                         </div>
 
-                        <UploadZone 
-                          label="Auth Page Left Character" 
-                          folder="Assets"
-                          recommendedAspect="Transparent PNG / Vertical"
-                          defaultValue={settings["auth_character_left"]}
-                          onUpload={(publicId) => updateSetting("auth_character_left", publicId)}
-                        />
-                        <UploadZone 
-                          label="Auth Page Right Character" 
-                          folder="Assets"
-                          recommendedAspect="Transparent PNG / Vertical"
-                          defaultValue={settings["auth_character_right"]}
-                          onUpload={(publicId) => updateSetting("auth_character_right", publicId)}
-                        />
+                        <div className="space-y-4">
+                          <UploadZone 
+                            label="Auth Page Left Character" 
+                            folder="Assets"
+                            recommendedAspect="Transparent PNG / Vertical"
+                            defaultValue={settings["auth_character_left"]}
+                            onUpload={(publicId) => updateSetting("auth_character_left", publicId)}
+                          />
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <Label className="text-xs">Left Width (%)</Label>
+                              <Input 
+                                type="number"
+                                min="10"
+                                max="200"
+                                value={settings["auth_character_left_width"] || "120"}
+                                onChange={(e) => updateSetting("auth_character_left_width", e.target.value)}
+                                placeholder="120"
+                                className="h-10 bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--foreground))] rounded-lg text-sm"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Left Height (vh)</Label>
+                              <Input 
+                                type="number"
+                                min="10"
+                                max="100"
+                                value={settings["auth_character_left_height"] || "80"}
+                                onChange={(e) => updateSetting("auth_character_left_height", e.target.value)}
+                                placeholder="80"
+                                className="h-10 bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--foreground))] rounded-lg text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <UploadZone 
+                            label="Auth Page Right Character" 
+                            folder="Assets"
+                            recommendedAspect="Transparent PNG / Vertical"
+                            defaultValue={settings["auth_character_right"]}
+                            onUpload={(publicId) => updateSetting("auth_character_right", publicId)}
+                          />
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <Label className="text-xs">Right Width (%)</Label>
+                              <Input 
+                                type="number"
+                                min="10"
+                                max="200"
+                                value={settings["auth_character_right_width"] || "110"}
+                                onChange={(e) => updateSetting("auth_character_right_width", e.target.value)}
+                                placeholder="110"
+                                className="h-10 bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--foreground))] rounded-lg text-sm"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Right Height (vh)</Label>
+                              <Input 
+                                type="number"
+                                min="10"
+                                max="100"
+                                value={settings["auth_character_right_height"] || "80"}
+                                onChange={(e) => updateSetting("auth_character_right_height", e.target.value)}
+                                placeholder="80"
+                                className="h-10 bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--foreground))] rounded-lg text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
                         <UploadZone 
                           label="Dashboard Promo Image" 
                           folder="Assets"
