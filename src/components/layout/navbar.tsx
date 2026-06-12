@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingCart, User, Menu, Bell, X, PackageOpen, BellOff } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, Bell, X, PackageOpen, BellOff, Home, Gamepad2, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -228,8 +228,42 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
                 </form>
               </div>
 
-              <nav className="flex flex-col gap-2 flex-1">
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-4 px-4">Menu Lainnya</div>
+              <nav className="flex flex-col gap-1 flex-1 mt-2">
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-4">Menu Utama</div>
+                <Link
+                  href="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  <Home className="mr-3 h-5 w-5" />
+                  Beranda
+                </Link>
+                <Link
+                  href="/games"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  <Gamepad2 className="mr-3 h-5 w-5" />
+                  Semua Game
+                </Link>
+                <Link
+                  href="/dashboard/transactions"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  <Receipt className="mr-3 h-5 w-5" />
+                  Transaksi
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  <User className="mr-3 h-5 w-5" />
+                  Akun Saya
+                </Link>
+
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-4 px-4">Informasi</div>
                 <Link
                   href="/help"
                   onClick={() => setIsMobileMenuOpen(false)}
