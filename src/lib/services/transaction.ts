@@ -82,11 +82,11 @@ const PAYMENT_FEES: Record<string, { type: "flat" | "percent"; value: number }> 
   ovo: { type: "flat", value: 1000 },
   dana: { type: "flat", value: 1000 },
   shopeepay: { type: "percent", value: 1.5 },
-  bca_va: { type: "flat", value: 4000 },
-  bni_va: { type: "flat", value: 4000 },
-  bri_va: { type: "flat", value: 4000 },
-  mandiri_va: { type: "flat", value: 4000 },
-  permata_va: { type: "flat", value: 4000 },
+  "bca-va": { type: "flat", value: 4000 },
+  "bni-va": { type: "flat", value: 4000 },
+  "bri-va": { type: "flat", value: 4000 },
+  "mandiri-va": { type: "flat", value: 4000 },
+  "permata-va": { type: "flat", value: 4000 },
   indomaret: { type: "flat", value: 2500 },
   alfamart: { type: "flat", value: 2500 },
 };
@@ -130,20 +130,56 @@ export async function createTransaction(
 ): Promise<TransactionRecord> {
   const span = tracing.startSpan("create_transaction");
 
-  // Risk Engine check removed
-
   const invoiceId = generateInvoiceId();
   const fee = calculateFee(input.price, input.paymentMethod);
   const discount = calculateDiscount(input.price, input.promoCode);
   const total = input.price + fee - discount;
 
-  // Persist to database — payment method lives on the Payment model, not Transaction
+  // Look up real Product by slug, fallback to first available
+  const product = await prisma.product.findUnique({
+    where: { slug: input.gameSlug },
+    include: { items: { where: { isActive: true }, take: 1, orderBy: { price: "asc" } } },
+  });
+
+  // Try to find matching ProductItem by price (most reliable match from constants)
+  let productItemId: string | undefined;
+  let productId: string | undefined;
+
+  if (product) {
+    productId = product.id;
+    // Find item matching the price from the frontend
+    const allItems = await prisma.productItem.findMany({
+      where: { productId: product.id, isActive: true },
+    });
+    const matchedItem = allItems.find((item) => item.price === input.price)
+      || allItems.find((item) => item.name.toLowerCase().includes(input.productName.toLowerCase().split(" ")[0]));
+    productItemId = matchedItem?.id || allItems[0]?.id;
+  }
+
+  // If still no product found, find any active product as system placeholder
+  if (!productId || !productItemId) {
+    const fallbackProduct = await prisma.product.findFirst({
+      where: { isActive: true },
+      include: { items: { where: { isActive: true }, take: 1 } },
+    });
+    if (fallbackProduct) {
+      productId = productId || fallbackProduct.id;
+      productItemId = productItemId || fallbackProduct.items[0]?.id;
+    }
+  }
+
+  // If still no items at all, we cannot create the transaction (DB is empty)
+  if (!productId || !productItemId) {
+    throw new Error("No active products or items in database. Please run seed first.");
+  }
+
+  // Persist to database
   const transaction = await prisma.transaction.create({
     data: {
       invoiceId,
       userId: input.userId,
-      productId: "PENDING_PRODUCT", // Placeholder until seed logic maps these
-      productItemId: "PENDING_ITEM",
+      productId,
+      productItemId,
       price: input.price,
       fee,
       discount,
@@ -151,6 +187,15 @@ export async function createTransaction(
       status: "PENDING",
       gameUserId: input.gameUserId,
       gameZoneId: input.gameZoneId,
+      // Store full context for invoice display & provider routing
+      providerData: {
+        gameSlug: input.gameSlug,
+        gameName: input.gameName,
+        productCode: input.productCode,
+        productName: input.productName,
+        customerName: input.customerName,
+        customerEmail: input.customerEmail,
+      },
       payment: {
         create: {
           gateway: "midtrans",
@@ -160,7 +205,7 @@ export async function createTransaction(
         },
       },
     },
-    include: { payment: true },
+    include: { payment: true, product: true, productItem: true },
   });
 
   logger.info(`Transaction Created: ${invoiceId}`, { 

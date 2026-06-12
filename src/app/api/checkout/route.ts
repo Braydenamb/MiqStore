@@ -72,8 +72,9 @@ export async function POST(req: NextRequest) {
       status: 201,
     });
 
-  } catch (error: any) {
-    console.error("Checkout API Error:", error);
-    return apiError(error.message || "Gagal memproses checkout", { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Gagal memproses checkout";
+    console.error("Checkout API Error:", message);
+    return apiError(message, { status: 500 });
   }
 }

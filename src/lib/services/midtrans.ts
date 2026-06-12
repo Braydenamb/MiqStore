@@ -55,7 +55,7 @@ export type MidtransTransactionStatus =
 /* ─── Config ─── */
 const MIDTRANS_CONFIG = {
   serverKey: process.env.MIDTRANS_SERVER_KEY || "",
-  clientKey: process.env.MIDTRANS_CLIENT_KEY || "",
+  clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "",
   isProduction: process.env.MIDTRANS_PRODUCTION === "true",
   get baseUrl() {
     return this.isProduction
@@ -116,9 +116,9 @@ export async function createSnapTransaction(
         phone: request.customerPhone || "",
       },
       callbacks: {
-        finish: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
-        error: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
-        pending: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
+        finish: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
+        error: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
+        pending: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
       },
       expiry: {
         unit: "hours",

@@ -6,6 +6,10 @@ export interface EventPayloads {
   "TRANSACTION_COMPLETED": {
     transaction: import("./transaction").TransactionRecord;
   };
+  "TRANSACTION_UPDATED": {
+    invoiceId: string;
+    status: import("./midtrans").MidtransTransactionStatus;
+  };
   "USER_REGISTERED": {
     userId: string;
     email: string;
