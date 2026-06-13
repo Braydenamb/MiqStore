@@ -7,6 +7,7 @@ import { Typography } from "@/components/typography";
 import Link from "next/link";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import type { PublicGame } from "@/lib/types";
 
 const getCategoryIcon = (categoryName: string) => {
   const cat = categoryName?.toLowerCase() || "";
@@ -16,7 +17,7 @@ const getCategoryIcon = (categoryName: string) => {
   return Gamepad2;
 };
 
-export function PopularGames({ initialGames = [] }: { initialGames?: any[] }) {
+export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[] }) {
   // Fallback to empty if DB has no games yet, or we could leave the old dummy data here as a fallback.
   // But since we want to fully connect it to DB, we will just use `initialGames`.
 

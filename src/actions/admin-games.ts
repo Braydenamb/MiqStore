@@ -2,8 +2,11 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { unstable_cache } from "next/cache";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
+import { createAuditLog } from "@/lib/audit-log";
+import { logger } from "@/lib/telemetry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -229,7 +232,7 @@ export const getProviders = unstable_cache(
 
 export async function createGame(data: GameFormData) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     const categoryId = data.categoryId || (await ensureDefaultCategory());
 
     const game = await prisma.product.create({
@@ -251,6 +254,15 @@ export async function createGame(data: GameFormData) {
     revalidatePath("/admin/games");
     revalidatePath("/");
     revalidateTag("admin-categories", "default");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "CREATE_GAME",
+      entity: "PRODUCT",
+      entityId: game.id,
+      newValues: { name: game.name, slug: game.slug, isActive: game.isActive },
+    });
+
     return { success: true, data: game };
   } catch (error: unknown) {
     if (
@@ -270,7 +282,11 @@ export async function createGame(data: GameFormData) {
 
 export async function updateGame(id: string, data: Partial<GameFormData>) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    // Fetch old values for audit
+    const oldGame = await prisma.product.findUnique({ where: { id }, select: { name: true, slug: true, isActive: true, isPopular: true, gameType: true } });
+
     const game = await prisma.product.update({
       where: { id },
       data: {
@@ -297,6 +313,16 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
     revalidatePath("/admin/games");
     revalidatePath(`/games/${game.slug}`);
     revalidateTag("admin-categories", "default");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "UPDATE_GAME",
+      entity: "PRODUCT",
+      entityId: id,
+      oldValues: oldGame as Prisma.InputJsonValue | null,
+      newValues: { name: game.name, slug: game.slug, isActive: game.isActive, isPopular: game.isPopular },
+    });
+
     return { success: true, data: game };
   } catch (error: unknown) {
     if (
@@ -316,11 +342,21 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
 
 export async function deleteGame(id: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+    const oldGame = await prisma.product.findUnique({ where: { id }, select: { name: true, slug: true } });
     await prisma.product.delete({ where: { id } });
     revalidatePath("/admin/games");
     revalidatePath("/");
     revalidateTag("admin-categories", "default");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "DELETE_GAME",
+      entity: "PRODUCT",
+      entityId: id,
+      oldValues: oldGame as Prisma.InputJsonValue | null,
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -330,12 +366,21 @@ export async function deleteGame(id: string) {
 
 export async function toggleGameStatus(id: string, isActive: boolean) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     await prisma.product.update({
       where: { id },
       data: { isActive },
     });
     revalidatePath("/admin/games");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: isActive ? "ACTIVATE_GAME" : "DEACTIVATE_GAME",
+      entity: "PRODUCT",
+      entityId: id,
+      newValues: { isActive },
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";

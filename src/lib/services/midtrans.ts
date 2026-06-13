@@ -12,6 +12,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/telemetry";
 
 /* ─── Types ─── */
 export interface MidtransSnapRequest {
@@ -185,7 +186,7 @@ export function verifyNotificationSignature(
   notification: MidtransNotification
 ): boolean {
   if (!MIDTRANS_CONFIG.serverKey) {
-    console.warn("[Midtrans] Server key not configured, skipping signature verification");
+    logger.warn("[Midtrans] Server key not configured, skipping signature verification");
     return true; // Allow in dev
   }
 

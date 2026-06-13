@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
+import { createAuditLog } from "@/lib/audit-log";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -58,7 +60,7 @@ export async function getGameItems(
 
 export async function createItem(data: ItemFormData) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     // Auto-set order to end of list
     const lastItem = await prisma.productItem.findFirst({
       where: { productId: data.gameId },
@@ -83,6 +85,15 @@ export async function createItem(data: ItemFormData) {
 
     revalidatePath(`/admin/games/${data.gameId}/items`);
     revalidatePath("/admin/games");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "CREATE_ITEM",
+      entity: "PRODUCT_ITEM",
+      entityId: item.id,
+      newValues: { name: item.name, price: item.price, amount: item.amount },
+    });
+
     return { success: true, data: item };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -92,7 +103,13 @@ export async function createItem(data: ItemFormData) {
 
 export async function updateItem(id: string, data: Partial<ItemFormData>) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    const oldItem = await prisma.productItem.findUnique({
+      where: { id },
+      select: { name: true, price: true, amount: true, isActive: true },
+    });
+
     const item = await prisma.productItem.update({
       where: { id },
       data: {
@@ -115,6 +132,16 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
     });
 
     revalidatePath(`/admin/games/${item.productId}/items`);
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "UPDATE_ITEM",
+      entity: "PRODUCT_ITEM",
+      entityId: id,
+      oldValues: oldItem as Prisma.InputJsonValue | null,
+      newValues: { name: item.name, price: item.price, isActive: item.isActive },
+    });
+
     return { success: true, data: item };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -124,10 +151,23 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
 
 export async function deleteItem(id: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+    const oldItem = await prisma.productItem.findUnique({
+      where: { id },
+      select: { name: true, price: true, productId: true },
+    });
     const item = await prisma.productItem.delete({ where: { id } });
     revalidatePath(`/admin/games/${item.productId}/items`);
     revalidatePath("/admin/games");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "DELETE_ITEM",
+      entity: "PRODUCT_ITEM",
+      entityId: id,
+      oldValues: oldItem as Prisma.InputJsonValue | null,
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -143,7 +183,7 @@ export async function bulkUpdateItemStatus(
   gameId: string
 ) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     await prisma.productItem.updateMany({
       where: { id: { in: ids } },
       data: { isActive },
@@ -151,6 +191,15 @@ export async function bulkUpdateItemStatus(
 
     revalidatePath(`/admin/games/${gameId}/items`);
     revalidatePath("/admin/games");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: isActive ? "BULK_ACTIVATE_ITEMS" : "BULK_DEACTIVATE_ITEMS",
+      entity: "PRODUCT_ITEM",
+      entityId: gameId,
+      newValues: { ids, isActive, count: ids.length },
+    });
+
     return { success: true, updated: ids.length };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -160,13 +209,22 @@ export async function bulkUpdateItemStatus(
 
 export async function bulkDeleteItems(ids: string[], gameId: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     await prisma.productItem.deleteMany({
       where: { id: { in: ids } },
     });
 
     revalidatePath(`/admin/games/${gameId}/items`);
     revalidatePath("/admin/games");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "BULK_DELETE_ITEMS",
+      entity: "PRODUCT_ITEM",
+      entityId: gameId,
+      oldValues: { deletedIds: ids, count: ids.length },
+    });
+
     return { success: true, deleted: ids.length };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -180,12 +238,14 @@ export async function bulkAdjustPrice(
   gameId: string
 ) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     // Fetch current prices
     const items = await prisma.productItem.findMany({
       where: { id: { in: ids } },
-      select: { id: true, price: true },
+      select: { id: true, price: true, name: true },
     });
+
+    const oldPrices = Object.fromEntries(items.map((i) => [i.id, { name: i.name, price: i.price }]));
 
     // Update each item with rounded new price
     await Promise.all(
@@ -199,6 +259,16 @@ export async function bulkAdjustPrice(
     );
 
     revalidatePath(`/admin/games/${gameId}/items`);
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "BULK_ADJUST_PRICE",
+      entity: "PRODUCT_ITEM",
+      entityId: gameId,
+      oldValues: oldPrices,
+      newValues: { percentageChange, affectedCount: ids.length },
+    });
+
     return { success: true, updated: ids.length };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -211,7 +281,7 @@ export async function reorderItems(
   orderedIds: string[]
 ) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     await Promise.all(
       orderedIds.map((id, index) =>
         prisma.productItem.update({
@@ -222,6 +292,15 @@ export async function reorderItems(
     );
 
     revalidatePath(`/admin/games/${gameId}/items`);
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "REORDER_ITEMS",
+      entity: "PRODUCT_ITEM",
+      entityId: gameId,
+      newValues: { orderedIds },
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";

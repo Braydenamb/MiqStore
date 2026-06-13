@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma, TransactionStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
+import { createAuditLog } from "@/lib/audit-log";
 
 export async function getAdminOrders(
   page: number = 1,
@@ -75,16 +76,31 @@ export async function getAdminOrders(
 
 export async function updateOrderStatus(dbId: string, newStatus: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
 
     const statusEnum = newStatus.toUpperCase() as TransactionStatus;
-    
+
+    const oldTx = await prisma.transaction.findUnique({
+      where: { id: dbId },
+      select: { status: true, invoiceId: true },
+    });
+
     await prisma.transaction.update({
       where: { id: dbId },
       data: { status: statusEnum },
     });
 
     revalidatePath("/admin/orders");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "UPDATE_ORDER_STATUS",
+      entity: "TRANSACTION",
+      entityId: dbId,
+      oldValues: { status: oldTx?.status, invoiceId: oldTx?.invoiceId },
+      newValues: { status: statusEnum },
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";

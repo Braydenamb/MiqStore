@@ -3,6 +3,8 @@
  * Provides Circuit Breaker and Exponential Backoff patterns to protect external API calls.
  */
 
+import { logger } from "./telemetry";
+
 export class CircuitBreakerError extends Error {
   constructor(message: string) {
     super(message);
@@ -61,7 +63,7 @@ export class CircuitBreaker {
     if (this.failureCount >= this.failureThreshold) {
       this.state = "OPEN";
       this.nextAttempt = Date.now() + this.resetTimeoutMs;
-      console.warn(`[CircuitBreaker] Tripped OPEN for ${this.resetTimeoutMs}ms`);
+      logger.warn(`CircuitBreaker tripped OPEN for ${this.resetTimeoutMs}ms`);
     }
   }
 
@@ -89,7 +91,7 @@ export async function withRetry<T>(
       
       // Delay exponentially: 500ms -> 1000ms -> 2000ms
       const delay = baseDelayMs * Math.pow(2, attempt - 1);
-      console.log(`[Retry] Attempt ${attempt} failed. Waiting ${delay}ms...`);
+      logger.info(`Retry attempt ${attempt} failed, waiting ${delay}ms`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }

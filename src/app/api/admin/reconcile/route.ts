@@ -4,6 +4,7 @@ import { getOrderStatus } from "@/lib/services/apigames";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/telemetry";
 
 export const dynamic = "force-dynamic";
 
@@ -101,7 +102,7 @@ export async function GET(_req: NextRequest) {
           });
         }
       } catch (error) {
-        console.error(`Reconciliation failed for ${tx.invoiceId}`, error);
+        logger.error(`Reconciliation failed for ${tx.invoiceId}`, error);
         failedCount++;
         details.push({
           id: tx.id,
@@ -120,7 +121,7 @@ export async function GET(_req: NextRequest) {
       details,
     }, { message: "Reconciliation complete" });
   } catch (error) {
-    console.error("[Reconcile] Error:", error);
+    logger.error("[Reconcile] Error:", error);
     return API_ERRORS.internal("Reconciliation failed");
   }
 }

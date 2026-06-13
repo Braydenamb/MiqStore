@@ -8,6 +8,7 @@ import {
 import { verifyWebhookSignature } from "@/lib/services/apigames";
 import { prisma } from "@/lib/prisma";
 import { eventBus } from "@/lib/services/event-bus";
+import { logger } from "@/lib/telemetry";
 
 /**
  * POST /api/webhook/provider
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
   try {
     // Rate limit
     const ip = getClientIP(req);
-    const rateResult = webhookLimiter.check(ip);
+    const rateResult = await webhookLimiter.check(ip);
     if (!rateResult.allowed) {
       return rateLimitResponse(rateResult, webhookLimiter);
     }
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
     const signature = req.headers.get("x-signature") || body.sign || "";
     const isValid = verifyWebhookSignature(signature, ref_id);
     if (!isValid) {
-      console.warn(`[Provider Webhook] Invalid signature for ref: ${ref_id}`);
+      logger.warn("Invalid provider webhook signature", { refId: ref_id });
       return API_ERRORS.unauthorized();
     }
 
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!transaction) {
-      console.warn(`[Provider Webhook] Transaction not found: ${ref_id}`);
+      logger.warn("Provider webhook transaction not found", { refId: ref_id });
       // Still return 200 to prevent gateway retries
       return apiSuccess(
         { refId: ref_id, status: internalStatus, note: "Transaction not found" },
@@ -103,9 +104,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    console.log(
-      `[Provider Webhook] Ref: ${ref_id}, TrxID: ${trx_id}, Status: ${status} → ${internalStatus}, SN: ${sn || "-"}`
-    );
+    logger.info("Provider webhook processed", {
+      refId: ref_id,
+      trxId: trx_id,
+      internalStatus,
+      serialNumber: sn || "-",
+    });
 
     return apiSuccess(
       {

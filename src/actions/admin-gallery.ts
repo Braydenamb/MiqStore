@@ -3,6 +3,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { logger } from "@/lib/telemetry";
 
 // Initialize Cloudinary config
 cloudinary.config({
@@ -52,7 +53,7 @@ export async function getGalleryAssets(folder?: string): Promise<CloudinaryAsset
 
     return result.resources as CloudinaryAsset[];
   } catch (error) {
-    console.error("[Cloudinary API Error] Failed to fetch gallery assets:", error);
+    logger.error("Failed to fetch gallery assets", error, { context: "Cloudinary" });
     return [];
   }
 }
@@ -73,7 +74,7 @@ export async function deleteGalleryAsset(publicId: string, resourceType: "image"
 
     return { success: true, result };
   } catch (error) {
-    console.error("[Cloudinary API Error] Failed to delete gallery asset:", error);
+    logger.error("Failed to delete gallery asset", error, { context: "Cloudinary", publicId });
     return { success: false, error: "Failed to delete asset from Cloudinary." };
   }
 }

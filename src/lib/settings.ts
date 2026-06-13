@@ -1,5 +1,6 @@
 import { prisma } from "./prisma";
 import { unstable_cache } from "next/cache";
+import { logger } from "./telemetry";
 
 /**
  * Fetches all site settings from the database as a key-value dictionary.
@@ -17,7 +18,7 @@ export const getCachedSettings = unstable_cache(
       
       return settingsDict;
     } catch (error) {
-      console.error("Error fetching settings:", error);
+      logger.error("Error fetching settings", error);
       return {};
     }
   },

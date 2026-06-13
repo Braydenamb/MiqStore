@@ -14,6 +14,7 @@ import {
 import { processTopup, type TransactionRecord } from "@/lib/services/transaction";
 import { prisma } from "@/lib/prisma";
 import { eventBus } from "@/lib/services/event-bus";
+import { logger } from "@/lib/telemetry";
 
 /**
  * POST /api/webhook/payment
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     // Rate limit
     const ip = getClientIP(req);
-    const rateResult = webhookLimiter.check(ip);
+    const rateResult = await webhookLimiter.check(ip);
     if (!rateResult.allowed) {
       return rateLimitResponse(rateResult, webhookLimiter);
     }
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
     // Verify signature (skip in dev if no server key configured)
     const isValidSignature = verifyNotificationSignature(body);
     if (!isValidSignature) {
-      console.warn(`[Webhook] Invalid signature for order: ${order_id}`);
+      logger.warn("Invalid webhook signature", { orderId: order_id });
       return API_ERRORS.unauthorized();
     }
 
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!transaction) {
-      console.warn(`[Webhook] Transaction not found: ${order_id}`);
+      logger.warn("Webhook transaction not found", { orderId: order_id });
       return API_ERRORS.notFound("Transaction not found");
     }
 
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest) {
         data: updateData,
       });
 
-      console.log(`[Webhook] Payment confirmed for ${order_id}, triggering topup...`);
+      logger.info("Payment confirmed, triggering topup", { orderId: order_id });
 
       // Build a TransactionRecord for processTopup
       const providerData = (transaction.providerData ?? {}) as Record<string, string>;
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
               transaction: { ...txRecord, providerStatus: "success" },
             });
 
-            console.log(`[Webhook] Topup SUCCESS for ${order_id}: ${topupResult.message}`);
+            logger.info("Topup SUCCESS", { orderId: order_id, message: topupResult.message });
           } else {
             // Topup failed — mark as FAILED but payment was received (needs manual review / refund)
             await prisma.transaction.update({
@@ -170,13 +171,13 @@ export async function POST(req: NextRequest) {
                 updatedAt: new Date(),
               },
             });
-            console.error(`[Webhook] Topup FAILED for ${order_id}: ${topupResult.message}`);
+            logger.error(`Topup FAILED for ${order_id}`, topupResult.message, { orderId: order_id });
           }
         } catch (err) {
-          console.error(`[Webhook] Post-topup DB update failed for ${order_id}:`, err);
+          logger.error(`Post-topup DB update failed for ${order_id}`, err);
         }
       }).catch((err) => {
-        console.error(`[Webhook] processTopup threw for ${order_id}:`, err);
+        logger.error(`processTopup threw for ${order_id}`, err);
       });
 
       // Return immediately — topup runs in background
@@ -205,9 +206,12 @@ export async function POST(req: NextRequest) {
       status: internalStatus,
     });
 
-    console.log(
-      `[Webhook] Order: ${order_id}, Status: ${transaction_status} → ${internalStatus}, Amount: ${gross_amount}`
-    );
+    logger.info("Webhook processed", {
+      orderId: order_id,
+      gatewayStatus: transaction_status,
+      internalStatus,
+      amount: gross_amount,
+    });
 
     return apiSuccess(
       {

@@ -1,14 +1,17 @@
 /**
  * Rate Limiter
  *
- * In-memory sliding window rate limiter for API routes.
- * In production, replace with Redis-backed implementation.
+ * Redis-backed sliding window rate limiter for API routes.
+ * Falls back to in-memory when Redis is unavailable.
  *
  * Usage:
  *   const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
- *   const result = limiter.check(ip);
- *   if (!result.allowed) return Response.json({ error: "Too many requests" }, { status: 429 });
+ *   const result = await limiter.check(ip);
+ *   if (!result.allowed) return rateLimitResponse(result, limiter);
  */
+
+import { redis } from "./redis";
+import { logger } from "./telemetry";
 
 interface RateLimiterConfig {
   /** Time window in milliseconds */
@@ -19,11 +22,6 @@ interface RateLimiterConfig {
   prefix?: string;
 }
 
-interface RateLimitEntry {
-  count: number;
-  resetAt: number;
-}
-
 interface RateLimitResult {
   allowed: boolean;
   remaining: number;
@@ -31,7 +29,13 @@ interface RateLimitResult {
   retryAfterMs: number;
 }
 
-const stores = new Map<string, Map<string, RateLimitEntry>>();
+// ── In-memory fallback store (for when Redis is down) ────────────────────────
+interface RateLimitEntry {
+  count: number;
+  resetAt: number;
+}
+
+const memoryStores = new Map<string, Map<string, RateLimitEntry>>();
 
 /** Cleanup stale entries every 5 minutes */
 let cleanupInterval: ReturnType<typeof setInterval> | null = null;
@@ -40,7 +44,7 @@ function startCleanup() {
   if (cleanupInterval) return;
   cleanupInterval = setInterval(() => {
     const now = Date.now();
-    for (const [, store] of stores) {
+    for (const [, store] of memoryStores) {
       for (const [key, entry] of store) {
         if (entry.resetAt < now) {
           store.delete(key);
@@ -50,50 +54,87 @@ function startCleanup() {
   }, 5 * 60 * 1000);
 }
 
+function memoryCheck(
+  store: Map<string, RateLimitEntry>,
+  key: string,
+  windowMs: number,
+  max: number
+): RateLimitResult {
+  const now = Date.now();
+  const entry = store.get(key);
+
+  if (!entry || entry.resetAt < now) {
+    store.set(key, { count: 1, resetAt: now + windowMs });
+    return { allowed: true, remaining: max - 1, resetAt: now + windowMs, retryAfterMs: 0 };
+  }
+
+  entry.count++;
+
+  if (entry.count > max) {
+    return { allowed: false, remaining: 0, resetAt: entry.resetAt, retryAfterMs: entry.resetAt - now };
+  }
+
+  return { allowed: true, remaining: max - entry.count, resetAt: entry.resetAt, retryAfterMs: 0 };
+}
+
+// ── Redis-backed rate limiter ────────────────────────────────────────────────
+
 export function createRateLimiter(config: RateLimiterConfig) {
   const { windowMs, max, prefix = "default" } = config;
 
-  if (!stores.has(prefix)) {
-    stores.set(prefix, new Map());
+  if (!memoryStores.has(prefix)) {
+    memoryStores.set(prefix, new Map());
   }
-  const store = stores.get(prefix)!;
-
+  const memoryStore = memoryStores.get(prefix)!;
   startCleanup();
 
   return {
-    check(key: string): RateLimitResult {
-      const now = Date.now();
-      const entry = store.get(key);
+    async check(key: string): Promise<RateLimitResult> {
+      const redisKey = `rl:${prefix}:${key}`;
+      const windowSec = Math.ceil(windowMs / 1000);
 
-      // No entry or expired → reset
-      if (!entry || entry.resetAt < now) {
-        store.set(key, { count: 1, resetAt: now + windowMs });
+      try {
+        // Atomic INCR + EXPIRE via Redis pipeline
+        const pipeline = redis.pipeline();
+        pipeline.incr(redisKey);
+        pipeline.pttl(redisKey);
+        const results = await pipeline.exec();
+
+        if (!results) {
+          throw new Error("Redis pipeline returned null");
+        }
+
+        const count = (results[0]?.[1] as number) ?? 1;
+        let ttl = (results[1]?.[1] as number) ?? -1;
+
+        // First request in window: set expiry
+        if (ttl === -1 || count === 1) {
+          await redis.pexpire(redisKey, windowMs);
+          ttl = windowMs;
+        }
+
+        const resetAt = Date.now() + (ttl > 0 ? ttl : windowMs);
+
+        if (count > max) {
+          return {
+            allowed: false,
+            remaining: 0,
+            resetAt,
+            retryAfterMs: ttl > 0 ? ttl : windowMs,
+          };
+        }
+
         return {
           allowed: true,
-          remaining: max - 1,
-          resetAt: now + windowMs,
+          remaining: max - count,
+          resetAt,
           retryAfterMs: 0,
         };
+      } catch {
+        // Redis unavailable — fall back to in-memory
+        logger.warn("Rate limiter falling back to in-memory", { prefix, key });
+        return memoryCheck(memoryStore, key, windowMs, max);
       }
-
-      // Within window
-      entry.count++;
-
-      if (entry.count > max) {
-        return {
-          allowed: false,
-          remaining: 0,
-          resetAt: entry.resetAt,
-          retryAfterMs: entry.resetAt - now,
-        };
-      }
-
-      return {
-        allowed: true,
-        remaining: max - entry.count,
-        resetAt: entry.resetAt,
-        retryAfterMs: 0,
-      };
     },
 
     /** Get rate limit headers for response */
@@ -108,9 +149,15 @@ export function createRateLimiter(config: RateLimiterConfig) {
       };
     },
 
-    /** Reset a specific key */
-    reset(key: string) {
-      store.delete(key);
+    /** Reset a specific key (for testing) */
+    async reset(key: string) {
+      const redisKey = `rl:${prefix}:${key}`;
+      try {
+        await redis.del(redisKey);
+      } catch {
+        // Ignore Redis errors during reset
+      }
+      memoryStore.delete(key);
     },
   };
 }

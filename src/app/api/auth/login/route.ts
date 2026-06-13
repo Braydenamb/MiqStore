@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   try {
     // Rate limit to prevent brute force
     const ip = getClientIP(req);
-    const rateResult = authLimiter.check(ip);
+    const rateResult = await authLimiter.check(ip);
     if (!rateResult.allowed) {
       return rateLimitResponse(rateResult, authLimiter);
     }

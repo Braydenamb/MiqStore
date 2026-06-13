@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/telemetry";
 
 export async function getPublicGames() {
   try {
@@ -22,7 +23,7 @@ export async function getPublicGames() {
     });
     return games;
   } catch (error) {
-    console.error("Failed to fetch public games:", error);
+    logger.error("Failed to fetch public games", error);
     return [];
   }
 }
@@ -45,7 +46,7 @@ export async function getPopularGames() {
     });
     return games;
   } catch (error) {
-    console.error("Failed to fetch popular games:", error);
+    logger.error("Failed to fetch popular games", error);
     return [];
   }
 }
@@ -73,7 +74,7 @@ export async function getGameDetails(slug: string) {
     });
     return game;
   } catch (error) {
-    console.error(`Failed to fetch game details for slug ${slug}:`, error);
+    logger.error(`Failed to fetch game details for slug ${slug}`, error);
     return null;
   }
 }

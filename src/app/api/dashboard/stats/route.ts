@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/telemetry";
 
 export async function GET() {
   try {
@@ -97,7 +98,7 @@ export async function GET() {
       favoriteGames: formattedFavoriteGames,
     });
   } catch (error) {
-    console.error("[DASHBOARD_STATS]", error);
+    logger.error("[DASHBOARD_STATS]", error);
     return NextResponse.json({ message: "Internal Error" }, { status: 500 });
   }
 }

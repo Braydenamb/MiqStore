@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validators";
 import bcrypt from "bcryptjs";
+import { logger } from "@/lib/telemetry";
 
 export async function POST(req: Request) {
   try {
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Register error:", error);
+    logger.error("Register error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

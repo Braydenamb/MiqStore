@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { calculateFee, calculateDiscount } from "@/lib/services/transaction";
 import { generateInvoiceId } from "@/lib/utils";
 import { createSnapTransaction } from "@/lib/services/midtrans";
+import { logger } from "@/lib/telemetry";
 
 /**
  * POST /api/transactions
@@ -164,7 +165,7 @@ export async function GET(req: NextRequest) {
       meta: { page, perPage, total, totalPages },
     });
   } catch (error) {
-    console.error("GET /api/transactions error:", error);
+    logger.error("GET /api/transactions error:", error);
     return API_ERRORS.internal();
   }
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
+import { createAuditLog } from "@/lib/audit-log";
 
 async function ensureDefaultCategory() {
   let category = await prisma.category.findFirst({
@@ -24,19 +25,32 @@ async function ensureDefaultCategory() {
   return category;
 }
 
-export async function getAdminProducts() {
+export async function getAdminProducts(page: number = 1, limit: number = 50) {
   try {
     await requireAdmin();
 
-    const products = await prisma.product.findMany({
-      include: {
-        _count: {
-          select: { items: true },
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        include: {
+          _count: {
+            select: { items: true },
+          },
         },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-    return { success: true, data: products };
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip,
+      }),
+      prisma.product.count(),
+    ]);
+
+    return {
+      success: true,
+      data: products,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     return { success: false, error: msg };
@@ -53,7 +67,7 @@ export async function createAdminProduct(data: {
   gallery?: string[];
 }) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
 
     const category = await ensureDefaultCategory();
 
@@ -72,6 +86,15 @@ export async function createAdminProduct(data: {
     });
 
     revalidatePath("/admin/products");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "CREATE_PRODUCT",
+      entity: "PRODUCT",
+      entityId: newProduct.id,
+      newValues: { name: newProduct.name, slug: newProduct.slug, isActive: newProduct.isActive },
+    });
+
     return { success: true, data: newProduct };
   } catch (error: unknown) {
     if (
@@ -99,7 +122,12 @@ export async function updateAdminProduct(
   }
 ) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    const oldProduct = await prisma.product.findUnique({
+      where: { id },
+      select: { name: true, slug: true, isActive: true },
+    });
 
     const updatedProduct = await prisma.product.update({
       where: { id },
@@ -115,6 +143,16 @@ export async function updateAdminProduct(
     });
 
     revalidatePath("/admin/products");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "UPDATE_PRODUCT",
+      entity: "PRODUCT",
+      entityId: id,
+      oldValues: oldProduct as Prisma.InputJsonValue | null,
+      newValues: { name: updatedProduct.name, slug: updatedProduct.slug, isActive: updatedProduct.isActive },
+    });
+
     return { success: true, data: updatedProduct };
   } catch (error: unknown) {
     if (
@@ -131,12 +169,26 @@ export async function updateAdminProduct(
 
 export async function deleteAdminProduct(id: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    const oldProduct = await prisma.product.findUnique({
+      where: { id },
+      select: { name: true, slug: true },
+    });
 
     await prisma.product.delete({
       where: { id },
     });
     revalidatePath("/admin/products");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "DELETE_PRODUCT",
+      entity: "PRODUCT",
+      entityId: id,
+      oldValues: oldProduct as Prisma.InputJsonValue | null,
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";

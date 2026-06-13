@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { createTransaction } from "@/lib/services/transaction";
 import { createSnapTransaction } from "@/lib/services/midtrans";
 import { z } from "zod";
+import { logger } from "@/lib/telemetry";
 
 const checkoutSchema = z.object({
   gameSlug: z.string().min(1),
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Gagal memproses checkout";
-    console.error("Checkout API Error:", message);
+    logger.error("Checkout API Error:", message);
     return apiError(message, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma, Role, MembershipTier } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
+import { createAuditLog } from "@/lib/audit-log";
 
 export async function getAdminUsers(
   page: number = 1,
@@ -29,7 +30,8 @@ export async function getAdminUsers(
       whereCondition.role = roleFilter as Role;
     }
 
-    const [users, total] = await Promise.all([
+    // Parallelize all queries — never run stats serially
+    const [users, total, totalAll, resellerCount, adminCount, activeCount] = await Promise.all([
       prisma.user.findMany({
         where: whereCondition,
         orderBy: { createdAt: "desc" },
@@ -42,6 +44,10 @@ export async function getAdminUsers(
         }
       }),
       prisma.user.count({ where: whereCondition }),
+      prisma.user.count(),
+      prisma.user.count({ where: { role: "RESELLER" } }),
+      prisma.user.count({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } } }),
+      prisma.user.count({ where: { isActive: true } }),
     ]);
 
     const mappedUsers = users.map((u) => ({
@@ -55,12 +61,11 @@ export async function getAdminUsers(
       joinDate: new Date(u.createdAt).toLocaleDateString("id-ID"),
     }));
 
-    // Generate stats
     const stats = {
-      total: await prisma.user.count(),
-      reseller: await prisma.user.count({ where: { role: "RESELLER" } }),
-      admin: await prisma.user.count({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } } }),
-      active: await prisma.user.count({ where: { isActive: true } }),
+      total: totalAll,
+      reseller: resellerCount,
+      admin: adminCount,
+      active: activeCount,
     };
 
     return { 
@@ -80,7 +85,12 @@ export async function getAdminUsers(
 
 export async function updateUserRole(id: string, newRole: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    const oldUser = await prisma.user.findUnique({
+      where: { id },
+      select: { role: true, email: true },
+    });
 
     const roleEnum = newRole as Role;
     
@@ -90,6 +100,16 @@ export async function updateUserRole(id: string, newRole: string) {
     });
 
     revalidatePath("/admin/users");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "UPDATE_USER_ROLE",
+      entity: "USER",
+      entityId: id,
+      oldValues: { role: oldUser?.role, email: oldUser?.email },
+      newValues: { role: roleEnum },
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -99,10 +119,24 @@ export async function updateUserRole(id: string, newRole: string) {
 
 export async function deleteUser(id: string) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    const oldUser = await prisma.user.findUnique({
+      where: { id },
+      select: { email: true, role: true, name: true },
+    });
 
     await prisma.user.delete({ where: { id } });
     revalidatePath("/admin/users");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "DELETE_USER",
+      entity: "USER",
+      entityId: id,
+      oldValues: oldUser as Prisma.InputJsonValue | null,
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
@@ -112,9 +146,9 @@ export async function deleteUser(id: string) {
 
 export async function createUser(data: { name: string; email: string; role: string; membership: string }) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
@@ -123,6 +157,15 @@ export async function createUser(data: { name: string; email: string; role: stri
       }
     });
     revalidatePath("/admin/users");
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "CREATE_USER",
+      entity: "USER",
+      entityId: user.id,
+      newValues: { name: data.name, email: data.email, role: data.role },
+    });
+
     return { success: true };
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
