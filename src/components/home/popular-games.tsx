@@ -47,7 +47,7 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
             {initialGames.map((game, idx) => {
-              const IconComponent = getCategoryIcon(game.category?.name);
+              const IconComponent = getCategoryIcon(game.category?.name ?? "");
               
               return (
                 <Link href={`/games/${game.slug}`} key={game.id} className="block h-full">
