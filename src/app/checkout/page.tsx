@@ -192,11 +192,11 @@ export default function CheckoutPage() {
   if (!game || !selectedProduct || !selectedPayment) {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center bg-[hsl(var(--background))] texture-overlay">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-sm w-full mx-4">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center glass-card p-8 rounded-2xl max-w-sm w-full mx-4">
           <AlertCircle className="h-12 w-12 text-[hsl(var(--primary))] mx-auto mb-4 opacity-50" />
           <h1 className="text-xl font-bold font-heading text-[hsl(var(--foreground))] mb-2">Data Kosong</h1>
-          <p className="text-sm text-gray-500 mb-6">Silakan pilih game dan produk terlebih dahulu sebelum checkout.</p>
-          <Button asChild className="w-full bg-[hsl(var(--secondary))] text-white hover:bg-[hsl(var(--primary))]">
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6">Silakan pilih game dan produk terlebih dahulu sebelum checkout.</p>
+          <Button asChild className="w-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90">
             <Link href="/games">Kembali ke Katalog</Link>
           </Button>
         </motion.div>
@@ -214,7 +214,7 @@ export default function CheckoutPage() {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" size="sm" asChild className="text-[hsl(var(--foreground))] hover:bg-[hsl(var(--primary))]/10">
+          <Button variant="ghost" size="sm" asChild className="text-[hsl(var(--foreground))] hover:bg-[hsl(var(--primary))]/10" aria-label="Go back to game">
             <Link href={`/games/${game.id}`}>
               <ArrowLeft className="w-4 h-4 mr-2" /> Kembali
             </Link>
@@ -225,25 +225,25 @@ export default function CheckoutPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
           {/* Expiry Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="glass-card rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Masa Berlaku Pesanan</p>
-              <p className="text-xs text-gray-400">Pesanan akan dibatalkan otomatis setelah 24 jam.</p>
+              <p className="text-sm font-bold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-1">Masa Berlaku Pesanan</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]/70">Pesanan akan dibatalkan otomatis setelah 24 jam.</p>
             </div>
-            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-bold text-sm bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
-              <Clock className="w-4 h-4 text-[hsl(var(--primary))]" />
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-bold text-sm bg-[hsl(var(--muted))] px-3 py-1.5 rounded-lg border border-[hsl(var(--border))]">
+              <Clock className="w-4 h-4 text-[hsl(var(--primary))]" aria-hidden="true" />
               <span>Berlaku 24 Jam</span>
             </div>
           </div>
 
           {/* Order Summary */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex gap-4">
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-6 bg-[hsl(var(--card))]/50 border-b border-[hsl(var(--border))]/50 flex gap-4">
               <div className="w-16 h-16 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center shrink-0">
                 {game.image ? (
                   <img src={game.image} alt={game.name} className="w-full h-full object-cover rounded-xl" />
                 ) : (
-                  <Gamepad2 className="w-8 h-8 text-[hsl(var(--primary))]" />
+                  <Gamepad2 className="w-8 h-8 text-[hsl(var(--primary))]" aria-hidden="true" />
                 )}
               </div>
               <div>
@@ -254,34 +254,34 @@ export default function CheckoutPage() {
 
             <div className="p-6 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">User ID</span>
+                <span className="text-[hsl(var(--muted-foreground))]">User ID</span>
                 <span className="font-bold text-[hsl(var(--foreground))]">{userId || "-"}</span>
               </div>
               {zoneId && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Zone ID</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Zone ID</span>
                   <span className="font-bold text-[hsl(var(--foreground))]">{zoneId}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Metode Pembayaran</span>
+                <span className="text-[hsl(var(--muted-foreground))]">Metode Pembayaran</span>
                 <span className="font-bold text-[hsl(var(--foreground))] uppercase">{selectedPayment.name}</span>
               </div>
             </div>
           </div>
 
           {/* Pricing Breakdown */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+          <div className="glass-card rounded-2xl p-6 space-y-4">
             <h3 className="font-bold font-heading text-[hsl(var(--foreground))] text-lg mb-4">Rincian Harga</h3>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Harga Item</span>
-              <span className="font-medium">{formatCurrency(price)}</span>
+              <span className="text-[hsl(var(--muted-foreground))]">Harga Item</span>
+              <span className="font-medium text-[hsl(var(--foreground))]">{formatCurrency(price)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Biaya Layanan</span>
-              <span className="font-medium">{fee === 0 ? "Gratis" : formatCurrency(fee)}</span>
+              <span className="text-[hsl(var(--muted-foreground))]">Biaya Layanan</span>
+              <span className="font-medium text-[hsl(var(--foreground))]">{fee === 0 ? "Gratis" : formatCurrency(fee)}</span>
             </div>
-            <div className="w-full h-px bg-gray-100 my-2" />
+            <div className="w-full h-px bg-[hsl(var(--border))] my-2" />
             <div className="flex justify-between items-center">
               <span className="font-bold text-[hsl(var(--foreground))]">Total Pembayaran</span>
               <span className="text-xl font-extrabold text-[hsl(var(--primary))] tabular-nums">{formatCurrency(total)}</span>
@@ -311,10 +311,10 @@ export default function CheckoutPage() {
                 id="terms"
                 checked={isAgreed}
                 onChange={(e) => setIsAgreed(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] accent-[hsl(var(--primary))] cursor-pointer"
+                className="mt-1 h-4 w-4 rounded border-[hsl(var(--border))] text-[hsl(var(--primary))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:ring-offset-2 focus:ring-offset-[hsl(var(--background))] accent-[hsl(var(--primary))] cursor-pointer transition-all"
               />
-              <label htmlFor="terms" className="text-sm text-gray-500 leading-tight cursor-pointer">
-                Saya menyetujui <Link href="/terms" className="text-[hsl(var(--primary))] font-medium hover:underline">Syarat & Ketentuan</Link> serta <Link href="/privacy" className="text-[hsl(var(--primary))] font-medium hover:underline">Kebijakan Privasi</Link> yang berlaku di MiqStore.
+              <label htmlFor="terms" className="text-sm text-[hsl(var(--muted-foreground))] leading-tight cursor-pointer">
+                Saya menyetujui <Link href="/terms" className="text-[hsl(var(--primary))] font-medium hover:underline">Syarat & Ketentuan</Link> serta <Link href="/privacy-policy" className="text-[hsl(var(--primary))] font-medium hover:underline">Kebijakan Privasi</Link> yang berlaku di MiqStore.
               </label>
             </div>
 
@@ -332,8 +332,8 @@ export default function CheckoutPage() {
               )}
             </Button>
 
-            <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1">
-              <ShieldCheck className="w-4 h-4 text-green-500" /> Pembayaran Aman & Terenkripsi
+            <p className="text-center text-xs text-[hsl(var(--muted-foreground))]/70 flex items-center justify-center gap-1">
+              <ShieldCheck className="w-4 h-4 text-green-500" aria-hidden="true" /> Pembayaran Aman & Terenkripsi
             </p>
           </div>
 
@@ -342,12 +342,12 @@ export default function CheckoutPage() {
 
       {/* Mobile Sticky Checkout CTA */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)]"
+        className="fixed bottom-0 left-0 right-0 z-50 lg:hidden glass-panel border-t border-[hsl(var(--border))]/50"
         style={{ paddingBottom: "calc(12px + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="mx-auto max-w-2xl px-4 pt-3 pb-1 flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total</p>
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] font-bold uppercase tracking-wider">Total</p>
             <p className="text-lg font-extrabold text-[hsl(var(--primary))] tabular-nums">{formatCurrency(total)}</p>
           </div>
           <Button

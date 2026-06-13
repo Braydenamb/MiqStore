@@ -1,9 +1,12 @@
 import { NextRequest } from "next/server";
-import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
+import { apiSuccess, API_ERRORS } from "@/lib/api-response";
 import { createTransactionSchema } from "@/lib/validators";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { calculateFee, calculateDiscount } from "@/lib/services/transaction";
+import { generateInvoiceId } from "@/lib/utils";
+import { createSnapTransaction } from "@/lib/services/midtrans";
 
 /**
  * POST /api/transactions
@@ -32,39 +35,76 @@ export async function POST(req: NextRequest) {
     const { productItemId, paymentMethod, gameUserId, gameZoneId, promoCode } =
       parsed.data;
 
-    // Mock: generate invoice
-    const invoiceId = `INV-${Date.now().toString(36).toUpperCase()}`;
-    const mockPrice = 68000;
-    const fee = paymentMethod === "qris" ? Math.round(mockPrice * 0.007) : 4000;
-    const discount = promoCode ? Math.round(mockPrice * 0.1) : 0;
-    const total = mockPrice + fee - discount;
+    // Look up the product item to get real price and product context
+    const item = await prisma.productItem.findUnique({
+      where: { id: productItemId, isActive: true },
+      include: {
+        product: { select: { id: true, name: true, slug: true } },
+      },
+    });
 
-    const transaction = {
-      id: crypto.randomUUID(),
+    if (!item) {
+      return API_ERRORS.notFound("Product item");
+    }
+
+    const invoiceId = generateInvoiceId();
+    const price = item.price;
+    const fee = calculateFee(price, paymentMethod);
+    const discount = calculateDiscount(price, promoCode);
+    const total = price + fee - discount;
+
+    // Create the transaction in DB
+    const transaction = await prisma.transaction.create({
+      data: {
+        invoiceId,
+        userId: user.id,
+        productId: item.product.id,
+        productItemId: item.id,
+        price,
+        fee,
+        discount,
+        total,
+        status: "PENDING",
+        gameUserId: gameUserId || null,
+        gameZoneId: gameZoneId || null,
+        providerData: {
+          gameSlug: item.product.slug,
+          gameName: item.product.name,
+          productName: item.name,
+        },
+        payment: {
+          create: {
+            gateway: "midtrans",
+            method: paymentMethod,
+            amount: total,
+            status: "PENDING",
+          },
+        },
+      },
+      include: { payment: true },
+    });
+
+    // Generate Midtrans Snap token
+    const snapResult = await createSnapTransaction({
+      orderId: invoiceId,
+      amount: total,
+      customerName: user.name || "User",
+      customerEmail: user.email || "",
+      itemName: `${item.product.name} - ${item.name}`,
+      itemCategory: "Digital Goods",
+      paymentMethod,
+    });
+
+    return apiSuccess({
+      id: transaction.id,
       invoiceId,
-      userId: user.id,
-      productItemId,
-      price: mockPrice,
+      total,
       fee,
       discount,
-      total,
-      status: "PENDING",
-      gameUserId: gameUserId || null,
-      gameZoneId: gameZoneId || null,
-      paymentMethod,
-      paymentUrl: null,
-      paymentCode: paymentMethod.includes("va")
-        ? `8808${Math.random().toString().slice(2, 14)}`
-        : null,
-      qrUrl:
-        paymentMethod === "qris"
-          ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${invoiceId}`
-          : null,
-      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 min
-      createdAt: new Date().toISOString(),
-    };
-
-    return apiSuccess(transaction, {
+      snapToken: snapResult.token,
+      redirectUrl: snapResult.redirectUrl,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    }, {
       message: "Transaksi berhasil dibuat. Silakan selesaikan pembayaran.",
       status: 201,
     });
@@ -90,7 +130,7 @@ export async function GET(req: NextRequest) {
 
     const where = {
       userId: user.id,
-      ...(status ? { status: status as any } : {}),
+      ...(status ? { status: status as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED" } : {}),
     };
 
     const total = await prisma.transaction.count({ where });

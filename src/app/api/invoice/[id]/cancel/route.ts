@@ -1,9 +1,14 @@
 import { NextRequest } from "next/server";
 import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return API_ERRORS.unauthorized();
+
     const { id: invoiceId } = await params;
 
     if (!invoiceId) {
@@ -15,6 +20,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
 
     if (!transaction) return apiError("Transaction not found", { status: 404 });
+
+    // Ownership check: only the owner or admin can cancel
+    const userRole = session.user.role;
+    if (transaction.userId !== session.user.id && userRole !== "ADMIN" && userRole !== "SUPER_ADMIN") {
+      return API_ERRORS.forbidden();
+    }
+
     if (transaction.status !== "PENDING") return apiError("Hanya pesanan pending yang dapat dibatalkan", { status: 400 });
 
     await prisma.transaction.update({

@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.local/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Environment files — NEVER copy secrets into Docker context
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Git
+.git/
+.gitignore
+
+# Tests
+tests/
+coverage/
+playwright-report/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+
+# Documentation (not needed in container)
+*.md
+
+# Scripts & utilities
+scripts/
+check-dashboard.js
+test-cloudinary.js
+test-cloudinary.ts
+set-admin.ts
+convert_images.py
+update_constants.py
+
+# Archived features
+MiqStore (Database)/
+
+# CI/CD
+.github/
+
+# Docker (prevent recursive copy)
+Dockerfile
+docker-compose*.yml
+nginx/
+
+# TypeScript build artifacts
+*.tsbuildinfo
+ts_errors.txt

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -25,6 +26,7 @@ export async function getGameItems(
   filters: { status?: "all" | "active" | "inactive"; q?: string } = {}
 ) {
   try {
+    await requireAdmin();
     const where: Record<string, unknown> = { productId: gameId };
 
     if (filters.status === "active") where.isActive = true;
@@ -33,7 +35,7 @@ export async function getGameItems(
     if (filters.q) {
       where.OR = [
         { name: { contains: filters.q, mode: "insensitive" } },
-        { providerCode: { contains: filters.q, mode: "insensitive" } },
+        { description: { contains: filters.q, mode: "insensitive" } },
       ];
     }
 
@@ -56,6 +58,7 @@ export async function getGameItems(
 
 export async function createItem(data: ItemFormData) {
   try {
+    await requireAdmin();
     // Auto-set order to end of list
     const lastItem = await prisma.productItem.findFirst({
       where: { productId: data.gameId },
@@ -89,6 +92,7 @@ export async function createItem(data: ItemFormData) {
 
 export async function updateItem(id: string, data: Partial<ItemFormData>) {
   try {
+    await requireAdmin();
     const item = await prisma.productItem.update({
       where: { id },
       data: {
@@ -120,6 +124,7 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
 
 export async function deleteItem(id: string) {
   try {
+    await requireAdmin();
     const item = await prisma.productItem.delete({ where: { id } });
     revalidatePath(`/admin/games/${item.productId}/items`);
     revalidatePath("/admin/games");
@@ -138,6 +143,7 @@ export async function bulkUpdateItemStatus(
   gameId: string
 ) {
   try {
+    await requireAdmin();
     await prisma.productItem.updateMany({
       where: { id: { in: ids } },
       data: { isActive },
@@ -154,6 +160,7 @@ export async function bulkUpdateItemStatus(
 
 export async function bulkDeleteItems(ids: string[], gameId: string) {
   try {
+    await requireAdmin();
     await prisma.productItem.deleteMany({
       where: { id: { in: ids } },
     });
@@ -173,6 +180,7 @@ export async function bulkAdjustPrice(
   gameId: string
 ) {
   try {
+    await requireAdmin();
     // Fetch current prices
     const items = await prisma.productItem.findMany({
       where: { id: { in: ids } },
@@ -203,6 +211,7 @@ export async function reorderItems(
   orderedIds: string[]
 ) {
   try {
+    await requireAdmin();
     await Promise.all(
       orderedIds.map((id, index) =>
         prisma.productItem.update({

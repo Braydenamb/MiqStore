@@ -1,11 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { PrismaClient, Role } from "@prisma/client";
-
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+import { Prisma, Role, MembershipTier } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export async function getAdminUsers(
   page: number = 1,
@@ -14,9 +12,11 @@ export async function getAdminUsers(
   roleFilter: string = "all"
 ) {
   try {
+    await requireAdmin();
+
     const skip = (page - 1) * limit;
 
-    const whereCondition: any = {};
+    const whereCondition: Prisma.UserWhereInput = {};
 
     if (search) {
       whereCondition.OR = [
@@ -72,13 +72,16 @@ export async function getAdminUsers(
         stats
       } 
     };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: msg };
   }
 }
 
 export async function updateUserRole(id: string, newRole: string) {
   try {
+    await requireAdmin();
+
     const roleEnum = newRole as Role;
     
     await prisma.user.update({
@@ -88,34 +91,41 @@ export async function updateUserRole(id: string, newRole: string) {
 
     revalidatePath("/admin/users");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: msg };
   }
 }
 
 export async function deleteUser(id: string) {
   try {
+    await requireAdmin();
+
     await prisma.user.delete({ where: { id } });
     revalidatePath("/admin/users");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: msg };
   }
 }
 
 export async function createUser(data: { name: string; email: string; role: string; membership: string }) {
   try {
+    await requireAdmin();
+
     await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
         role: data.role as Role,
-        membership: data.membership as any,
+        membership: data.membership as MembershipTier,
       }
     });
     revalidatePath("/admin/users");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: msg };
   }
 }

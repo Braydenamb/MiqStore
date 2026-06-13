@@ -1,9 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-/**
- * Mocking MembershipTier since `npx prisma generate` cannot be run in this environment
- */
-export type MembershipTier = "BRONZE" | "SILVER" | "GOLD" | "DIAMOND";
+import type { MembershipTier } from "@prisma/client";
 
 export interface GamificationState {
   currentLevel: number;
@@ -83,12 +79,11 @@ export async function awardTransactionXP(userId: string, transactionTotal: numbe
   const { tier: newTier } = calculateLevel(newPoints);
 
   // Update User
-  // Note: We use `any` cast for membership since types might not match Prisma's generated types locally
   await prisma.user.update({
     where: { id: userId },
     data: { 
       rewardPoints: newPoints,
-      membership: newTier as any 
+      membership: newTier
     }
   });
 

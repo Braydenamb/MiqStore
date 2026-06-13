@@ -6,6 +6,8 @@ import {
   rateLimitResponse,
 } from "@/lib/rate-limit";
 import { verifyWebhookSignature } from "@/lib/services/apigames";
+import { prisma } from "@/lib/prisma";
+import { eventBus } from "@/lib/services/event-bus";
 
 /**
  * POST /api/webhook/provider
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
       return API_ERRORS.unauthorized();
     }
 
-    // Map Apigames status
+    // Map Apigames status to internal TransactionStatus
     const statusMap: Record<string, string> = {
       "0": "PENDING",
       "1": "PROCESSING",
@@ -54,34 +56,52 @@ export async function POST(req: NextRequest) {
     };
     const internalStatus = statusMap[status] || "PENDING";
 
-    // In production:
     // 1. Find transaction by ref_id (invoiceId)
-    // const transaction = await prisma.transaction.findUnique({
-    //   where: { invoiceId: ref_id }
-    // });
-    //
-    // 2. Update provider status + serial number
-    // await prisma.transaction.update({
-    //   where: { invoiceId: ref_id },
-    //   data: {
-    //     providerStatus: internalStatus.toLowerCase(),
-    //     providerTrxId: trx_id,
-    //     serialNumber: sn || undefined,
-    //     completedAt: internalStatus === "SUCCESS" ? new Date() : undefined,
-    //     updatedAt: new Date(),
-    //   },
-    // });
-    //
-    // 3. If FAILED → initiate refund or retry
-    // if (internalStatus === "FAILED") {
-    //   await handleTopupFailure(transaction);
-    // }
-    //
-    // 4. Notify user
-    // await sendNotification(transaction.userId, {
-    //   title: internalStatus === "SUCCESS" ? "Topup Berhasil! 🎉" : "Topup Gagal",
-    //   body: `${transaction.productName} - ${transaction.gameName}`,
-    // });
+    const transaction = await prisma.transaction.findUnique({
+      where: { invoiceId: ref_id },
+    });
+
+    if (!transaction) {
+      console.warn(`[Provider Webhook] Transaction not found: ${ref_id}`);
+      // Still return 200 to prevent gateway retries
+      return apiSuccess(
+        { refId: ref_id, status: internalStatus, note: "Transaction not found" },
+        { message: "Webhook received but transaction not found" }
+      );
+    }
+
+    // 2. Idempotency: skip if already at terminal SUCCESS/FAILED state
+    if (transaction.status === "SUCCESS" || transaction.status === "FAILED") {
+      return apiSuccess(
+        { refId: ref_id, status: transaction.status, duplicate: true },
+        { message: "Already processed" }
+      );
+    }
+
+    // 3. Update transaction with provider status
+    await prisma.transaction.update({
+      where: { id: transaction.id },
+      data: {
+        status: internalStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
+        providerRef: trx_id || transaction.providerRef,
+        providerData: {
+          ...(transaction.providerData as Record<string, unknown> ?? {}),
+          serialNumber: sn || "",
+          providerMessage: message || "",
+        },
+        updatedAt: new Date(),
+      },
+    });
+
+    // 4. Fire event for completed transactions
+    if (internalStatus === "SUCCESS") {
+      eventBus.emit("TRANSACTION_COMPLETED", {
+        transaction: {
+          invoiceId: ref_id,
+          providerStatus: "success",
+        },
+      });
+    }
 
     console.log(
       `[Provider Webhook] Ref: ${ref_id}, TrxID: ${trx_id}, Status: ${status} → ${internalStatus}, SN: ${sn || "-"}`

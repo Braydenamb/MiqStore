@@ -2,6 +2,7 @@
 
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/admin-auth";
 
 // Initialize Cloudinary config
 cloudinary.config({
@@ -31,10 +32,10 @@ export interface CloudinaryAsset {
   secure_url: string;
   status: string;
   access_mode: string;
-  access_control: null | any;
+  access_control: unknown;
   etag: string;
-  created_by: null | any;
-  uploaded_by: null | any;
+  created_by: unknown;
+  uploaded_by: unknown;
 }
 
 /**
@@ -42,17 +43,9 @@ export interface CloudinaryAsset {
  */
 export async function getGalleryAssets(folder?: string): Promise<CloudinaryAsset[]> {
   try {
-    let search = cloudinary.search;
-    
-    // If a specific folder is requested, filter by it, otherwise get everything
-    if (folder) {
-      // Allow searching multiple folders by doing folder:Gallery OR folder:Games etc.
-      // But for simplicity, we'll just not use expression if folder is empty
-      // Wait, let's just fetch ALL assets for the user so they can see everything.
-    }
-    
-    // To fetch all assets, we can just use an empty expression or exclude the expression entirely
-    const result = await search
+    await requireAdmin();
+
+    const result = await cloudinary.search
       .sort_by("created_at", "desc")
       .max_results(500)
       .execute();
@@ -70,13 +63,14 @@ export async function getGalleryAssets(folder?: string): Promise<CloudinaryAsset
  */
 export async function deleteGalleryAsset(publicId: string, resourceType: "image" | "video" | "raw" = "image") {
   try {
+    await requireAdmin();
+
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: resourceType,
     });
-    
-    // Refresh the gallery page cache so the deleted image disappears
+
     revalidatePath("/admin/gallery");
-    
+
     return { success: true, result };
   } catch (error) {
     console.error("[Cloudinary API Error] Failed to delete gallery asset:", error);

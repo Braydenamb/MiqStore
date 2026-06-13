@@ -1,11 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { PrismaClient, TransactionStatus } from "@prisma/client";
-
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+import { Prisma, TransactionStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export async function getAdminOrders(
   page: number = 1,
@@ -14,9 +12,11 @@ export async function getAdminOrders(
   statusFilter: string = "all"
 ) {
   try {
+    await requireAdmin();
+
     const skip = (page - 1) * limit;
 
-    const whereCondition: any = {};
+    const whereCondition: Prisma.TransactionWhereInput = {};
 
     if (search) {
       whereCondition.OR = [
@@ -67,13 +67,16 @@ export async function getAdminOrders(
     }));
 
     return { success: true, data: { orders: mappedOrders, total, totalPages: Math.ceil(total / limit) } };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: msg };
   }
 }
 
 export async function updateOrderStatus(dbId: string, newStatus: string) {
   try {
+    await requireAdmin();
+
     const statusEnum = newStatus.toUpperCase() as TransactionStatus;
     
     await prisma.transaction.update({
@@ -83,7 +86,8 @@ export async function updateOrderStatus(dbId: string, newStatus: string) {
 
     revalidatePath("/admin/orders");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: msg };
   }
 }

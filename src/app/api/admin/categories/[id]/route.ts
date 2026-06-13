@@ -1,12 +1,24 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
+async function isAdmin(): Promise<boolean> {
+  const session = await getServerSession(authOptions);
+  const role = session?.user?.role;
+  return !!(session?.user && (role === "ADMIN" || role === "SUPER_ADMIN"));
+}
+
 export async function PATCH(req: Request, { params }: RouteParams) {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     const body = await req.json();
     const { name, slug, description, icon, color, isActive } = body;
@@ -32,6 +44,10 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
 export async function DELETE(_req: Request, { params }: RouteParams) {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     await prisma.category.delete({ where: { id } });
     return NextResponse.json({ success: true });

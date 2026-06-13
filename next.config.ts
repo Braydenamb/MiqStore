@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // output: "standalone", // Enable when using proper npm install + Docker
+  output: "standalone",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.googleusercontent.com" },
@@ -42,8 +42,20 @@ const nextConfig: NextConfig = {
             value: "strict-origin-when-cross-origin",
           },
           {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+          {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://app.sandbox.midtrans.com https://app.midtrans.com https://widget.cloudinary.com https://upload-widget.cloudinary.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:;",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://vercel.live https://app.sandbox.midtrans.com https://app.midtrans.com https://widget.cloudinary.com https://upload-widget.cloudinary.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "img-src 'self' data: https:",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "connect-src 'self' https: wss:",
+              "frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com",
+            ].join("; "),
           },
         ],
       },

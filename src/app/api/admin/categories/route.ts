@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+
+async function isAdmin(): Promise<boolean> {
+  const session = await getServerSession(authOptions);
+  const role = session?.user?.role;
+  return !!(session?.user && (role === "ADMIN" || role === "SUPER_ADMIN"));
+}
 
 export async function GET() {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const categories = await prisma.category.findMany({
       orderBy: { order: "asc" },
       include: { _count: { select: { products: true } } },
@@ -16,6 +28,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { name, slug, description, icon, color, isActive } = body;
 

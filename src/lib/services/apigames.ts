@@ -11,6 +11,8 @@
  *  4. Webhook callback → handled in /api/webhook/provider
  */
 
+import crypto from "crypto";
+
 /* ─── Types ─── */
 export interface ApigamesProduct {
   code: string;
@@ -64,15 +66,7 @@ function generateSignature(merchantId: string, apiKey: string, refId: string): s
 }
 
 function hashMD5(input: string): string {
-  // Use Web Crypto API compatible approach
-  // In production, use: crypto.createHash('md5').update(input).digest('hex')
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return Math.abs(hash).toString(16).padStart(8, "0");
+  return crypto.createHash("md5").update(input).digest("hex");
 }
 
 import { CircuitBreaker, withRetry, CircuitBreakerError } from "../reliability";

@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   ShieldAlert,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
@@ -19,6 +20,12 @@ const navLinks = [
   { label: "Transaksi", href: "/dashboard/transactions", icon: Receipt },
   { label: "Profil", href: "/dashboard/profile", icon: User },
   { label: "Pengaturan", href: "/dashboard/settings", icon: Settings },
+];
+
+const MOBILE_NAV_LINKS = [
+  { label: "Beranda", href: "/dashboard", icon: Home },
+  { label: "Transaksi", href: "/dashboard/transactions", icon: Receipt },
+  { label: "Profil", href: "/dashboard/profile", icon: User },
 ];
 
 export default function DashboardLayoutClient({
@@ -138,10 +145,46 @@ export default function DashboardLayoutClient({
         </header>
 
         {/* Page content */}
-        <main id="dashboard-content" className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-4 lg:pb-12 max-w-5xl w-full mx-auto" tabIndex={-1}>
+        <main id="dashboard-content" className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-12 max-w-3xl w-full mx-auto" tabIndex={-1}>
           {children}
         </main>
       </div>
+
+      {/* ── Mobile Bottom Navigation ─────────────────────────────── */}
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-40 lg:hidden glass-panel border-t border-[hsl(var(--border))]/50"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        aria-label="Dashboard navigation"
+      >
+        <div className="flex items-center justify-around h-16">
+          {MOBILE_NAV_LINKS.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors min-w-[64px]",
+                  isActive
+                    ? "text-[hsl(var(--primary))]"
+                    : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                )}
+              >
+                <link.icon className="h-5 w-5" />
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium text-[hsl(var(--muted-foreground))] hover:text-red-500 transition-colors min-w-[64px]"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Keluar</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }

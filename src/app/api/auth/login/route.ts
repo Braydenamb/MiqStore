@@ -1,10 +1,18 @@
 import { NextRequest } from "next/server";
 import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
 import { authLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Email tidak valid"),
+  password: z.string().min(1, "Password wajib diisi"),
+});
 
 /**
  * POST /api/auth/login
- * Authenticate user with email/password.
+ * Authenticate user with email/password via real DB validation.
  * Rate limited: 10 req/min per IP.
  */
 export async function POST(req: NextRequest) {
@@ -17,54 +25,67 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { email, password } = body;
+    const parsed = loginSchema.safeParse(body);
 
-    if (!email || !password) {
+    if (!parsed.success) {
       return API_ERRORS.validation({
-        email: !email ? ["Email wajib diisi"] : [],
-        password: !password ? ["Password wajib diisi"] : [],
+        email: parsed.error.flatten().fieldErrors.email ?? [],
+        password: parsed.error.flatten().fieldErrors.password ?? [],
       });
     }
 
-    // Mock authentication — in production, validate against database
-    if (email === "admin@miqstore.com" && password === "admin123") {
-      return apiSuccess(
-        {
-          user: {
-            id: "usr_admin_001",
-            name: "Super Admin",
-            email: "admin@miqstore.com",
-            role: "SUPER_ADMIN",
-            membership: "DIAMOND",
-          },
-          token: "mock-admin-jwt-token",
-          expiresAt: new Date(Date.now() + 86400000).toISOString(),
-        },
-        { message: "Login berhasil" }
-      );
-    }
+    const { email, password } = parsed.data;
 
-    if (password.length >= 8) {
-      return apiSuccess(
-        {
-          user: {
-            id: "usr_" + Date.now().toString(36),
-            name: email.split("@")[0],
-            email,
-            role: "USER",
-            membership: "BRONZE",
-          },
-          token: "mock-user-jwt-token",
-          expiresAt: new Date(Date.now() + 86400000).toISOString(),
-        },
-        { message: "Login berhasil" }
-      );
-    }
-
-    return apiError("Email atau password salah", {
-      status: 401,
-      code: "INVALID_CREDENTIALS",
+    // Look up user by email
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true,
+        role: true,
+        membership: true,
+        isActive: true,
+      },
     });
+
+    if (!user || !user.password) {
+      return apiError("Email atau password salah", {
+        status: 401,
+        code: "INVALID_CREDENTIALS",
+      });
+    }
+
+    if (!user.isActive) {
+      return apiError("Akun Anda telah dinonaktifkan", {
+        status: 403,
+        code: "ACCOUNT_DISABLED",
+      });
+    }
+
+    // Verify password against hashed password in DB
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return apiError("Email atau password salah", {
+        status: 401,
+        code: "INVALID_CREDENTIALS",
+      });
+    }
+
+    return apiSuccess(
+      {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          membership: user.membership,
+        },
+      },
+      { message: "Login berhasil" }
+    );
   } catch {
     return API_ERRORS.internal();
   }

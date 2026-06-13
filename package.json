@@ -5,7 +5,7 @@
   "description": "TopUp Digital Store - Premium Game Top-Up & Digital Product Marketplace",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push --accept-data-loss && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
@@ -48,7 +48,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.12.1",
     "gsap": "^3.15.0",
-    "lenis": "latest",
+    "lenis": "1.3.23",
     "lucide-react": "^0.513.0",
     "motion": "^11.11.4",
     "next": "16.2.6",

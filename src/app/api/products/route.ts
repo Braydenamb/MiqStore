@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
-import { POPULAR_GAMES, CATEGORIES } from "@/lib/constants";
+import { apiSuccess, API_ERRORS } from "@/lib/api-response";
+import { prisma } from "@/lib/prisma";
 
 /**
  * GET /api/products
- * List all products with optional filtering.
+ * List all active products from the database with optional filtering.
  */
 export async function GET(req: NextRequest) {
   try {
@@ -15,42 +15,54 @@ export async function GET(req: NextRequest) {
     const perPage = parseInt(searchParams.get("per_page") || "12");
     const popular = searchParams.get("popular");
 
-    let products = POPULAR_GAMES.map((game) => ({
+    const where: Record<string, unknown> = { isActive: true };
+
+    if (category) {
+      where.category = { slug: category };
+    }
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { publisher: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    if (popular === "true") {
+      where.isPopular = true;
+    }
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        include: {
+          category: { select: { name: true, slug: true } },
+        },
+        orderBy: [
+          { isPopular: "desc" },
+          { order: "asc" },
+          { name: "asc" },
+        ],
+        skip: (page - 1) * perPage,
+        take: perPage,
+      }),
+      prisma.product.count({ where }),
+    ]);
+
+    const formatted = products.map((game) => ({
       id: game.id,
       name: game.name,
       slug: game.slug,
       publisher: game.publisher,
-      category: game.category,
+      category: game.category?.name || "",
       image: game.image,
       color: game.color,
-      popular: game.popular,
+      popular: game.isPopular,
     }));
 
-    // Filter by category
-    if (category) {
-      products = products.filter((p) => p.category === category);
-    }
-
-    // Filter by search
-    if (search) {
-      products = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(search) ||
-          p.publisher.toLowerCase().includes(search)
-      );
-    }
-
-    // Filter by popular
-    if (popular === "true") {
-      products = products.filter((p) => p.popular);
-    }
-
-    // Paginate
-    const total = products.length;
     const totalPages = Math.ceil(total / perPage);
-    const paginated = products.slice((page - 1) * perPage, page * perPage);
 
-    return apiSuccess(paginated, {
+    return apiSuccess(formatted, {
       meta: { page, perPage, total, totalPages },
     });
   } catch {

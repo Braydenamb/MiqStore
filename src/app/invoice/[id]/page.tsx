@@ -255,30 +255,30 @@ export default function InvoicePage() {
       <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay pt-24 pb-32 lg:pb-16 font-sans">
         <div className="mx-auto max-w-xl px-4 sm:px-6 relative z-10">
           <div className="mb-8 flex items-center justify-center gap-2 text-sm text-[hsl(var(--foreground))]/60 font-medium">
-            <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-12 bg-[hsl(var(--muted))] rounded animate-pulse" />
             <ChevronRight className="h-4 w-4" />
-            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-32 bg-[hsl(var(--muted))] rounded animate-pulse" />
           </div>
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center animate-pulse">
-              <div className="h-2 bg-gray-100 absolute top-0 left-0 right-0 rounded-t-2xl" />
-              <div className="h-16 w-16 rounded-full bg-gray-200 mx-auto mb-4" />
-              <div className="h-6 w-48 bg-gray-200 rounded mx-auto mb-2" />
-              <div className="h-4 w-32 bg-gray-200 rounded mx-auto" />
+            <div className="glass-card rounded-2xl p-8 text-center animate-pulse">
+              <div className="h-2 bg-[hsl(var(--muted))] absolute top-0 left-0 right-0 rounded-t-2xl" />
+              <div className="h-16 w-16 rounded-full bg-[hsl(var(--muted))] mx-auto mb-4" />
+              <div className="h-6 w-48 bg-[hsl(var(--muted))] rounded mx-auto mb-2" />
+              <div className="h-4 w-32 bg-[hsl(var(--muted))] rounded mx-auto" />
             </div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4 animate-pulse">
-              <div className="h-4 w-24 bg-gray-200 rounded" />
+            <div className="glass-card rounded-2xl p-6 space-y-4 animate-pulse">
+              <div className="h-4 w-24 bg-[hsl(var(--muted))] rounded" />
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gray-200" />
+                <div className="w-12 h-12 rounded-xl bg-[hsl(var(--muted))]" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 w-32 bg-gray-200 rounded" />
-                  <div className="h-3 w-24 bg-gray-200 rounded" />
+                  <div className="h-4 w-32 bg-[hsl(var(--muted))] rounded" />
+                  <div className="h-3 w-24 bg-[hsl(var(--muted))] rounded" />
                 </div>
               </div>
               <div className="space-y-3 pt-4">
-                <div className="h-3 w-full bg-gray-100 rounded" />
-                <div className="h-3 w-full bg-gray-100 rounded" />
-                <div className="h-3 w-2/3 bg-gray-100 rounded" />
+                <div className="h-3 w-full bg-[hsl(var(--muted))]/50 rounded" />
+                <div className="h-3 w-full bg-[hsl(var(--muted))]/50 rounded" />
+                <div className="h-3 w-2/3 bg-[hsl(var(--muted))]/50 rounded" />
               </div>
             </div>
           </div>
@@ -291,11 +291,11 @@ export default function InvoicePage() {
   if (error || !invoice) {
     return (
       <div className="min-h-screen bg-[hsl(var(--background))] texture-overlay pt-24 pb-32 font-sans flex items-center justify-center">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-sm w-full mx-4">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center glass-card p-8 rounded-2xl max-w-sm w-full mx-4">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h1 className="text-xl font-bold font-heading text-[hsl(var(--foreground))] mb-2">Invoice Tidak Ditemukan</h1>
-          <p className="text-sm text-gray-500 mb-6">{error || "Invoice ini tidak ada atau sudah dihapus."}</p>
-          <Button asChild className="w-full bg-[hsl(var(--secondary))] text-white hover:bg-[hsl(var(--primary))]">
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6">{error || "Invoice ini tidak ada atau sudah dihapus."}</p>
+          <Button asChild className="w-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90">
             <Link href="/games">Kembali ke Katalog</Link>
           </Button>
         </motion.div>
@@ -310,16 +310,16 @@ export default function InvoicePage() {
       <div className="mx-auto max-w-xl px-4 sm:px-6 relative z-10">
 
         {/* Breadcrumb */}
-        <div className="mb-8 flex items-center justify-center gap-2 text-sm text-[hsl(var(--foreground))]/60 font-medium">
+        <nav aria-label="Breadcrumb" className="mb-8 flex items-center justify-center gap-2 text-sm text-[hsl(var(--foreground))]/60 font-medium">
           <Link href="/" className="hover:text-[hsl(var(--primary))] transition-colors">Home</Link>
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
           <span className="text-[hsl(var(--foreground))] truncate max-w-[200px]">Invoice {invoice.id}</span>
-        </div>
+        </nav>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
           {/* ─── Status Header Card ─── */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center relative overflow-hidden">
+          <div className="glass-card rounded-2xl p-8 text-center relative overflow-hidden">
             <div className={cn("absolute top-0 left-0 right-0 h-2 transition-colors duration-500", config.bg)} />
 
             <AnimatePresence mode="wait">
@@ -340,8 +340,8 @@ export default function InvoicePage() {
             <h1 className="text-2xl font-extrabold font-heading text-[hsl(var(--foreground))] mb-1">
               {config.label}
             </h1>
-            <p className="text-sm text-gray-500 mb-2">{config.description}</p>
-            <p className="text-xs text-gray-400 font-mono">#{invoice.id}</p>
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-2">{config.description}</p>
+            <p className="text-xs text-[hsl(var(--muted-foreground))]/70 font-mono">#{invoice.id}</p>
 
             {/* Countdown for pending */}
             {currentStatus === "pending" && countdown && (
@@ -370,9 +370,9 @@ export default function InvoicePage() {
           </div>
 
           {/* ─── Order Details Card ─── */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 bg-gray-50/50 border-b border-gray-100">
-              <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Detail Pesanan</h2>
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-6 bg-[hsl(var(--card))]/50 border-b border-[hsl(var(--border))]/50">
+              <h2 className="text-sm font-bold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-4">Detail Pesanan</h2>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center shrink-0">
                   <Gamepad2 className="w-6 h-6 text-[hsl(var(--primary))]" />
@@ -386,14 +386,15 @@ export default function InvoicePage() {
 
             <div className="p-6 space-y-4 text-sm">
               {/* Game User ID */}
-              <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                <span className="text-gray-500">User ID</span>
+              <div className="flex justify-between items-center pb-3 border-b border-[hsl(var(--border))]/50">
+                <span className="text-[hsl(var(--muted-foreground))]">User ID</span>
                 <div className="text-right flex items-center gap-2">
                   <span className="font-bold text-[hsl(var(--foreground))]">{invoice.gameUserId || "-"}</span>
                   {invoice.gameUserId && (
                     <button
                       onClick={() => handleCopy(invoice.gameUserId, "User ID")}
-                      className="text-gray-400 hover:text-[hsl(var(--primary))] transition-colors"
+                      className="text-[hsl(var(--muted-foreground))]/60 hover:text-[hsl(var(--primary))] transition-colors"
+                      aria-label="Copy User ID"
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -403,21 +404,21 @@ export default function InvoicePage() {
 
               {/* Zone ID */}
               {invoice.gameZoneId && (
-                <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                  <span className="text-gray-500">Zone ID</span>
+                <div className="flex justify-between items-center pb-3 border-b border-[hsl(var(--border))]/50">
+                  <span className="text-[hsl(var(--muted-foreground))]">Zone ID</span>
                   <span className="font-bold text-[hsl(var(--foreground))]">{invoice.gameZoneId}</span>
                 </div>
               )}
 
               {/* Payment Method */}
-              <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                <span className="text-gray-500">Metode Pembayaran</span>
+              <div className="flex justify-between items-center pb-3 border-b border-[hsl(var(--border))]/50">
+                <span className="text-[hsl(var(--muted-foreground))]">Metode Pembayaran</span>
                 <span className="font-bold text-[hsl(var(--foreground))] uppercase">{invoice.payment}</span>
               </div>
 
               {/* Transaction Time */}
-              <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                <span className="text-gray-500">Waktu Transaksi</span>
+              <div className="flex justify-between items-center pb-3 border-b border-[hsl(var(--border))]/50">
+                <span className="text-[hsl(var(--muted-foreground))]">Waktu Transaksi</span>
                 <span className="font-medium text-[hsl(var(--foreground))]">
                   {new Date(invoice.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
                 </span>
@@ -425,8 +426,8 @@ export default function InvoicePage() {
 
               {/* Provider Reference */}
               {invoice.providerRef && (
-                <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                  <span className="text-gray-500">Ref. Provider</span>
+                <div className="flex justify-between items-center pb-3 border-b border-[hsl(var(--border))]/50">
+                  <span className="text-[hsl(var(--muted-foreground))]">Ref. Provider</span>
                   <span className="font-mono text-xs text-[hsl(var(--primary))]">{invoice.providerRef}</span>
                 </div>
               )}
@@ -434,22 +435,22 @@ export default function InvoicePage() {
               {/* Pricing */}
               <div className="pt-2 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Harga Item</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Harga Item</span>
                   <span className="font-medium text-[hsl(var(--foreground))]">{formatCurrency(invoice.price)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Biaya Layanan</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Biaya Layanan</span>
                   <span className="font-medium text-[hsl(var(--foreground))]">
                     {invoice.fee === 0 ? "Gratis" : formatCurrency(invoice.fee)}
                   </span>
                 </div>
                 {invoice.discount > 0 && (
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Diskon</span>
+                    <span className="text-[hsl(var(--muted-foreground))]">Diskon</span>
                     <span className="font-medium text-green-600">-{formatCurrency(invoice.discount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl mt-3">
+                <div className="flex justify-between items-center p-4 bg-[hsl(var(--muted))]/30 rounded-xl mt-3">
                   <span className="font-bold text-[hsl(var(--foreground))]">Total Pembayaran</span>
                   <span className="text-xl font-extrabold text-[hsl(var(--primary))] tabular-nums">
                     {formatCurrency(invoice.total)}
@@ -464,17 +465,17 @@ export default function InvoicePage() {
             {/* Copy Invoice ID */}
             <Button
               variant="ghost"
-              className="flex-1 h-12 rounded-xl text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-gray-50 font-bold"
+              className="flex-1 h-12 rounded-xl text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/50 font-bold"
               onClick={() => handleCopy(invoice.id, "Invoice ID")}
             >
               <Copy className="w-4 h-4 mr-2" /> Salin Invoice
             </Button>
-
+            
             {/* Refresh (only for non-terminal) */}
             {!isTerminal && (
               <Button
                 variant="ghost"
-                className="flex-1 h-12 rounded-xl text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-gray-50 font-bold"
+                className="flex-1 h-12 rounded-xl text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/50 font-bold"
                 onClick={handleRefresh}
               >
                 <RefreshCw className="w-4 h-4 mr-2" /> Refresh Status
@@ -533,7 +534,7 @@ export default function InvoicePage() {
               animate={{ opacity: 1 }}
               className="text-center"
             >
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[hsl(var(--muted-foreground))]/70">
                 Butuh bantuan?{" "}
                 <a href="mailto:support@miqstore.com" className="text-[hsl(var(--primary))] font-medium hover:underline">
                   Hubungi Customer Service

@@ -11,8 +11,9 @@
 // 1. Structured Logging (Loki-ready)
 // ---------------------------------------------------------
 type LogLevel = "info" | "warn" | "error" | "debug";
+type LogContext = Record<string, unknown>;
 
-function formatLog(level: LogLevel, message: string, context?: Record<string, any>) {
+function formatLog(level: LogLevel, message: string, context?: LogContext) {
   const logEntry = {
     timestamp: new Date().toISOString(),
     level: level.toUpperCase(),
@@ -33,14 +34,13 @@ function formatLog(level: LogLevel, message: string, context?: Record<string, an
 }
 
 export const logger = {
-  info: (msg: string, ctx?: Record<string, any>) => formatLog("info", msg, ctx),
-  warn: (msg: string, ctx?: Record<string, any>) => formatLog("warn", msg, ctx),
-  error: (msg: string, err?: unknown, ctx?: Record<string, unknown>) => {
+  info: (msg: string, ctx?: LogContext) => formatLog("info", msg, ctx),
+  warn: (msg: string, ctx?: LogContext) => formatLog("warn", msg, ctx),
+  error: (msg: string, err?: unknown, ctx?: LogContext) => {
     const errorDetails = err instanceof Error ? { error: err.message, stack: err.stack } : { error: String(err) };
     formatLog("error", msg, { ...ctx, ...errorDetails });
-    // TODO: Connect to Sentry SDK here via @sentry/nextjs captureException
   },
-  debug: (msg: string, ctx?: Record<string, any>) => {
+  debug: (msg: string, ctx?: LogContext) => {
     if (process.env.NODE_ENV !== "production") {
       formatLog("debug", msg, ctx);
     }
@@ -50,7 +50,6 @@ export const logger = {
 // ---------------------------------------------------------
 // 2. Metrics (Prometheus-ready)
 // ---------------------------------------------------------
-// Mock in-memory metric store. In production, use prom-client.
 const metricStore: Record<string, number> = {};
 
 export const metrics = {
@@ -59,7 +58,6 @@ export const metrics = {
       metricStore[metricName] = 0;
     }
     metricStore[metricName] += value;
-    // We could expose /api/metrics for Prometheus to scrape this
   },
   getMetrics: () => {
     return { ...metricStore };
@@ -70,7 +68,7 @@ export const metrics = {
 // 3. Tracing (OpenTelemetry-ready)
 // ---------------------------------------------------------
 export const tracing = {
-  startSpan: (operationName: string, context?: Record<string, any>) => {
+  startSpan: (operationName: string, context?: LogContext) => {
     const startTime = Date.now();
     logger.debug(`[Trace Start] ${operationName}`, context);
     

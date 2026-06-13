@@ -132,9 +132,9 @@ export async function createSnapTransaction(
         phone: request.customerPhone || "",
       },
       callbacks: {
-        finish: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
-        error: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
-        pending: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
+        finish: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
+        error: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
+        pending: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/invoice/${request.orderId}`,
       },
       expiry: {
         unit: "hours",

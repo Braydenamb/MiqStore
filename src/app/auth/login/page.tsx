@@ -41,7 +41,7 @@ export default function LoginPage() {
         });
         router.push("/dashboard");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMsg = "Terjadi kesalahan sistem. Silakan coba lagi.";
       setError(errorMsg);
       toast.error("Terjadi Kesalahan", {
@@ -129,8 +129,9 @@ export default function LoginPage() {
               required
             />
             <div className="flex justify-between items-center px-1 pt-1">
-              <label className="flex items-center gap-2 cursor-pointer group">
-                <input 
+              <label htmlFor="remember" className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  id="remember"
                   type="checkbox" 
                   className="w-3.5 h-3.5 rounded-sm border-[hsl(var(--foreground))]/30 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] transition-colors group-hover:border-[hsl(var(--primary))] accent-[hsl(var(--primary))]" 
                 />
@@ -138,9 +139,9 @@ export default function LoginPage() {
                   Ingat saya
                 </span>
               </label>
-              <a href="#" className="text-[11px] font-bold text-[hsl(var(--primary))] hover:text-[var(--color-gold)] transition-colors">
+              <button type="button" className="text-[11px] font-bold text-[hsl(var(--primary))] hover:text-[var(--color-gold)] transition-colors" onClick={() => toast.info("Fitur lupa password akan segera tersedia.")}>
                 Lupa password?
-              </a>
+              </button>
             </div>
           </div>
 

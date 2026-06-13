@@ -1,19 +1,23 @@
 import { NextRequest } from "next/server";
 import { apiSuccess, API_ERRORS } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * GET /api/invoice/[id]
  *
  * Fetch transaction details by invoiceId for the invoice/status page.
- * Returns full order context including game name, product name,
- * payment info, and current status from the DB.
+ * Requires authentication; only the transaction owner or an admin can view.
  */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return API_ERRORS.unauthorized();
+
     const { id: invoiceId } = await params;
 
     if (!invoiceId) {
@@ -32,6 +36,12 @@ export async function GET(
 
     if (!transaction) {
       return API_ERRORS.notFound("Invoice");
+    }
+
+    // Ownership check: only the owner or admin can view
+    const userRole = session.user.role;
+    if (transaction.userId !== session.user.id && userRole !== "ADMIN" && userRole !== "SUPER_ADMIN") {
+      return API_ERRORS.forbidden();
     }
 
     // Extract display names from providerData (stored at creation time)

@@ -6,8 +6,30 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+// Extend NextAuth types to include our custom `role` field
+declare module "next-auth" {
+  interface User {
+    role?: string;
+  }
+  interface Session {
+    user: {
+      id: string;
+      email?: string | null;
+      name?: string | null;
+      image?: string | null;
+      role?: string;
+    };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string;
+    role?: string;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
-  // @ts-ignore - PrismaAdapter type mismatch is common between v4 and v5
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
@@ -35,6 +57,10 @@ export const authOptions: NextAuthOptions = {
 
         if (!user || !user.password) {
           throw new Error("Invalid email or password");
+        }
+
+        if (!user.isActive) {
+          throw new Error("Account is disabled");
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -68,15 +94,26 @@ export const authOptions: NextAuthOptions = {
       // First time JWT is created, append user details
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role;
+        token.role = user.role;
       }
+
+      // Refresh role from DB on token refresh (handles role changes without re-login)
+      if (!user && token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { role: true, isActive: true },
+        });
+        if (dbUser) {
+          token.role = dbUser.role;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
-        // @ts-ignore
-        session.user.role = token.role as string;
+        session.user.role = token.role;
       }
       return session;
     },

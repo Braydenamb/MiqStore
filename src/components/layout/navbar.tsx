@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingCart, User, Menu, Bell, X, PackageOpen, BellOff, Home, Gamepad2, Receipt } from "lucide-react";
+import { Search, User, Menu, X, Home, Gamepad2, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,8 +19,6 @@ const NAV_LINKS = [
 export function Navbar({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   // Hide on dashboard and admin pages
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return null;
@@ -77,86 +75,8 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
               />
             </form>
 
-            {/* Notifications */}
-            <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={cn("relative rounded-full text-[hsl(var(--foreground))]", isNotificationsOpen && "bg-black/5")}
-                onClick={() => {
-                  setIsNotificationsOpen(!isNotificationsOpen);
-                  setIsCartOpen(false);
-                }}
-              >
-                <Bell className="h-5 w-5" />
-              </Button>
-
-              <AnimatePresence>
-                {isNotificationsOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsNotificationsOpen(false)} />
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-[hsl(var(--popover))]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-50 p-6 flex flex-col items-center justify-center text-center origin-top-right"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                        <BellOff className="h-6 w-6 text-[hsl(var(--muted-foreground))]" />
-                      </div>
-                      <h3 className="font-bold text-[hsl(var(--foreground))] mb-1">Belum Ada Notifikasi</h3>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))]">Notifikasi tentang pesanan dan promo akan muncul di sini.</p>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Cart */}
-            <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={cn("relative rounded-full text-[hsl(var(--foreground))]", isCartOpen && "bg-black/5")}
-                onClick={() => {
-                  setIsCartOpen(!isCartOpen);
-                  setIsNotificationsOpen(false);
-                }}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--color-gold)] text-[10px] font-bold text-[hsl(var(--primary))]">
-                  0
-                </span>
-              </Button>
-
-              <AnimatePresence>
-                {isCartOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsCartOpen(false)} />
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-[hsl(var(--popover))]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-50 p-6 flex flex-col items-center justify-center text-center origin-top-right"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-[hsl(var(--primary))]/10 flex items-center justify-center mb-4">
-                        <PackageOpen className="h-6 w-6 text-[hsl(var(--primary))]" />
-                      </div>
-                      <h3 className="font-bold text-[hsl(var(--foreground))] mb-1">Keranjang Kosong</h3>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))] mb-4">Kamu belum menambahkan produk apa pun ke keranjang.</p>
-                      <Button className="w-full bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-xl h-10 text-xs font-bold" onClick={() => setIsCartOpen(false)}>
-                        Mulai Belanja
-                      </Button>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
-
-            <Link href="/dashboard" tabIndex={-1}>
-              <Button variant="ghost" size="icon" className="flex rounded-full text-[hsl(var(--foreground))]">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="icon" aria-label="Account" className="flex rounded-full text-[hsl(var(--foreground))]">
                 <User className="h-5 w-5" />
               </Button>
             </Link>
@@ -165,6 +85,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
             <Button 
               variant="ghost" 
               size="icon" 
+              aria-label="Open menu"
               className="md:hidden rounded-full text-[hsl(var(--foreground))]"
               onClick={() => setIsMobileMenuOpen(true)}
             >
@@ -265,25 +186,18 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
 
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-4 px-4">Informasi</div>
                 <Link
-                  href="/help"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
-                >
-                  Pusat Bantuan
-                </Link>
-                <Link
-                  href="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
-                >
-                  Tentang Kami
-                </Link>
-                <Link
                   href="/terms"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
                 >
                   Syarat & Ketentuan
+                </Link>
+                <Link
+                  href="/privacy-policy"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
+                >
+                  Kebijakan Privasi
                 </Link>
               </nav>
 

@@ -3,6 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,6 +57,7 @@ async function ensureDefaultCategory(): Promise<string> {
 
 export async function getGames(filters: GameFilters = {}) {
   try {
+    await requireAdmin();
     const {
       q,
       categoryId,
@@ -149,6 +151,7 @@ export async function getGames(filters: GameFilters = {}) {
 
 export async function getGameById(id: string) {
   try {
+    await requireAdmin();
     const game = await prisma.product.findUnique({
       where: { id },
       include: {
@@ -171,6 +174,7 @@ export async function getGameById(id: string) {
 
 export async function getGamesStats() {
   try {
+    await requireAdmin();
     const [total, active, inactive, totalItems] = await Promise.all([
       prisma.product.count(),
       prisma.product.count({ where: { isActive: true } }),
@@ -225,6 +229,7 @@ export const getProviders = unstable_cache(
 
 export async function createGame(data: GameFormData) {
   try {
+    await requireAdmin();
     const categoryId = data.categoryId || (await ensureDefaultCategory());
 
     const game = await prisma.product.create({
@@ -265,6 +270,7 @@ export async function createGame(data: GameFormData) {
 
 export async function updateGame(id: string, data: Partial<GameFormData>) {
   try {
+    await requireAdmin();
     const game = await prisma.product.update({
       where: { id },
       data: {
@@ -310,6 +316,7 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
 
 export async function deleteGame(id: string) {
   try {
+    await requireAdmin();
     await prisma.product.delete({ where: { id } });
     revalidatePath("/admin/games");
     revalidatePath("/");
@@ -323,6 +330,7 @@ export async function deleteGame(id: string) {
 
 export async function toggleGameStatus(id: string, isActive: boolean) {
   try {
+    await requireAdmin();
     await prisma.product.update({
       where: { id },
       data: { isActive },

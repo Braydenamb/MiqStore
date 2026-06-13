@@ -18,16 +18,13 @@ import { logger, metrics, tracing } from "../telemetry";
 import { eventBus } from "./event-bus";
 import { registerSystemSubscribers } from "./subscribers";
 import { routeTopupOrder } from "./provider-router";
+import { generateInvoiceId } from "@/lib/utils";
 
 // Boot the background event workers exactly once when this module loads
 registerSystemSubscribers();
-import {
-  verifyNotificationSignature,
-  mapTransactionStatus,
-  type MidtransNotification,
-  type MidtransTransactionStatus,
+import type {
+  MidtransTransactionStatus,
 } from "./midtrans";
-import type { ApigamesOrderResponse } from "./apigames";
 
 /* ─── Types ─── */
 export interface CreateTransactionInput {
@@ -111,13 +108,6 @@ export function calculateDiscount(price: number, promoCode?: string): number {
   if (!promoCode) return 0;
   const rate = PROMO_CODES[promoCode.toUpperCase()];
   return rate ? Math.round(price * rate) : 0;
-}
-
-/* ─── Invoice ID Generator ─── */
-function generateInvoiceId(): string {
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `INV-${timestamp}${random}`;
 }
 
 /* ─── Orchestrator Methods ─── */
@@ -221,48 +211,7 @@ export async function createTransaction(
 }
 
 /**
- * Step 2: Handle payment webhook from Midtrans
- *
- * Called when Midtrans sends payment status update.
- * If payment is confirmed, trigger topup via Apigames.
- */
-export async function handlePaymentWebhook(
-  notification: MidtransNotification
-): Promise<{
-  orderId: string;
-  paymentStatus: MidtransTransactionStatus;
-  shouldTriggerTopup: boolean;
-}> {
-  // Verify signature
-  const isValid = verifyNotificationSignature(notification);
-  if (!isValid) {
-    throw new Error("Invalid webhook signature");
-  }
-
-  const paymentStatus = mapTransactionStatus(
-    notification.transaction_status,
-    notification.fraud_status
-  );
-
-  // In production: update transaction in database
-  // await prisma.transaction.update({
-  //   where: { invoiceId: notification.order_id },
-  //   data: { paymentStatus, paidAt: paymentStatus === "PAID" ? new Date() : undefined }
-  // });
-
-  console.log(
-    `[Webhook] Payment ${notification.order_id}: ${notification.transaction_status} → ${paymentStatus}`
-  );
-
-  return {
-    orderId: notification.order_id,
-    paymentStatus,
-    shouldTriggerTopup: paymentStatus === "PAID",
-  };
-}
-
-/**
- * Step 3: Process topup via Apigames after payment confirmed
+ * Step 2: Process topup via Apigames after payment confirmed
  */
 export async function processTopup(
   transaction: TransactionRecord

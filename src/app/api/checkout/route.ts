@@ -20,14 +20,15 @@ const checkoutSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const user = session?.user;
 
-    // Default user ID for guest checkout (optional, based on your business logic)
-    // If you strictly require login, return 401. 
-    // We'll allow guest checkout by generating a random guest ID if not logged in.
-    const userId = user?.id || `guest-${Date.now()}`;
-    const customerName = user?.name || "Guest User";
-    const customerEmail = user?.email || "guest@miqstore.com";
+    // Require authentication — no guest checkout
+    if (!session?.user?.id) {
+      return API_ERRORS.unauthorized();
+    }
+
+    const userId = session.user.id;
+    const customerName = session.user.name || "User";
+    const customerEmail = session.user.email || "";
 
     const body = await req.json();
     const parsed = checkoutSchema.safeParse(body);

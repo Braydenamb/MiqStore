@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Gamepad2, Twitter, Instagram, Facebook } from "lucide-react";
 
 export function Footer({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
@@ -17,10 +16,8 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
             &copy; {new Date().getFullYear()} MiqStore. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            <Link href="/faq" className="hover:text-[var(--color-gold)] transition-colors">FAQ</Link>
-            <Link href="/help" className="hover:text-[var(--color-gold)] transition-colors">Pusat Bantuan</Link>
             <Link href="/terms" className="hover:text-[var(--color-gold)] transition-colors">Syarat dan Ketentuan</Link>
-            <Link href="/privacy" className="hover:text-[var(--color-gold)] transition-colors">Kebijakan Privasi</Link>
+            <Link href="/privacy-policy" className="hover:text-[var(--color-gold)] transition-colors">Kebijakan Privasi</Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -6,8 +7,8 @@ export const dynamic = "force-dynamic";
  * GET /api/invoice/[id]/stream
  * 
  * Server-Sent Events (SSE) endpoint for real-time invoice status updates.
- * The client connects to this endpoint and receives push updates when the 
- * transaction status changes, avoiding the need for constant polling.
+ * Polls the database every 3 seconds for status changes and pushes updates
+ * to the client. Connection closes on terminal status or client disconnect.
  */
 export async function GET(
   req: NextRequest,
@@ -15,7 +16,6 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  // Set up SSE headers
   const headers = new Headers({
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache, no-transform",
@@ -24,41 +24,75 @@ export async function GET(
 
   const stream = new ReadableStream({
     async start(controller) {
-      // Helper to send events
-      const sendEvent = (data: any) => {
-        controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
+      const encoder = new TextEncoder();
+
+      const sendEvent = (data: Record<string, unknown>) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       };
 
       // 1. Send initial connection success
       sendEvent({ type: "connected", invoiceId: id });
 
-      // In production, you would:
-      // A. Fetch initial status from DB and send it
-      // B. Subscribe to Redis PubSub or PostgreSQL LISTEN for updates on this invoice
-      // C. When an update event is received, send it via sendEvent()
-      
-      // Since this is a demo, we will simulate receiving an update from a webhook
-      // after a few seconds.
-      let mockState = 0;
-      
-      const interval = setInterval(() => {
-        mockState++;
-        
-        if (mockState === 1) {
-          sendEvent({ type: "update", status: "paid" });
-        } else if (mockState === 2) {
-          sendEvent({ type: "update", status: "processing" });
-        } else if (mockState === 3) {
-          sendEvent({ type: "update", status: "success" });
-          clearInterval(interval);
-          controller.close();
+      // 2. Send initial status from DB
+      try {
+        const initialTx = await prisma.transaction.findUnique({
+          where: { invoiceId: id },
+          select: { status: true },
+        });
+
+        if (initialTx) {
+          sendEvent({ type: "update", status: initialTx.status.toLowerCase() });
+
+          // If already terminal, close immediately
+          if (["SUCCESS", "FAILED", "EXPIRED", "REFUNDED"].includes(initialTx.status)) {
+            controller.close();
+            return;
+          }
         }
-      }, 4000);
+      } catch {
+        sendEvent({ type: "error", message: "Failed to fetch initial status" });
+      }
+
+      // 3. Poll DB for status changes
+      let lastStatus = "";
+      const interval = setInterval(async () => {
+        try {
+          const tx = await prisma.transaction.findUnique({
+            where: { invoiceId: id },
+            select: { status: true, providerRef: true },
+          });
+
+          if (!tx) {
+            sendEvent({ type: "error", message: "Invoice not found" });
+            clearInterval(interval);
+            controller.close();
+            return;
+          }
+
+          const currentStatus = tx.status.toLowerCase();
+
+          if (currentStatus !== lastStatus) {
+            lastStatus = currentStatus;
+            sendEvent({
+              type: "update",
+              status: currentStatus,
+              providerRef: tx.providerRef || undefined,
+            });
+          }
+
+          // Close on terminal status
+          if (["success", "failed", "expired", "refunded"].includes(currentStatus)) {
+            clearInterval(interval);
+            controller.close();
+          }
+        } catch {
+          // Silently retry on next interval
+        }
+      }, 3000);
 
       // Handle client disconnect
       req.signal.addEventListener("abort", () => {
         clearInterval(interval);
-        // In production: unsubscribe from Redis/DB
       });
     },
   });
