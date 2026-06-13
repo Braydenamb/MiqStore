@@ -1,7 +1,7 @@
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This project runs **Next.js 16.2.6** — APIs, conventions, and file structure may differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
 ## Project Context
@@ -10,15 +10,19 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Goal**: Provide a fast, secure, and visually stunning top-up experience for gamers.
 
 ## Stack Details
-- **Next.js 15**: Use App Router exclusively. Leverage Server Components by default; only use Client Components (`"use client"`) when interactivity or hooks are strictly required.
+- **Next.js 16.2.6**: Use App Router exclusively. Leverage Server Components by default; only use Client Components (`"use client"`) when interactivity or hooks are strictly required.
 - **TypeScript**: Strict mode enabled. No `any` types allowed. Define explicit interfaces for all data models and API responses.
 - **Tailwind v4**: Use the new utility classes and configuration patterns. Avoid inline styles.
 - **shadcn/ui**: Use for base components. Customize to match the "Liquid glass" and "Pastel blue" aesthetic.
 - **Cloudinary**: Used for gallery management, image hosting, and optimization via `next-cloudinary`.
 - **DnD Kit**: Used for drag-and-drop interactions in complex UI components (e.g., admin dashboard widgets).
 - **pnpm**: Always use `pnpm` for package management. Do not use `npm` or `yarn`.
-- **Docker**: Used for local development databases (e.g., PostgreSQL, Redis) to ensure environment consistency.
+- **Docker**: Used for local development databases (PostgreSQL, Redis) to ensure environment consistency.
 - **Playwright**: Write E2E tests for critical flows like checkout, authentication, and top-up processing.
+- **Vitest**: Write unit tests for complex pure functions in `lib/`.
+- **Zustand**: Used for client-side global state (do not duplicate with TanStack Query server-state).
+- **ioredis**: Redis client for rate-limiting and caching. Assume Redis is available via `REDIS_URL`.
+- **Resend**: Transactional email service. Use for order confirmations and notifications.
 
 ## Development Rules
 - **No `any`**: Strictly enforce TypeScript types. Use `unknown` if the type is truly dynamic, and narrow it down with type guards.
@@ -29,29 +33,32 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Clean Architecture**: Separate concerns into clear layers:
   - `components/`: Pure, reusable UI components.
   - `lib/`: Business logic, domain models, and utilities.
-  - `actions/`: External API calls, Database interactions, and Server Actions.
+  - `actions/`: External API calls, database interactions, and Server Actions.
+- **Admin Audit Logging**: All admin mutations (create, update, delete) MUST call `lib/audit-log.ts` to write an `AdminAuditLog` record.
+- **Telemetry over console.log**: Use `lib/telemetry.ts` (`logger.info`, `logger.error`, `metrics.increment`) instead of raw `console.log` in production code paths.
 
 ## Design System (Aesthetic)
 - **Liquid Glass**: Implement glassmorphism using Tailwind's `backdrop-blur`, semi-transparent backgrounds (e.g., `bg-white/10` or `bg-slate-900/40`), and subtle borders (`border-white/20`).
 - **Pastel Blue Theme**: Use a calming, modern pastel blue as the primary accent color. Contrast with deep dark backgrounds for a premium, sleek feel.
-- **Modern Dashboard**: Clean, grid-based layouts with clear typography (e.g., Inter, Playfair Display) and ample whitespace.
-- **Smooth Animation**: Use CSS transitions or `framer-motion` for micro-interactions (hover states, dialog reveals, page transitions). Keep animations quick and subtle (150ms-300ms).
+- **Modern Dashboard**: Clean, grid-based layouts with clear typography (Inter, Playfair Display) and ample whitespace.
+- **Smooth Animation**: Use CSS transitions or `framer-motion` for micro-interactions (hover states, dialog reveals, page transitions). Keep animations quick and subtle (150ms–300ms).
 
 ## Common Errors to Avoid
 - **Path Duplication (`src/src/`)**: Pay strict attention to file paths when creating or modifying files. NEVER accidentally create nested directories like `src/src/middleware.ts` instead of `src/middleware.ts`.
 - **Middleware & Proxy Conflicts**: Next.js will throw a build error if both `middleware.ts` and `proxy.ts` exist. Only use one (or combine their logic appropriately) to avoid the `Both middleware file and proxy file are detected` build crash.
 - **JSX Dynamic Component Names**: When rendering components dynamically from an object map (e.g., icons), ALWAYS extract the component reference to an uppercase variable before rendering. Never use lowercase property access directly in JSX as it will crash the Turbopack build. Example: `const Icon = map[key].icon; <Icon />` (Correct) vs `<map[key].icon />` (Incorrect).
 - **Missing Shadcn Components**: Do not blindly import Shadcn components (e.g. `Checkbox`, `DropdownMenu`) assuming they are installed. Verify their existence first. If a component is missing and causes a build error, either use native HTML elements (e.g. `<input type="checkbox">`, `<select>`) or properly install them using the `pnpm dlx shadcn@latest add` command.
+- **Never read `.env` directly**: Do not open or read the `.env` file using any tool. Assume it exists. Reference `process.env.VARIABLE_NAME` in code.
 
 ## Agent Workflow (Always)
-- **Use Context7**: Query Context7 for any library documentation or API usage (e.g., Next.js 15, Tailwind v4, Prisma) before guessing or assuming based on old training data.
-- **Generate Tests**: Write Playwright tests for new UI flows and unit tests for complex pure functions before considering a task complete.
-- **Generate Documentation**: Keep project documentation (`README.md`, `ADMIN_SETUP.md`) updated. Add TSDoc comments to complex functions and types.
+- **Use Context7**: Query Context7 for any library documentation or API usage (e.g., Next.js 16, Tailwind v4, Prisma v6) before guessing or assuming based on old training data.
+- **Generate Tests**: Write Playwright tests for new UI flows and Vitest unit tests for complex pure functions before considering a task complete.
+- **Generate Documentation**: Keep project documentation (`README.md`, `ADMIN_SETUP.md`, `UPDATES.md`) updated. Add TSDoc comments to complex functions and types.
 - **Follow the 7-Phase Workflow**:
   1. Understand Requirements & Context
   2. Research & Gather Documentation (via Context7)
   3. Plan Architecture & Design
-  4. Implement Foundation (Types/Database schema)
+  4. Implement Foundation (Types / Database schema)
   5. Build UI & Core Functionality
   6. Test & Refine (E2E & Unit tests)
   7. Document & Finalize
@@ -69,6 +76,8 @@ Do NOT implement or suggest the following features as they will slow down develo
 - Ranking Systems
 - Live Feed
 - Notification system (bell icon) — do not show unless real notifications exist
+
+> **Note**: `lib/services/gamification.ts`, `lib/services/subscribers.ts`, and `lib/services/event-bus.ts` exist in the codebase but are **not wired up to any active flows** for MVP. Do not expand or expose these unless the scope changes.
 
 ## Dashboard UX Philosophy
 > **"A regular user only cares about 3 things: top up, check order status, logout."**

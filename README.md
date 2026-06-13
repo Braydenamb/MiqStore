@@ -1,44 +1,76 @@
 # MiqStore 🎮
-**The Next-Generation Game Top-up & Digital Ecosystem**
 
-MiqStore is an ultra-modern, highly scalable, event-driven e-commerce platform dedicated to digital game top-ups, voucher distribution, and reseller ecosystems. Built with the "Liquid Cyber Pastel" design language, it bridges the gap between stunning aesthetic experiences and hardcore enterprise backend architecture.
+**Professional Game Top-Up & Digital Goods Store**
 
-![MiqStore Version](https://img.shields.io/badge/Version-2.0.0-blue.svg)
+MiqStore is a modern, scalable e-commerce platform dedicated to digital game top-ups. Built with the **"Liquid Glass & Pastel Blue"** design language, it delivers a premium, mobile-first experience backed by a clean, maintainable architecture.
+
+![MiqStore Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
-![Prisma](https://img.shields.io/badge/Prisma-ORM-teal.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black.svg)
+![Prisma](https://img.shields.io/badge/Prisma-6.x-teal.svg)
+![React](https://img.shields.io/badge/React-19-61DAFB.svg)
 
 ---
 
-## ✨ Key Features
+## ✨ Implemented Features
 
 ### 1. Liquid Glass Aesthetics
-A cutting-edge UI featuring glassmorphism, dynamic gradients, smooth micro-animations, and hyper-responsive layouts. The platform uses Aceternity UI, Magic UI, and Framer Motion to instantly WOW users and build trust through premium visual fidelity.
+A cutting-edge UI featuring glassmorphism (`backdrop-blur`, semi-transparent backgrounds), dynamic gradients, smooth micro-animations (Framer Motion), and hyper-responsive layouts. Built with shadcn/ui on top of Tailwind v4.
 
-### 2. Multi-Provider Smart Routing 🚦
-Never run out of stock. MiqStore features a dynamic routing engine that tests multiple backend providers (e.g., Apigames, Digiflazz, VIP Reseller) in parallel.
-- **Stock Validation**: Automatically falls back if a provider is out of stock.
-- **Price Optimization**: Dynamically selects the cheapest provider to maximize profit margins.
+### 2. Role-Based Access Control (RBAC) 🔐
+A four-tier RBAC system: `USER` → `RESELLER` → `ADMIN` → `SUPER_ADMIN`. Middleware strictly protects `/admin` routes, redirecting unauthorized users to their dashboard.
 
-### 3. AI Risk Engine & Personalization 🧠
-- **Risk Engine**: Heuristic velocity and anomaly checks block suspicious transactions before they hit payment gateways.
-- **Churn Predictor**: Automatically identifies users slipping away and mints custom retention Promo Codes to win them back.
+### 3. Admin Panel 🛠️
+A full-featured admin dashboard at `/admin` including:
+- **Games & Categories**: Create, edit, reorder game listings with Cloudinary image management.
+- **Product Items**: Manage denominations, pricing, and reseller pricing per SKU.
+- **Orders**: View and update transaction statuses.
+- **Users**: Manage user roles and accounts.
+- **Gallery**: Cloudinary-powered media management.
+- **Settings**: Key-value store for global platform configuration.
+- **System**: Maintenance mode and health controls.
 
-### 4. Enterprise Telemetry 📊
-Fully observable infrastructure. Blind `console.log` statements are replaced with a centralized Telemetry SDK that outputs JSON-structured logs for Grafana Loki, performance span tracking, and Prometheus metric counters.
+### 4. Cloudinary Asset Management 🖼️
+All images are hosted on Cloudinary via `next-cloudinary`. Admin gallery management, upload, and optimization are handled server-side.
+
+### 5. Midtrans Payment Gateway 💳
+Transaction lifecycle: `PENDING` → `PAID` → `PROCESSING` → `SUCCESS`/`FAILED`/`REFUNDED`/`EXPIRED`. Webhook-based payment confirmation integrated via Midtrans.
+
+### 6. Transaction Engine
+An event-driven transaction service (`lib/services/transaction.ts`) with:
+- Provider routing (`lib/services/provider-router.ts`) via `Apigames` adapter
+- EventBus (`lib/services/event-bus.ts`) for decoupled post-transaction workflows
+- Rate limiting (`lib/rate-limit.ts`) via `ioredis` (Redis)
+
+### 7. Enterprise Telemetry 📊
+Centralized structured logging via `lib/telemetry.ts`. JSON-structured output replaces raw `console.log` for production observability.
+
+### 8. Admin Audit Logging
+All admin mutations are recorded in `AdminAuditLog` for full accountability and compliance traceability.
+
+### 9. SEO & PWA Ready
+Dynamic metadata, sitemaps (`/sitemap.xml`), robots (`/robots.txt`), and PWA service worker registration.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 & Framer Motion
-- **Image & Asset Management**: Cloudinary (`next-cloudinary`)
-- **Package Manager**: pnpm
-- **Database**: PostgreSQL with Prisma ORM
-- **Containerization**: Docker (Local DBs & Deployment)
-- **Testing**: Playwright (E2E Validation) & Vitest (Unit)
+| Layer | Technology |
+|---|---|
+| Framework | [Next.js 16.2.6](https://nextjs.org/) (App Router) |
+| Language | TypeScript 5 (strict mode) |
+| Styling | Tailwind CSS v4 + Framer Motion |
+| UI Components | shadcn/ui + Radix UI |
+| Image Management | Cloudinary (`next-cloudinary`) |
+| Package Manager | `pnpm` |
+| Database | PostgreSQL (via Neon) + Prisma ORM v6 |
+| Auth | NextAuth v4 (`@auth/prisma-adapter`) |
+| Client State | Zustand + TanStack Query v5 |
+| Email | Resend |
+| Cache / Rate Limit | Redis (`ioredis`) |
+| Containerization | Docker (local dev databases) |
+| Testing | Playwright (E2E) + Vitest (Unit) |
+| Animations | Framer Motion + GSAP + Lenis |
 
 ---
 
@@ -47,7 +79,7 @@ Fully observable infrastructure. Blind `console.log` statements are replaced wit
 ### Prerequisites
 - Node.js 20+
 - pnpm
-- Docker (for local PostgreSQL instance)
+- Docker (for local PostgreSQL & Redis)
 
 ### Installation
 
@@ -63,31 +95,82 @@ Fully observable infrastructure. Blind `console.log` statements are replaced wit
    ```
 
 3. **Configure Environment Variables:**
-   Copy `.env.example` to `.env` and fill in your keys.
+   Copy `.env.example` to `.env` and fill in all required keys.
 
-4. **Initialize Database:**
+4. **Start local services (PostgreSQL + Redis):**
    ```bash
-   pnpm prisma generate
-   pnpm prisma db push
+   docker compose up -d
    ```
 
-5. **Run the Development Server:**
+5. **Initialize Database:**
+   ```bash
+   pnpm db:generate
+   pnpm db:push
+   ```
+
+6. **Run the Development Server:**
    ```bash
    pnpm dev
    ```
+
+### Useful Scripts
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start dev server |
+| `pnpm build` | Generate Prisma client + production build |
+| `pnpm db:migrate` | Run Prisma migrations |
+| `pnpm db:seed` | Seed the database |
+| `pnpm db:studio` | Open Prisma Studio |
+| `pnpm test` | Run Vitest unit tests |
 
 ---
 
 ## 🤖 Developer & Agent Workflow
 
-Modern AI coding agents (and human developers) must follow our **7-Phase Structured Roadmap** when undertaking major refactoring or feature implementation:
+AI coding agents and human developers must follow the **7-Phase Structured Workflow** for major features or refactoring:
 
-1. **Analyze project structure**
-2. **Generate improvement roadmap** (Implementation Plan)
-3. **Redesign / Implement UI and Logic**
-4. **Improve performance**
-5. **Add tests** (Playwright/Vitest)
-6. **Prepare Vercel deployment**
-7. **Generate documentation**
+1. **Understand Requirements & Context**
+2. **Research & Gather Documentation** (via Context7 MCP)
+3. **Plan Architecture & Design**
+4. **Implement Foundation** (Types / Database schema)
+5. **Build UI & Core Functionality**
+6. **Test & Refine** (Playwright E2E + Vitest unit tests)
+7. **Document & Finalize**
 
-For detailed AI Agent configurations, please refer to the `AGENTS.md` and `RULES.md` files at the root of this project.
+For full agent configuration, coding standards, and UX philosophy, see:
+- [`AGENTS.md`](./AGENTS.md) — Agent rules, stack details, and design system
+- [`RULES.md`](./RULES.md) — Strict coding rules for all contributors
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — Technical architecture and service layer
+- [`engineering.md`](./engineering.md) — Database schema, gotchas, and patterns
+- [`ADMIN_SETUP.md`](./ADMIN_SETUP.md) — How to provision an admin account
+- [`ASSET_GOVERNANCE.md`](./ASSET_GOVERNANCE.md) — Image asset standards
+
+---
+
+## 🗺 Route Map
+
+| Route | Description |
+|---|---|
+| `/` | Homepage (game catalog) |
+| `/games/[slug]` | Game top-up page |
+| `/top-up/[slug]` | Top-up flow |
+| `/checkout` | Order checkout |
+| `/invoice/[id]` | Invoice / order confirmation |
+| `/dashboard` | User dashboard (orders, profile, favorites) |
+| `/auth/login` | Login page |
+| `/admin` | Admin panel (ADMIN+ only) |
+
+---
+
+## 📖 Documentation
+
+| File | Purpose |
+|---|---|
+| `AGENTS.md` | AI agent rules and coding standards |
+| `RULES.md` | Strict development rules |
+| `ARCHITECTURE.md` | Service layer architecture |
+| `engineering.md` | DB schema, gotchas, performance patterns |
+| `ADMIN_SETUP.md` | Provisioning admin accounts via SQL |
+| `ASSET_GOVERNANCE.md` | Image format, naming, and size standards |
+| `UPDATES.md` | Deferred features and update log |
