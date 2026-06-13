@@ -7,6 +7,7 @@ import { Search, User, Menu, X, Home, Gamepad2, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import MiqStoreLogo from "@/components/ui/logo";
 
 const NAV_LINKS = [
   { label: "Games", href: "/games" },
@@ -30,7 +31,11 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
           
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img src={logoUrl || "/icons/logo.png"} alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+            ) : (
+              <MiqStoreLogo className="h-8 w-auto text-[hsl(var(--primary))]" />
+            )}
             <span className="font-heading text-2xl font-bold tracking-tight text-[hsl(var(--primary))]">
               MiqStore
             </span>
@@ -119,7 +124,11 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
             >
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
-                  <img src={logoUrl || "/icons/logo.png"} alt="MiqStore Logo" className="h-6 w-auto object-contain" />
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="MiqStore Logo" className="h-6 w-auto object-contain" />
+                  ) : (
+                    <MiqStoreLogo className="h-6 w-auto text-[hsl(var(--primary))]" />
+                  )}
                   <span className="font-heading text-xl font-bold tracking-tight text-[hsl(var(--primary))]">
                     MiqStore
                   </span>

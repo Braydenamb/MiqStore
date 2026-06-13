@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useSettings } from "@/components/providers/settings-provider";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import MiqStoreLogo from "@/components/ui/logo";
 
 interface LoadingScreenProps {
   message?: string;
@@ -97,11 +98,15 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="absolute inset-0 bg-[hsl(var(--primary))]/20 blur-3xl rounded-full -z-10"
             />
-            <img
-              src={logoUrl}
-              alt="MiqStore Logo"
-              className="w-20 h-auto sm:w-24 drop-shadow-[0_4px_20px_rgba(7,59,76,0.25)]"
-            />
+            {logoUrl && logoUrl !== "/icons/logo.png" ? (
+              <img
+                src={logoUrl}
+                alt="MiqStore Logo"
+                className="w-20 h-auto sm:w-24 drop-shadow-[0_4px_20px_rgba(7,59,76,0.25)]"
+              />
+            ) : (
+              <MiqStoreLogo className="w-20 h-auto sm:w-24 text-[hsl(var(--primary))] drop-shadow-[0_4px_20px_rgba(7,59,76,0.25)]" />
+            )}
           </motion.div>
         </div>
 

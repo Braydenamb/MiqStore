@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
+import MiqStoreLogo from "@/components/ui/logo";
 
 const navLinks = [
   { label: "Beranda", href: "/dashboard", icon: LayoutDashboard },
@@ -59,11 +60,15 @@ export default function DashboardLayoutClient({
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 px-5 py-5 border-b border-[hsl(var(--border))]/50">
-          <img
-            src={logoUrl || "/icons/logo.png"}
-            alt="MiqStore Logo"
-            className="h-10 w-auto object-contain"
-          />
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="MiqStore Logo"
+              className="h-10 w-auto object-contain"
+            />
+          ) : (
+            <MiqStoreLogo className="h-10 w-auto text-[hsl(var(--foreground))]" />
+          )}
           <span className="font-heading text-3xl font-bold tracking-tight text-[hsl(var(--foreground))]">
             {APP_NAME}
           </span>
@@ -125,11 +130,15 @@ export default function DashboardLayoutClient({
         <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-8 h-20 border-b border-[hsl(var(--border))]/50 bg-[hsl(var(--background))]/95 backdrop-blur-md shrink-0">
           {/* Mobile: Logo */}
           <Link href="/" className="flex items-center gap-2 lg:hidden">
-            <img
-              src={logoUrl || "/icons/logo.png"}
-              alt="MiqStore Logo"
-              className="h-10 w-auto object-contain"
-            />
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt="MiqStore Logo"
+                className="h-10 w-auto object-contain"
+              />
+            ) : (
+              <MiqStoreLogo className="h-10 w-auto text-[hsl(var(--foreground))]" />
+            )}
             <span className="font-heading font-bold text-[hsl(var(--foreground))]">{APP_NAME}</span>
           </Link>
 
