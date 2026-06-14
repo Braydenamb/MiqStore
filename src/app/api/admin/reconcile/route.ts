@@ -139,6 +139,13 @@ export async function GET(_req: NextRequest) {
           };
 
           if (newStatus === "FAILED" && tx.status !== "FAILED") {
+            // OCC Lock
+            const claimLock = await prisma.transaction.updateMany({
+               where: { id: tx.id, status: tx.status },
+               data: { status: "FAILED" }
+            });
+            if (claimLock.count === 0) return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: false, note: "Race condition prevented" };
+
             try {
               const { refundTransaction } = await import("@/lib/services/midtrans");
               await refundTransaction(tx.invoiceId, tx.total, `Reconciliation Failed: ${providerStatus.message}`);
@@ -151,8 +158,8 @@ export async function GET(_req: NextRequest) {
             }
           }
 
-          await prisma.transaction.update({
-            where: { id: tx.id },
+          await prisma.transaction.updateMany({
+            where: { id: tx.id, status: tx.status },
             data: {
               status: finalStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
               providerRef: providerStatus.trxId || tx.providerRef,

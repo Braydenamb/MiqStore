@@ -53,7 +53,7 @@ export interface ApigamesStatusResponse {
 const APIGAMES_CONFIG = {
   baseUrl: process.env.APIGAMES_BASE_URL || "https://v1.apigames.id",
   merchantId: process.env.APIGAMES_MERCHANT_ID || "",
-  apiKey: process.env.APIGAMES_API_KEY || "",
+  apiKey: process.env.APIGAMES_SECRET_KEY || "",
   webhookSecret: process.env.APIGAMES_WEBHOOK_SECRET || "",
 } as const;
 

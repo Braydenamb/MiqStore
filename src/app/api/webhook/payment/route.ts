@@ -164,8 +164,8 @@ export async function POST(req: NextRequest) {
             ? "PROCESSING" 
             : "SUCCESS";
 
-          await prisma.transaction.update({
-            where: { invoiceId: order_id },
+          const finalUpdate = await prisma.transaction.updateMany({
+            where: { invoiceId: order_id, status: "PROCESSING" },
             data: {
               status: finalStatus,
               providerRef: topupResult.providerTrxId,
@@ -177,9 +177,25 @@ export async function POST(req: NextRequest) {
             },
           });
 
+          if (finalUpdate.count === 0) {
+             logger.warn("Sync completion aborted: async webhook already processed this transaction", { orderId: order_id });
+             return apiSuccess({ status: "RACE_CONDITION_PREVENTED", duplicate: true });
+          }
+
           logger.info("Topup SUCCESS", { orderId: order_id, message: topupResult.message });
         } else {
           // Topup failed — mark as FAILED but payment was received. Issue automated refund.
+          
+          // Claim lock before refunding
+          const claimLock = await prisma.transaction.updateMany({
+            where: { invoiceId: order_id, status: "PROCESSING" },
+            data: { status: "FAILED" }
+          });
+          
+          if (claimLock.count === 0) {
+             logger.warn("Refund aborted: async webhook already processed this transaction", { orderId: order_id });
+             return apiSuccess({ status: "RACE_CONDITION_PREVENTED", duplicate: true });
+          }
           let refundStatus = "pending_manual_refund";
           try {
             await refundTransaction(order_id, transaction.total, `Topup Failed: ${topupResult.message}`);
@@ -189,11 +205,12 @@ export async function POST(req: NextRequest) {
             logger.error(`Automated refund failed for ${order_id}`, { error: refundErr instanceof Error ? refundErr.message : refundErr });
           }
 
-          await prisma.transaction.update({
-            where: { invoiceId: order_id },
+          await prisma.transaction.updateMany({
+            // Status is now FAILED due to the claim lock
+            where: { invoiceId: order_id, status: "FAILED" },
             data: {
               status: refundStatus === "refunded_automatically" ? "REFUNDED" : "FAILED",
-              providerData: { error: topupResult.message, needsRefund: refundStatus !== "refunded_automatically", refundStatus },
+              providerData: { error: topupResult.message, needsRefund: refundStatus !== "refunded_automatically", refundStatus } as any,
               updatedAt: new Date(),
             },
           });

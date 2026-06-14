@@ -86,6 +86,13 @@ export async function POST(req: NextRequest) {
     };
 
     if (internalStatus === "FAILED" && transaction.status !== "FAILED") {
+      // OCC Lock
+      const claimLock = await prisma.transaction.updateMany({
+         where: { id: transaction.id, status: transaction.status },
+         data: { status: "FAILED" }
+      });
+      if (claimLock.count === 0) return apiSuccess({ duplicate: true }, { message: "Race condition prevented" });
+
       try {
         const { refundTransaction } = await import("@/lib/services/midtrans");
         await refundTransaction(ref_id, transaction.total, `Async Provider Failed: ${message}`);
@@ -98,8 +105,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await prisma.transaction.update({
-      where: { id: transaction.id },
+    await prisma.transaction.updateMany({
+      where: { id: transaction.id, status: transaction.status },
       data: {
         status: finalStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
         providerRef: trx_id || transaction.providerRef,
