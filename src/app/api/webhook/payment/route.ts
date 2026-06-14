@@ -1,194 +1,132 @@
 import { NextRequest } from "next/server";
-import { apiSuccess, API_ERRORS } from "@/lib/api-response";
-import {
-  webhookLimiter,
-  getClientIP,
-  rateLimitResponse,
-} from "@/lib/rate-limit";
-import {
-  verifyNotificationSignature,
-  mapTransactionStatus,
-  refundTransaction,
-  type MidtransNotification,
-  type MidtransTransactionStatus,
-} from "@/lib/services/midtrans";
-import { metrics } from "@/lib/telemetry";
-import { processTopup, type TransactionRecord } from "@/lib/services/transaction";
 import { prisma } from "@/lib/prisma";
+import { apiSuccess, apiError } from "@/lib/api-response";
 import { logger } from "@/lib/telemetry";
+import { routeTopupOrder } from "@/lib/services/provider-router";
+import {
+  type IpaymuNotification,
+  type IpaymuTransactionStatus,
+  mapTransactionStatus,
+} from "@/lib/services/ipaymu";
 
 /**
- * POST /api/webhook/payment
- *
- * Handle payment gateway callbacks from Midtrans.
- * Security:
- *  1. Rate limiting (100 req/min)
- *  2. Signature verification (SHA512)
- *  3. Idempotency check (by order_id + status)
+ * Handle payment gateway callbacks from iPaymu.
  *
  * Flow:
- *  1. Verify signature
- *  2. Map Midtrans status → internal status
- *  3. Update DB transaction status
- *  4. If PAID → trigger processTopup() via Provider Router
- *  5. If topup succeeds → mark SUCCESS, fire TRANSACTION_COMPLETED
+ *  1. Receive webhook POST
+ *  2. Map iPaymu status_code → internal status
+ *  3. Idempotency Check (Has this transaction already been processed?)
+ *  4. Database Transaction (OCC)
+ *  5. If PAID, trigger Provider fulfillment
+ *  6. Return 200 OK
  */
 export async function POST(req: NextRequest) {
   try {
-    // Rate limit
-    const ip = getClientIP(req);
-    const rateResult = await webhookLimiter.check(ip);
-    if (!rateResult.allowed) {
-      return rateLimitResponse(rateResult, webhookLimiter);
+    // iPaymu sends form-data or JSON. We will parse it.
+    // Sometimes it's x-www-form-urlencoded
+    const contentType = req.headers.get("content-type") || "";
+    let body: IpaymuNotification;
+
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      const formData = await req.formData();
+      body = Object.fromEntries(formData) as unknown as IpaymuNotification;
+    } else {
+      body = (await req.json()) as IpaymuNotification;
     }
 
-    const body = (await req.json()) as MidtransNotification;
+    const { reference_id, status_code, trx_id } = body;
 
-    // Validate required fields
-    const { order_id, transaction_status, status_code, gross_amount, signature_key } = body;
-
-    if (!order_id || !transaction_status) {
-      return API_ERRORS.validation({
-        order_id: !order_id ? ["order_id wajib"] : [],
-        transaction_status: !transaction_status ? ["transaction_status wajib"] : [],
-      });
+    if (!reference_id) {
+      return apiError("Missing reference_id", { status: 400 });
     }
 
-    // Verify signature (skip in dev if no server key configured)
-    const isValidSignature = verifyNotificationSignature(body);
-    if (!isValidSignature) {
-      logger.warn("Invalid webhook signature", { orderId: order_id });
-      return API_ERRORS.unauthorized();
-    }
+    const order_id = reference_id;
 
-    // Map gateway status to internal status
-    const internalStatus: MidtransTransactionStatus = mapTransactionStatus(
-      transaction_status,
-      body.fraud_status
-    );
+    logger.info("iPaymu Webhook Received", { order_id, status_code, trx_id });
 
-    // 1. Find transaction by order_id (invoiceId)
+    // Find the transaction in our DB
     const transaction = await prisma.transaction.findUnique({
       where: { invoiceId: order_id },
-      include: { payment: true },
+      include: {
+        product: true,
+        productItem: true,
+      },
     });
 
     if (!transaction) {
-      logger.warn("Webhook transaction not found", { orderId: order_id });
-      return API_ERRORS.notFound("Transaction not found");
+      logger.error("Transaction not found for webhook", { order_id });
+      return apiError("Transaction not found", { status: 404 });
     }
 
-    // 2. Idempotency: skip if already at SAME status or already TERMINAL
-    // Terminal states must never be overwritten — a refunded/successful order
-    // must not be re-processed by a duplicate or out-of-order webhook.
-    const TERMINAL_DB_STATUSES = ["SUCCESS", "FAILED", "REFUNDED", "EXPIRED"];
-    if (
-      transaction.status === internalStatus ||
-      TERMINAL_DB_STATUSES.includes(transaction.status)
-    ) {
-      logger.info("Webhook skipped: already terminal or duplicate", {
-        orderId: order_id,
-        currentStatus: transaction.status,
-        incomingStatus: internalStatus,
-      });
-      return apiSuccess({ orderId: order_id, status: transaction.status, duplicate: true });
+    const internalStatus: IpaymuTransactionStatus = mapTransactionStatus(status_code);
+
+    // ------------------------------------------------------------------
+    // Phase 1: Idempotency & OCC Claim
+    // ------------------------------------------------------------------
+    if (transaction.status === "SUCCESS" || transaction.status === "FAILED" || transaction.status === "REFUNDED") {
+      logger.info("Webhook ignored: Transaction already in terminal state", { order_id, status: transaction.status });
+      return apiSuccess({ status: "IGNORED" });
     }
 
-    // 3. Update payment status in DB
-    const updateData: Record<string, unknown> = {
-      status: internalStatus,
-      updatedAt: new Date(),
-    };
-
-    // Also update the Payment record
-    if (transaction.payment) {
-      await prisma.payment.update({
-        where: { transactionId: transaction.id },
-        data: {
-          status: internalStatus === "PAID" || internalStatus === "SUCCESS" ? "PAID" 
-                : internalStatus === "FAILED" || internalStatus === "EXPIRED" ? "FAILED" 
-                : "PENDING",
-          paidAt: internalStatus === "PAID" ? new Date() : undefined,
-          callbackData: JSON.parse(JSON.stringify(body)),
-          externalId: body.transaction_id,
-        },
-      });
+    // Only process state changes
+    if (transaction.status === internalStatus) {
+      return apiSuccess({ status: "NO_CHANGE" });
     }
 
-    // 4. If payment confirmed → trigger topup via Provider Router
+    // Attempt to claim the transaction for processing
+    const claimResult = await prisma.transaction.updateMany({
+      where: { invoiceId: order_id, status: transaction.status },
+      data: { status: internalStatus, updatedAt: new Date() },
+    });
+
+    if (claimResult.count === 0) {
+      logger.warn("Race condition prevented: Webhook claim failed", { order_id });
+      return apiSuccess({ status: "RACE_CONDITION_PREVENTED", duplicate: true });
+    }
+
+    // ------------------------------------------------------------------
+    // Phase 2: Fulfillment (If Paid)
+    // ------------------------------------------------------------------
     if (internalStatus === "PAID") {
-      updateData.status = "PROCESSING";
-
-      // Use updateMany for Optimistic Concurrency Control (OCC) to prevent TOCTOU
-      // if two webhooks arrive simultaneously.
-      const updateResult = await prisma.transaction.updateMany({
-        where: { invoiceId: order_id, status: transaction.status },
-        data: updateData,
-      });
-
-      if (updateResult.count === 0) {
-        logger.warn("TOCTOU webhook concurrency prevented", { orderId: order_id });
-        return apiSuccess({ duplicate: true, status: "RACE_CONDITION_PREVENTED" });
-      }
-
-      logger.info("Payment confirmed, triggering topup", { orderId: order_id });
-
-      // Build a TransactionRecord for processTopup
-      const providerData = (transaction.providerData ?? {}) as Record<string, string>;
-      const txRecord: TransactionRecord = {
-        id: transaction.id,
-        invoiceId: transaction.invoiceId,
-        userId: transaction.userId,
-        gameSlug: providerData.gameSlug || "",
-        gameName: providerData.gameName || "",
-        productCode: providerData.productCode || transaction.productItemId,
-        productName: providerData.productName || "",
-        gameUserId: transaction.gameUserId || "",
-        gameZoneId: transaction.gameZoneId || undefined,
-        price: transaction.price,
-        fee: transaction.fee,
-        discount: transaction.discount,
-        total: transaction.total,
-        paymentMethod: transaction.payment?.method || "",
-        paymentStatus: "PAID",
-        providerStatus: "processing",
-        createdAt: transaction.createdAt,
-        updatedAt: transaction.updatedAt,
-      };
-
-      // Trigger topup and wait for it to complete to ensure serverless doesn't kill the process
       try {
-        const topupResult = await processTopup(txRecord);
-        if (topupResult.success) {
-          const finalStatus = topupResult.status === "processing" || topupResult.status === "pending" || topupResult.message.includes("Timeout") 
-            ? "PROCESSING" 
-            : "SUCCESS";
+        // Log payment metadata
+        await prisma.payment.updateMany({
+          where: { transactionId: transaction.id },
+          data: {
+            status: "PAID",
+            updatedAt: new Date(),
+          },
+        });
 
-          const finalUpdate = await prisma.transaction.updateMany({
-            where: { invoiceId: order_id, status: "PROCESSING" },
+        // Trigger Provider
+        // routeTopupOrder(productCode, gameUserId, zoneId, invoiceId)
+        const topupResult = await routeTopupOrder(
+          (transaction as any).productItem?.providerCode || "",
+          transaction.gameUserId || "",
+          transaction.gameZoneId || undefined,
+          transaction.invoiceId
+        );
+
+        if (topupResult.success) {
+          // Topup Success
+          await prisma.transaction.update({
+            where: { invoiceId: order_id },
             data: {
-              status: finalStatus,
-              providerRef: topupResult.providerTrxId,
-              providerData: {
-                serialNumber: topupResult.serialNumber,
-                message: topupResult.message,
-              },
+              status: "SUCCESS",
+              providerData: { sn: topupResult.serialNumber, trxId: topupResult.providerTrxId } as any,
               updatedAt: new Date(),
             },
           });
-
-          if (finalUpdate.count === 0) {
-             logger.warn("Sync completion aborted: async webhook already processed this transaction", { orderId: order_id });
-             return apiSuccess({ status: "RACE_CONDITION_PREVENTED", duplicate: true });
-          }
-
-          logger.info("Topup SUCCESS", { orderId: order_id, message: topupResult.message });
+          logger.info("Fulfillment successful via webhook", { order_id, sn: topupResult.serialNumber });
         } else {
-          // Topup failed — mark as FAILED but payment was received. Issue automated refund.
+          // Topup Failed
+          logger.error("Fulfillment failed via webhook", { order_id, reason: topupResult.message });
+          
+          let refundStatus = "pending_manual_refund";
           
           // Claim lock before refunding
           const claimLock = await prisma.transaction.updateMany({
-            where: { invoiceId: order_id, status: "PROCESSING" },
+            where: { invoiceId: order_id, status: "PAID" },
             data: { status: "FAILED" }
           });
           
@@ -196,80 +134,38 @@ export async function POST(req: NextRequest) {
              logger.warn("Refund aborted: async webhook already processed this transaction", { orderId: order_id });
              return apiSuccess({ status: "RACE_CONDITION_PREVENTED", duplicate: true });
           }
-          let refundStatus = "pending_manual_refund";
-          try {
-            await refundTransaction(order_id, transaction.total, `Topup Failed: ${topupResult.message}`);
-            refundStatus = "refunded_automatically";
-            logger.info(`Automated refund successful for ${order_id}`);
-          } catch (refundErr) {
-            logger.error(`Automated refund failed for ${order_id}`, { error: refundErr instanceof Error ? refundErr.message : refundErr });
-          }
 
           await prisma.transaction.updateMany({
             // Status is now FAILED due to the claim lock
             where: { invoiceId: order_id, status: "FAILED" },
             data: {
-              status: refundStatus === "refunded_automatically" ? "REFUNDED" : "FAILED",
-              providerData: { error: topupResult.message, needsRefund: refundStatus !== "refunded_automatically", refundStatus } as any,
+              status: "FAILED",
+              providerData: { error: topupResult.message, needsRefund: true, refundStatus } as any,
               updatedAt: new Date(),
             },
           });
-          logger.error(`Topup FAILED for ${order_id}, refund status: ${refundStatus}`, { message: topupResult.message, orderId: order_id });
-
-          // Emit metric so dashboards/alerts can detect unresolved manual refunds
-          if (refundStatus !== "refunded_automatically") {
-            metrics.increment("manual_refund_required");
-            logger.error("[ALERT] Manual refund required — automated refund failed", undefined, {
-              orderId: order_id,
-              amount: transaction.total,
-              reason: topupResult.message,
-            });
-          }
         }
       } catch (err) {
-        logger.error(`Post-topup DB update or processTopup failed for ${order_id}`, { error: err instanceof Error ? err.stack : err });
+        logger.error("Unhandled exception during webhook fulfillment", {
+          order_id,
+          error: String(err),
+        });
+        
+        // Failsafe: Ensure it doesn't get stuck in PAID without fulfillment
+        await prisma.transaction.updateMany({
+            where: { invoiceId: order_id, status: "PAID" },
+            data: {
+                status: "FAILED",
+                providerData: { error: "Unhandled Exception", needsRefund: true } as any,
+                updatedAt: new Date()
+            }
+        });
       }
-
-      // Return after topup is fully processed
-      return apiSuccess(
-        {
-          orderId: order_id,
-          status: "SUCCESS", // Or FAILED depending on topupResult, but the webhook itself is processed successfully
-          processedAt: new Date().toISOString(),
-        },
-        {
-          message: "Payment confirmed, topup processed",
-          headers: webhookLimiter.headers(rateResult),
-        }
-      );
     }
 
-    // Non-PAID statuses: just update and return
-    await prisma.transaction.update({
-      where: { invoiceId: order_id },
-      data: updateData,
-    });
-
-    logger.info("Webhook processed", {
-      orderId: order_id,
-      gatewayStatus: transaction_status,
-      internalStatus,
-      amount: gross_amount,
-    });
-
-    return apiSuccess(
-      {
-        orderId: order_id,
-        status: internalStatus,
-        processedAt: new Date().toISOString(),
-      },
-      {
-        message: "Webhook processed successfully",
-        headers: webhookLimiter.headers(rateResult),
-      }
-    );
+    return apiSuccess({ status: "PROCESSED", internalStatus });
   } catch (error) {
-    logger.error("Payment Webhook fatal error", { error: error instanceof Error ? error.stack : error });
-    return API_ERRORS.internal();
+    logger.error("Webhook exception", { error: String(error) });
+    return apiError("Internal server error", { status: 500 });
   }
 }

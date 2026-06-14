@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
       providerMessage: message || "",
     };
 
-    if (internalStatus === "FAILED" && transaction.status !== "FAILED") {
+    if (internalStatus === "FAILED" && (transaction.status === "PAID" || transaction.status === "PROCESSING")) {
       // OCC Lock
       const claimLock = await prisma.transaction.updateMany({
          where: { id: transaction.id, status: transaction.status },
@@ -94,8 +94,8 @@ export async function POST(req: NextRequest) {
       if (claimLock.count === 0) return apiSuccess({ duplicate: true }, { message: "Race condition prevented" });
 
       try {
-        const { refundTransaction } = await import("@/lib/services/midtrans");
-        await refundTransaction(ref_id, transaction.total, `Async Provider Failed: ${message}`);
+        const { refundTransaction } = await import("@/lib/services/ipaymu");
+        await refundTransaction(ref_id, `Async Provider Failed: ${message}`);
         finalStatus = "REFUNDED";
         providerDataUpdate = { ...providerDataUpdate, needsRefund: false, refundStatus: "refunded_automatically" } as any;
         logger.info(`Automated async refund successful for ${ref_id}`);

@@ -176,8 +176,8 @@ export async function routeTopupOrder(
     logger.info(`Provider selected!`, { provider: provider.name, latency, price });
 
     // 4. Execute Topup
+    const startTime = Date.now();
     try {
-      const startTime = Date.now();
       const order = await provider.createOrder(productCode, gameUserId, zoneId, invoiceId);
       const executionTime = Date.now() - startTime;
       
@@ -197,7 +197,7 @@ export async function routeTopupOrder(
       
       if (e.name === "AbortError" || e.name === "TimeoutError" || e.message?.includes("timeout")) {
         logger.error(`FATAL TIMEOUT: Do not fallback! Assumed processing on ${provider.name}`);
-        span.end("timeout");
+        span.end("error");
         return {
           success: true,
           providerName: provider.name,

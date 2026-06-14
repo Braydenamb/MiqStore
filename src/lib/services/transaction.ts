@@ -3,7 +3,7 @@
  *
  * Coordinates the full lifecycle of a topup transaction:
  *  1. Validate input
- *  2. Create payment via Midtrans
+ *  2. Create payment via iPaymu
  *  3. Store transaction in DB (pending)
  *  4. On payment confirmed → Place order via Apigames
  *  5. On topup confirmed → Mark as success
@@ -18,8 +18,8 @@ import { logger, metrics, tracing } from "../telemetry";
 import { routeTopupOrder } from "./provider-router";
 import { generateInvoiceId } from "@/lib/utils";
 import type {
-  MidtransTransactionStatus,
-} from "./midtrans";
+  IpaymuTransactionStatus,
+} from "./ipaymu";
 
 /* ─── Types ─── */
 export interface CreateTransactionInput {
@@ -53,7 +53,7 @@ export interface TransactionRecord {
   discount: number;
   total: number;
   paymentMethod: string;
-  paymentStatus: MidtransTransactionStatus;
+  paymentStatus: IpaymuTransactionStatus;
   providerStatus: "idle" | "pending" | "processing" | "success" | "failed";
   providerTrxId?: string;
   serialNumber?: string;
@@ -183,7 +183,7 @@ export async function createTransaction(
       },
       payment: {
         create: {
-          gateway: "midtrans",
+          gateway: "ipaymu",
           method: input.paymentMethod,
           amount: total,
           status: "PENDING",
@@ -257,7 +257,7 @@ export async function processTopup(
 
 /**
  * Step 4 (Wallet Ecosystem): Instant Checkout via Internal Wallet
- * Bypasses Midtrans completely.
+ * Bypasses payment gateway completely.
  * (OUT OF SCOPE FOR MVP)
  */
 // export async function handleWalletCheckout(

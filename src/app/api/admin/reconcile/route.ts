@@ -59,19 +59,19 @@ export async function GET(_req: NextRequest) {
         }
 
         if (tx.status === "PENDING") {
-          // 1. Sweep missing Midtrans webhooks
-          const { getTransactionStatus, mapTransactionStatus } = await import("@/lib/services/midtrans");
-          let midtransStatus;
+          // 1. Sweep missing iPaymu webhooks
+          const { getIpaymuTransactionStatus, mapTransactionStatus } = await import("@/lib/services/ipaymu");
+          let ipaymuStatus;
           try {
-            midtransStatus = await getTransactionStatus(tx.invoiceId);
-          } catch (e) {
-            logger.warn(`Midtrans status not found for ${tx.invoiceId}`);
+            ipaymuStatus = await getIpaymuTransactionStatus(tx.invoiceId);
+          } catch (err) {
+            logger.warn(`iPaymu status not found for ${tx.invoiceId}`);
             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: false };
           }
           
-          const internalMidtransStatus = mapTransactionStatus(midtransStatus.transaction_status, midtransStatus.fraud_status);
+          const internalIpaymuStatus = mapTransactionStatus(ipaymuStatus?.Data?.Status || "0");
           
-          if (internalMidtransStatus === "PAID") {
+          if (internalIpaymuStatus === "PAID") {
              // Simulate webhook flow
              await prisma.transaction.update({
                where: { id: tx.id },
@@ -106,13 +106,14 @@ export async function GET(_req: NextRequest) {
                }
              });
              
-             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: finalStatus, note: "Reconciled from Midtrans & Processed", success: true };
-          } else if (internalMidtransStatus === "EXPIRED" || internalMidtransStatus === "FAILED" || internalMidtransStatus === "REFUNDED") {
-             await prisma.transaction.update({
-               where: { id: tx.id },
-               data: { status: internalMidtransStatus, updatedAt: new Date() }
+             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: finalStatus, note: "Reconciled from iPaymu & Processed", success: true };
+          } else if (internalIpaymuStatus === "EXPIRED" || internalIpaymuStatus === "FAILED" || internalIpaymuStatus === "REFUNDED") {
+             // Mark as expired/failed
+             await prisma.transaction.updateMany({
+               where: { id: tx.id, status: tx.status },
+               data: { status: internalIpaymuStatus, updatedAt: new Date() }
              });
-             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: internalMidtransStatus, note: "Reconciled from Midtrans", success: true };
+             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: internalIpaymuStatus, note: "Reconciled from iPaymu", success: true };
           }
           
           return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: true };
@@ -147,8 +148,8 @@ export async function GET(_req: NextRequest) {
             if (claimLock.count === 0) return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: false, note: "Race condition prevented" };
 
             try {
-              const { refundTransaction } = await import("@/lib/services/midtrans");
-              await refundTransaction(tx.invoiceId, tx.total, `Reconciliation Failed: ${providerStatus.message}`);
+              const { refundTransaction } = await import("@/lib/services/ipaymu");
+              await refundTransaction(tx.invoiceId, `Reconciliation Failed: ${providerStatus.message}`);
               finalStatus = "REFUNDED";
               providerDataUpdate = { ...providerDataUpdate, needsRefund: false, refundStatus: "refunded_automatically" } as any;
               logger.info(`Automated reconcile refund successful for ${tx.invoiceId}`);

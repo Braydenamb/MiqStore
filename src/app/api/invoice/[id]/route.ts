@@ -83,12 +83,12 @@ export async function GET(
       discount: transaction.discount,
       total: transaction.total,
       payment: transaction.payment?.method || "Unknown",
-      paymentGateway: transaction.payment?.gateway || "midtrans",
+      paymentGateway: transaction.payment?.gateway || "ipaymu",
       status: displayStatus,
       providerRef: transaction.providerRef,
       createdAt: transaction.createdAt.toISOString(),
       updatedAt: transaction.updatedAt.toISOString(),
-      // Expiry: 24h from creation (matches Midtrans expiry config)
+      // Expiry: 24h from creation (matches iPaymu expiry config)
       expiredAt: new Date(transaction.createdAt.getTime() + 24 * 60 * 60 * 1000).toISOString(),
     }, { headers: { "Cache-Control": cacheControl } });
   } catch (error) {

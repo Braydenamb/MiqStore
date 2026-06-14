@@ -401,7 +401,7 @@ export const FAQ_ITEMS: FAQItem[] = [
   {
     question: "Apakah aman bertransaksi di MiqStore?",
     answer:
-      "Ya, sangat aman! Kami menggunakan enkripsi SSL, payment gateway resmi (Midtrans & Xendit), dan sistem keamanan berlapis untuk melindungi data dan transaksi kamu.",
+      "Ya, sangat aman! Kami menggunakan enkripsi SSL, payment gateway resmi (iPaymu), dan sistem keamanan berlapis untuk melindungi data dan transaksi kamu.",
   },
   {
     question: "Bagaimana jika top up gagal atau item tidak masuk?",

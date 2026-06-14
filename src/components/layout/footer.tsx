@@ -18,6 +18,8 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <Link href="/terms" className="hover:text-[var(--color-gold)] transition-colors">Syarat dan Ketentuan</Link>
             <Link href="/privacy-policy" className="hover:text-[var(--color-gold)] transition-colors">Kebijakan Privasi</Link>
+            <Link href="/refund-policy" className="hover:text-[var(--color-gold)] transition-colors">Kebijakan Pengembalian</Link>
+            <Link href="/faq" className="hover:text-[var(--color-gold)] transition-colors">FAQ</Link>
           </div>
         </div>
       </div>

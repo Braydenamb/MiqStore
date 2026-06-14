@@ -142,32 +142,16 @@ export default function CheckoutPage() {
         throw new Error(result.error || "Gagal membuat transaksi");
       }
 
-      const { token, invoiceId } = result.data;
-
       // Clear session storage after successful transaction creation
       clearCheckoutStorage();
 
-      // Trigger Midtrans Snap payment modal
-      window.snap.pay(token, {
-        onSuccess: () => {
-          checkoutStore.reset();
-          router.push(`/invoice/${invoiceId}?status=success`);
-        },
-        onPending: () => {
-          router.push(`/invoice/${invoiceId}?status=pending`);
-        },
-        onError: () => {
-          toast.error("Pembayaran gagal atau dibatalkan.");
-          setIsProcessing(false);
-          router.push(`/invoice/${invoiceId}?status=failed`);
-        },
-        onClose: () => {
-          toast.info("Jendela pembayaran ditutup. Pesanan tetap aktif selama 24 jam.");
-          setIsProcessing(false);
-          // Redirect to invoice so user can see pending status
-          router.push(`/invoice/${invoiceId}?status=pending`);
-        },
-      });
+      // iPaymu redirect flow
+      if (result.data.redirectUrl) {
+        window.location.href = result.data.redirectUrl;
+      } else {
+        checkoutStore.reset();
+        router.push(`/invoice/${result.data.invoiceId}`);
+      }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Terjadi kesalahan jaringan";
 

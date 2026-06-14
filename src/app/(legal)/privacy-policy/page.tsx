@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">2. How We Use Your Information</h2>
-            <p>We use the information we collect to process transactions securely via Midtrans, communicate with you about your orders, and prevent fraud using automated systems.</p>
+            <p>We use the information we collect to process transactions securely via official payment gateway partners like iPaymu, communicate with you about your orders, and prevent fraud using automated systems.</p>
           </section>
 
           <section>
@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">4. Security</h2>
-            <p>Your connection to MiqStore is secured using SSL, and all payment processing is handled off-site by Midtrans. We do not store your credit card information.</p>
+            <p>Your connection to MiqStore is secured using SSL, and all payment processing is handled off-site by our payment gateway partners. We do not store your credit card information.</p>
           </section>
         </div>
       </div>

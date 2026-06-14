@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { calculateFee, calculateDiscount } from "@/lib/services/transaction";
 import { generateInvoiceId } from "@/lib/utils";
-import { createSnapTransaction } from "@/lib/services/midtrans";
+import { createIpaymuTransaction } from "@/lib/services/ipaymu";
 import { logger } from "@/lib/telemetry";
 
 /**
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         },
         payment: {
           create: {
-            gateway: "midtrans",
+            gateway: "ipaymu",
             method: paymentMethod,
             amount: total,
             status: "PENDING",
@@ -85,14 +85,13 @@ export async function POST(req: NextRequest) {
       include: { payment: true },
     });
 
-    // Generate Midtrans Snap token
-    const snapResult = await createSnapTransaction({
-      orderId: invoiceId,
+    // Generate iPaymu Payment Link
+    const ipaymuResult = await createIpaymuTransaction({
+      referenceId: invoiceId,
       amount: total,
       customerName: user.name || "User",
-      customerEmail: user.email || "",
+      customerEmail: user.email || "no-email@miqstore.online",
       itemName: `${item.product.name} - ${item.name}`,
-      itemCategory: "Digital Goods",
       paymentMethod,
     });
 
@@ -102,8 +101,8 @@ export async function POST(req: NextRequest) {
       total,
       fee,
       discount,
-      snapToken: snapResult.token,
-      redirectUrl: snapResult.redirectUrl,
+      token: ipaymuResult.sessionId,
+      redirectUrl: ipaymuResult.url,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     }, {
       message: "Transaksi berhasil dibuat. Silakan selesaikan pembayaran.",
