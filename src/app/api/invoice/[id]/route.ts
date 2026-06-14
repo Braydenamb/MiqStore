@@ -63,6 +63,14 @@ export async function GET(
 
     const displayStatus = statusMap[transaction.status] || "pending";
 
+    const TERMINAL_STATUSES_DISPLAY = ["SUCCESS", "FAILED", "REFUNDED", "EXPIRED"];
+    const isTerminal = TERMINAL_STATUSES_DISPLAY.includes(transaction.status);
+    // Terminal invoices never change — cache aggressively.
+    // Active invoices: short cache + stale-while-revalidate to reduce DB storms from polling.
+    const cacheControl = isTerminal
+      ? "public, max-age=60, stale-while-revalidate=120"
+      : "public, max-age=3, stale-while-revalidate=5";
+
     return apiSuccess({
       id: transaction.invoiceId,
       game: gameName,
@@ -82,8 +90,11 @@ export async function GET(
       updatedAt: transaction.updatedAt.toISOString(),
       // Expiry: 24h from creation (matches Midtrans expiry config)
       expiredAt: new Date(transaction.createdAt.getTime() + 24 * 60 * 60 * 1000).toISOString(),
-    });
-  } catch {
+    }, { headers: { "Cache-Control": cacheControl } });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    // eslint-disable-next-line no-console
+    console.error("[Invoice GET] Fatal error", { msg, error });
     return API_ERRORS.internal("Failed to fetch invoice");
   }
 }

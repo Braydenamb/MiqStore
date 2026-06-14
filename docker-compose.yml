@@ -1,10 +1,6 @@
 # ============================================
-# MiqStore — Docker Compose
-# App + PostgreSQL + Redis + Nginx
-# ============================================
-# SECURITY NOTE: Database and Redis ports are NOT exposed to the host.
-# Only the Nginx reverse proxy is publicly accessible (80/443).
-# For local development access, use: docker exec -it miqstore-db psql -U postgres
+# MiqStore — Docker Compose (Production)
+# App + Nginx ONLY. Managed DB and Redis are used.
 # ============================================
 
 services:
@@ -16,53 +12,12 @@ services:
     container_name: miqstore-app
     restart: unless-stopped
     env_file: .env
-    environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-miqstore_secret}@db:5432/miqstore?schema=public
-      - DIRECT_URL=postgresql://postgres:${POSTGRES_PASSWORD:-miqstore_secret}@db:5432/miqstore?schema=public
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3
       start_period: 30s
-    networks:
-      - miqstore-network
-
-  # ── PostgreSQL ──
-  db:
-    image: postgres:17-alpine
-    container_name: miqstore-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-miqstore_secret}
-      POSTGRES_DB: miqstore
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    # Port NOT exposed — access via docker exec or app network only
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - miqstore-network
-
-  # ── Redis ──
-  redis:
-    image: redis:7-alpine
-    container_name: miqstore-redis
-    restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis_data:/data
-    # Port NOT exposed — access via docker exec or app network only
     networks:
       - miqstore-network
 
@@ -82,10 +37,6 @@ services:
         condition: service_healthy
     networks:
       - miqstore-network
-
-volumes:
-  postgres_data:
-  redis_data:
 
 networks:
   miqstore-network:

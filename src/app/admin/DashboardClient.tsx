@@ -162,6 +162,7 @@ export default function DashboardClient({ initialData }: { initialData: Dashboar
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const savedLayout = localStorage.getItem("admin-dashboard-layout");
     if (savedLayout) {

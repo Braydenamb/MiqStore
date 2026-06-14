@@ -9,6 +9,7 @@ import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
 import { getCachedSettings } from "@/lib/settings";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { SettingsProvider } from "@/components/providers/settings-provider";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 import "./globals.css";
 
 import { Inter, Playfair_Display } from "next/font/google";
@@ -126,6 +127,8 @@ export default async function RootLayout({
           <PwaRegistry />
         </Providers>
         </SettingsProvider>
+        
+        <AnalyticsTracker />
 
         {/* Midtrans Snap Script */}
         <Script

@@ -47,7 +47,6 @@ export async function getAdminSettings() {
     });
     return { success: true, data: settingsDict };
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
     logger.error("Failed to fetch settings", error, { context: "getAdminSettings" });
     return { success: false, error: "Failed to load settings" };
   }
@@ -122,7 +121,6 @@ export async function saveAdminSettings(settingsDict: Record<string, string>, gr
 
     return { success: true, message: "Settings saved successfully" };
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
     logger.error("Failed to save settings", error, { context: "saveAdminSettings" });
     return { success: false, error: "Failed to save settings" };
   }

@@ -3,11 +3,19 @@ import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/telemetry";
+import { transactionLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) return API_ERRORS.unauthorized();
+    
+    const rateLimitKey = session.user.id || getClientIP(req);
+    const rlResult = await transactionLimiter.check(rateLimitKey);
+    if (!rlResult.allowed) {
+      return rateLimitResponse(rlResult, transactionLimiter);
+    }
 
     const { id: invoiceId } = await params;
 
@@ -39,9 +47,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         where: { transactionId: transaction.id },
         data: { status: "FAILED" }
     });
+    
+    logger.info("Invoice cancelled successfully", { invoiceId, cancelledBy: session.user.id });
 
     return apiSuccess({ status: "failed" }, { message: "Pesanan berhasil dibatalkan" });
   } catch (error) {
+    logger.error("Cancel Invoice API Error", { error: error instanceof Error ? error.stack : error });
     return apiError("Gagal membatalkan pesanan", { status: 500 });
   }
 }

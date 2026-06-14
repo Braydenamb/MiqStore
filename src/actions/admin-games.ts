@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
 import { createAuditLog } from "@/lib/audit-log";
 import { logger } from "@/lib/telemetry";
+import { cloudinary } from "@/lib/cloudinary-server";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -254,6 +255,7 @@ export async function createGame(data: GameFormData) {
     revalidatePath("/admin/games");
     revalidatePath("/");
     revalidateTag("admin-categories", "default");
+    revalidateTag("products");
 
     await createAuditLog({
       adminId: admin.id,
@@ -313,6 +315,7 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
     revalidatePath("/admin/games");
     revalidatePath(`/games/${game.slug}`);
     revalidateTag("admin-categories", "default");
+    revalidateTag("products");
 
     await createAuditLog({
       adminId: admin.id,
@@ -343,18 +346,38 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
 export async function deleteGame(id: string) {
   try {
     const admin = await requireAdmin();
-    const oldGame = await prisma.product.findUnique({ where: { id }, select: { name: true, slug: true } });
+    const oldGame = await prisma.product.findUnique({ 
+      where: { id }, 
+      select: { name: true, slug: true, image: true, banner: true } 
+    });
+    
     await prisma.product.delete({ where: { id } });
+    
+    // Cleanup orphaned Cloudinary assets to prevent storage leaks
+    // Use the cloudinary sdk directly to avoid circular import (admin-gallery imports admin-auth)
+    const toDelete = [oldGame?.image, oldGame?.banner]
+      .filter((v): v is string => !!v && !v.startsWith("http"));
+    if (toDelete.length > 0) {
+      await Promise.allSettled(
+        toDelete.map((publicId) =>
+          cloudinary.uploader.destroy(publicId).catch((e) =>
+            logger.warn("Failed to delete Cloudinary asset on game deletion", { publicId, error: e })
+          )
+        )
+      );
+    }
+
     revalidatePath("/admin/games");
     revalidatePath("/");
     revalidateTag("admin-categories", "default");
+    revalidateTag("products");
 
     await createAuditLog({
       adminId: admin.id,
       action: "DELETE_GAME",
       entity: "PRODUCT",
       entityId: id,
-      oldValues: oldGame as Prisma.InputJsonValue | null,
+      oldValues: { name: oldGame?.name, slug: oldGame?.slug },
     });
 
     return { success: true };
@@ -372,6 +395,7 @@ export async function toggleGameStatus(id: string, isActive: boolean) {
       data: { isActive },
     });
     revalidatePath("/admin/games");
+    revalidateTag("products");
 
     await createAuditLog({
       adminId: admin.id,

@@ -148,7 +148,7 @@ export function GamesClient({ initialGames }: { initialGames: PublicGame[] }) {
         <div className="py-20 text-center">
           <Gamepad2 className="h-16 w-16 mx-auto text-[hsl(var(--primary))]/20 mb-4" />
           <h3 className="text-xl font-bold text-[hsl(var(--foreground))] mb-2">No games found</h3>
-          <p className="text-[hsl(var(--foreground))]/60">We couldn't find any games matching "{searchParams.get("q")}".</p>
+          <p className="text-[hsl(var(--foreground))]/60">We couldn&apos;t find any games matching &quot;{searchParams.get("q")}&quot;.</p>
         </div>
       )}
 

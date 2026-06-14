@@ -8,6 +8,7 @@ import {
 import {
   verifyNotificationSignature,
   mapTransactionStatus,
+  refundTransaction,
   type MidtransNotification,
   type MidtransTransactionStatus,
 } from "@/lib/services/midtrans";
@@ -77,9 +78,20 @@ export async function POST(req: NextRequest) {
       return API_ERRORS.notFound("Transaction not found");
     }
 
-    // 2. Idempotency: skip if already at same or terminal status
-    if (transaction.status === internalStatus) {
-      return apiSuccess({ orderId: order_id, status: internalStatus, duplicate: true });
+    // 2. Idempotency: skip if already at SAME status or already TERMINAL
+    // Terminal states must never be overwritten — a refunded/successful order
+    // must not be re-processed by a duplicate or out-of-order webhook.
+    const TERMINAL_DB_STATUSES = ["SUCCESS", "FAILED", "REFUNDED", "EXPIRED"];
+    if (
+      transaction.status === internalStatus ||
+      TERMINAL_DB_STATUSES.includes(transaction.status)
+    ) {
+      logger.info("Webhook skipped: already terminal or duplicate", {
+        orderId: order_id,
+        currentStatus: transaction.status,
+        incomingStatus: internalStatus,
+      });
+      return apiSuccess({ orderId: order_id, status: transaction.status, duplicate: true });
     }
 
     // 3. Update payment status in DB
@@ -138,57 +150,63 @@ export async function POST(req: NextRequest) {
         updatedAt: transaction.updatedAt,
       };
 
-      // Trigger topup asynchronously — don't block the webhook response
-      processTopup(txRecord).then(async (topupResult) => {
-        try {
-          if (topupResult.success) {
-            await prisma.transaction.update({
-              where: { invoiceId: order_id },
-              data: {
-                status: "SUCCESS",
-                providerRef: topupResult.providerTrxId,
-                providerData: {
-                  serialNumber: topupResult.serialNumber,
-                  message: topupResult.message,
-                },
-                updatedAt: new Date(),
+      // Trigger topup and wait for it to complete to ensure serverless doesn't kill the process
+      try {
+        const topupResult = await processTopup(txRecord);
+        if (topupResult.success) {
+          await prisma.transaction.update({
+            where: { invoiceId: order_id },
+            data: {
+              status: "SUCCESS",
+              providerRef: topupResult.providerTrxId,
+              providerData: {
+                serialNumber: topupResult.serialNumber,
+                message: topupResult.message,
               },
-            });
+              updatedAt: new Date(),
+            },
+          });
 
-            // Fire completed event for background workers (XP, etc.)
-            await eventBus.publish("TRANSACTION_COMPLETED", {
-              transaction: { ...txRecord, providerStatus: "success" },
-            });
+          // Fire completed event for background workers (XP, etc.)
+          await eventBus.publish("TRANSACTION_COMPLETED", {
+            transaction: { ...txRecord, providerStatus: "success" },
+          });
 
-            logger.info("Topup SUCCESS", { orderId: order_id, message: topupResult.message });
-          } else {
-            // Topup failed — mark as FAILED but payment was received (needs manual review / refund)
-            await prisma.transaction.update({
-              where: { invoiceId: order_id },
-              data: {
-                status: "FAILED",
-                providerData: { error: topupResult.message, needsRefund: true },
-                updatedAt: new Date(),
-              },
-            });
-            logger.error(`Topup FAILED for ${order_id}`, topupResult.message, { orderId: order_id });
+          logger.info("Topup SUCCESS", { orderId: order_id, message: topupResult.message });
+        } else {
+          // Topup failed — mark as FAILED but payment was received. Issue automated refund.
+          let refundStatus = "pending_manual_refund";
+          try {
+            await refundTransaction(order_id, transaction.total, `Topup Failed: ${topupResult.message}`);
+            refundStatus = "refunded_automatically";
+            logger.info(`Automated refund successful for ${order_id}`);
+          } catch (refundErr) {
+            logger.error(`Automated refund failed for ${order_id}`, { error: refundErr instanceof Error ? refundErr.message : refundErr });
           }
-        } catch (err) {
-          logger.error(`Post-topup DB update failed for ${order_id}`, err);
-        }
-      }).catch((err) => {
-        logger.error(`processTopup threw for ${order_id}`, err);
-      });
 
-      // Return immediately — topup runs in background
+          await prisma.transaction.update({
+            where: { invoiceId: order_id },
+            data: {
+              status: refundStatus === "refunded_automatically" ? "REFUNDED" : "FAILED",
+              providerData: { error: topupResult.message, needsRefund: refundStatus !== "refunded_automatically", refundStatus },
+              updatedAt: new Date(),
+            },
+          });
+          logger.error(`Topup FAILED for ${order_id}, refund status: ${refundStatus}`, { message: topupResult.message, orderId: order_id });
+        }
+      } catch (err) {
+        logger.error(`Post-topup DB update or processTopup failed for ${order_id}`, { error: err instanceof Error ? err.stack : err });
+      }
+
+      // Return after topup is fully processed
       return apiSuccess(
         {
           orderId: order_id,
-          status: "PROCESSING",
+          status: "SUCCESS", // Or FAILED depending on topupResult, but the webhook itself is processed successfully
           processedAt: new Date().toISOString(),
         },
         {
-          message: "Payment confirmed, topup in progress",
+          message: "Payment confirmed, topup processed",
           headers: webhookLimiter.headers(rateResult),
         }
       );
@@ -224,7 +242,8 @@ export async function POST(req: NextRequest) {
         headers: webhookLimiter.headers(rateResult),
       }
     );
-  } catch {
+  } catch (error) {
+    logger.error("Payment Webhook fatal error", { error: error instanceof Error ? error.stack : error });
     return API_ERRORS.internal();
   }
 }

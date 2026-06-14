@@ -198,12 +198,20 @@ export async function createOrder(
       ref_id: order.invoiceId,
     });
 
+    // Guard: malformed Apigames response where data envelope is missing
+    if (!data || typeof data.data !== "object" || data.data === null) {
+      throw new ApigamesError(
+        `Apigames returned malformed response for order ${order.invoiceId}: missing data envelope`,
+        502
+      );
+    }
+
     return {
       success: data.result,
       trxId: data.data.trx_id,
       refId: data.data.ref_id,
-      status: mapApigamesStatus(data.data.status),
-      message: data.data.message,
+      status: mapApigamesStatus(data.data.status || ""),
+      message: data.data.message || "",
       sn: data.data.sn,
     };
   } catch (error) {
@@ -240,12 +248,20 @@ export async function getOrderStatus(
       ref_id: refId,
     });
 
+    // Guard: malformed Apigames status response
+    if (!data || typeof data.data !== "object" || data.data === null) {
+      throw new ApigamesError(
+        `Apigames returned malformed status response for ref ${refId}`,
+        502
+      );
+    }
+
     return {
       success: data.result,
       trxId: data.data.trx_id,
-      status: mapApigamesStatus(data.data.status),
+      status: mapApigamesStatus(data.data.status || ""),
       sn: data.data.sn,
-      message: data.data.message,
+      message: data.data.message || "",
     };
   } catch (error) {
     if (error instanceof ApigamesError) throw error;
@@ -260,12 +276,21 @@ export function verifyWebhookSignature(
   signature: string,
   refId: string
 ): boolean {
+  // SECURITY: Never bypass verification on empty secret
+  if (!APIGAMES_CONFIG.webhookSecret || APIGAMES_CONFIG.webhookSecret.trim() === "") {
+    return false;
+  }
   const expected = generateSignature(
     APIGAMES_CONFIG.merchantId,
     APIGAMES_CONFIG.webhookSecret,
     refId
   );
-  return signature === expected;
+  // Use length-safe comparison to prevent trivial bypasses
+  if (expected.length !== (signature || "").length) return false;
+  return crypto.timingSafeEqual(
+    Buffer.from(expected, "utf8"),
+    Buffer.from(signature || "", "utf8")
+  );
 }
 
 /* ─── Helpers ─── */

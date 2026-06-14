@@ -172,12 +172,7 @@ export default function CheckoutPage() {
       const message = error instanceof Error ? error.message : "Terjadi kesalahan jaringan";
 
       if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
-        toast.error("Koneksi bermasalah. Periksa internet kamu dan coba lagi.", {
-          action: {
-            label: "Coba Lagi",
-            onClick: () => { handlePay(); },
-          },
-        });
+        toast.error("Koneksi bermasalah. Periksa internet kamu dan coba lagi.");
       } else if (message.includes("No active products")) {
         toast.error("Produk belum tersedia di sistem. Hubungi customer service.");
       } else {

@@ -6,16 +6,19 @@ import { createTransaction } from "@/lib/services/transaction";
 import { createSnapTransaction } from "@/lib/services/midtrans";
 import { z } from "zod";
 import { logger } from "@/lib/telemetry";
+import { transactionLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
+import { prisma } from "@/lib/prisma";
 
 const checkoutSchema = z.object({
-  gameSlug: z.string().min(1),
-  gameName: z.string().min(1),
-  productCode: z.string().min(1),
-  productName: z.string().min(1),
-  gameUserId: z.string().min(1),
-  gameZoneId: z.string().optional(),
-  price: z.number().positive(),
-  paymentMethod: z.string().min(1),
+  gameSlug: z.string().min(1).max(100),
+  gameName: z.string().min(1).max(200),
+  productCode: z.string().min(1).max(100),
+  productName: z.string().min(1).max(200),
+  // User-supplied account IDs: trim + strict length cap to prevent injection
+  gameUserId: z.string().min(1).max(64).transform((s) => s.trim()),
+  gameZoneId: z.string().max(64).transform((s) => s.trim()).optional(),
+  price: z.number().positive().max(10_000_000), // cap at 10M IDR
+  paymentMethod: z.string().min(1).max(50),
 });
 
 export async function POST(req: NextRequest) {
@@ -25,6 +28,13 @@ export async function POST(req: NextRequest) {
     // Require authentication — no guest checkout
     if (!session?.user?.id) {
       return API_ERRORS.unauthorized();
+    }
+    
+    // Rate Limiting
+    const rateLimitKey = session.user.id || getClientIP(req);
+    const rlResult = await transactionLimiter.check(rateLimitKey);
+    if (!rlResult.allowed) {
+      return rateLimitResponse(rlResult, transactionLimiter);
     }
 
     const userId = session.user.id;
@@ -43,6 +53,57 @@ export async function POST(req: NextRequest) {
           ])
         )
       );
+    }
+
+    // Velocity Rule: Fraud Prevention
+    // Block if user has >= 3 FAILED transactions in the last hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentFailures = await prisma.transaction.count({
+      where: {
+        userId,
+        status: "FAILED",
+        createdAt: { gte: oneHourAgo },
+      },
+    });
+
+    if (recentFailures >= 3) {
+      logger.warn("Velocity rule triggered: Blocked checkout", { userId, failures: recentFailures });
+      return apiError("Terlalu banyak transaksi gagal. Harap tunggu 1 jam.", { status: 429 });
+    }
+
+    // Price-drift protection: verify submitted price against live DB price
+    // Scenario: Admin raises price between user opening page and submitting checkout.
+    // Without this check, user gets billed the OLD price (revenue loss) or the
+    // system creates a transaction that mismatches what Midtrans will charge.
+    const liveItem = await prisma.productItem.findFirst({
+      where: { 
+        product: { slug: parsed.data.gameSlug },
+        name: { equals: parsed.data.productName, mode: "insensitive" },
+        isActive: true,
+      },
+      select: { price: true, name: true },
+    });
+    if (liveItem && Math.abs(liveItem.price - parsed.data.price) > 1) {
+      logger.warn("Price mismatch at checkout", {
+        submitted: parsed.data.price,
+        live: liveItem.price,
+        userId,
+        gameSlug: parsed.data.gameSlug,
+      });
+      return apiError(
+        `Harga produk telah berubah. Harga terbaru: Rp${liveItem.price.toLocaleString("id-ID")}. Silakan coba kembali.`,
+        { status: 409 }
+      );
+    }
+
+    // Pending invoice flood detection: block fraudsters generating hundreds of
+    // unpaid Snap tokens (API quota drain and storage abuse)
+    const recentPending = await prisma.transaction.count({
+      where: { userId, status: "PENDING", createdAt: { gte: oneHourAgo } },
+    });
+    if (recentPending >= 5) {
+      logger.warn("Pending invoice flood detected", { userId, pendingCount: recentPending });
+      return apiError("Terlalu banyak pesanan tertunda. Selesaikan atau batalkan pesanan sebelumnya.", { status: 429 });
     }
 
     // 1. Create Internal Transaction (DB)
@@ -73,11 +134,15 @@ export async function POST(req: NextRequest) {
     }, {
       message: "Transaksi berhasil dibuat",
       status: 201,
+      headers: transactionLimiter.headers(rlResult),
     });
 
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Gagal memproses checkout";
-    logger.error("Checkout API Error:", message);
+    logger.error("Checkout API Error", { 
+        message, 
+        error: error instanceof Error ? error.stack : error 
+    });
     return apiError(message, { status: 500 });
   }
 }

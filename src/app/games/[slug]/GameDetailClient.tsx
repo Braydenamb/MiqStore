@@ -39,6 +39,7 @@ export function GameDetailClient({ game, products }: { game: GameDetail | null, 
 
   useEffect(() => {
     if (!slug) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsHydrated(true);
     const saved = localStorage.getItem(`miq_saved_id_${slug}`);
     if (saved) {

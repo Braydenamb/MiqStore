@@ -48,21 +48,14 @@ export async function GET(_req: NextRequest) {
       error?: string;
     }> = [];
 
-    // 3. Process each transaction
-    for (const tx of stuckTxs) {
+    // 3. Process transactions concurrently
+    const reconcilePromises = stuckTxs.map(async (tx) => {
       try {
         const providerData = (tx.providerData ?? {}) as Record<string, string>;
         const providerRef = tx.providerRef || providerData.productCode;
 
         if (!providerRef) {
-          details.push({
-            id: tx.id,
-            invoiceId: tx.invoiceId,
-            oldStatus: tx.status,
-            error: "No provider reference found",
-          });
-          failedCount++;
-          continue;
+          throw new Error("No provider reference found");
         }
 
         // Check status with Apigames
@@ -92,26 +85,56 @@ export async function GET(_req: NextRequest) {
             },
           });
 
-          reconciledCount++;
-          details.push({
+          return {
             id: tx.id,
             invoiceId: tx.invoiceId,
             oldStatus: tx.status,
             newStatus,
             note: "Reconciled from provider",
-          });
+            success: true
+          };
         }
+
+        return {
+          id: tx.id,
+          invoiceId: tx.invoiceId,
+          oldStatus: tx.status,
+          success: true
+        };
       } catch (error) {
-        logger.error(`Reconciliation failed for ${tx.invoiceId}`, error);
-        failedCount++;
-        details.push({
+        logger.error(`Reconciliation failed for ${tx.invoiceId}`, { error: error instanceof Error ? error.message : "Unknown error" });
+        return {
           id: tx.id,
           invoiceId: tx.invoiceId,
           oldStatus: tx.status,
           error: error instanceof Error ? error.message : "Unknown error",
-        });
+          success: false
+        };
       }
-    }
+    });
+
+    const results = await Promise.allSettled(reconcilePromises);
+
+    results.forEach((result) => {
+      if (result.status === "fulfilled") {
+        const data = result.value;
+        details.push({
+          id: data.id,
+          invoiceId: data.invoiceId,
+          oldStatus: data.oldStatus,
+          newStatus: data.newStatus,
+          note: data.note,
+          error: data.error,
+        });
+        if (data.success && data.newStatus) {
+          reconciledCount++;
+        } else if (!data.success) {
+          failedCount++;
+        }
+      } else {
+        failedCount++;
+      }
+    });
 
     // 4. Return results
     return apiSuccess({

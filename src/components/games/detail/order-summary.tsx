@@ -1,4 +1,4 @@
-import { Info, HelpCircle, History, Loader2 } from "lucide-react";
+import { Info, HelpCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -132,17 +132,6 @@ export function OrderSummary({
           </Accordion>
         </div>
 
-        {/* Dummy Recent Orders (Desktop) */}
-        <div className="mt-6 bg-[hsl(var(--card))]/40 backdrop-blur-xl rounded-2xl border border-white/10 p-4 flex items-center gap-3 overflow-hidden shadow-xl">
-          <History className="h-8 w-8 text-[hsl(var(--primary))]/40 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="text-xs text-[hsl(var(--foreground))]/60 font-medium mb-0.5">Transaksi Terakhir</p>
-            <div className="animate-pulse">
-              <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">0812****889 top up 1050 Diamonds</p>
-              <p className="text-[10px] text-[hsl(var(--primary))]">Beberapa detik yang lalu</p>
-            </div>
-          </div>
-        </div>
       </div>
       
       {/* Mobile Extra Sections */}
@@ -161,17 +150,6 @@ export function OrderSummary({
           </ol>
         </div>
 
-        {/* Dummy Recent Orders (Mobile) */}
-        <div className="bg-[hsl(var(--card))]/40 backdrop-blur-xl rounded-2xl border border-white/10 p-4 flex items-center gap-3 overflow-hidden shadow-xl">
-          <History className="h-8 w-8 text-[hsl(var(--primary))]/40 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="text-xs text-[hsl(var(--foreground))]/60 font-medium mb-0.5">Transaksi Terakhir</p>
-            <div className="animate-pulse">
-              <p className="text-sm font-bold text-[hsl(var(--foreground))] truncate">0812****889 top up 1050 Diamonds</p>
-              <p className="text-[10px] text-[hsl(var(--primary))]">Beberapa detik yang lalu</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

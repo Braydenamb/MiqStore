@@ -104,6 +104,7 @@ function useCountdown(expiredAt: string | null) {
       return Math.max(0, Math.floor(diff / 1000));
     };
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTimeLeft(calcRemaining());
     const timer = setInterval(() => {
       const remaining = calcRemaining();
@@ -172,28 +173,42 @@ export default function InvoicePage() {
     return () => { cancelled = true; };
   }, [fetchInvoice]);
 
-  /* ─── Polling for status updates ─── */
+  /* ─── Polling for status updates with backoff ─── */
   useEffect(() => {
     if (!invoice || TERMINAL_STATUSES.includes(invoice.status)) {
-      if (pollRef.current) clearInterval(pollRef.current);
+      if (pollRef.current) clearTimeout(pollRef.current);
       return;
     }
 
-    pollRef.current = setInterval(async () => {
+    let timeoutDelay = POLL_INTERVAL;
+    
+    const poll = async () => {
       const fresh = await fetchInvoice();
       if (fresh) {
         setInvoice(fresh);
+        if (!TERMINAL_STATUSES.includes(fresh.status)) {
+          // Increase delay up to max 15 seconds to reduce DB load
+          timeoutDelay = Math.min(timeoutDelay * 1.5, 15000);
+          pollRef.current = setTimeout(poll, timeoutDelay);
+        }
+      } else {
+        // If fetch fails, keep polling but back off heavily
+        timeoutDelay = Math.min(timeoutDelay * 2, 30000);
+        pollRef.current = setTimeout(poll, timeoutDelay);
       }
-    }, POLL_INTERVAL);
+    };
+
+    pollRef.current = setTimeout(poll, timeoutDelay);
 
     return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
+      if (pollRef.current) clearTimeout(pollRef.current);
     };
   }, [invoice?.status, fetchInvoice]);
 
   /* ─── Confetti on success ─── */
   useEffect(() => {
     if (invoice?.status === "success" && !confettiFired) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setConfettiFired(true);
       const script = document.createElement("script");
       script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
@@ -532,14 +547,17 @@ export default function InvoicePage() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center"
+              className="mt-6 glass-card rounded-2xl p-6 text-center border border-red-200/20 bg-red-500/5"
             >
-              <p className="text-xs text-[hsl(var(--muted-foreground))]/70">
-                Butuh bantuan?{" "}
-                <a href="mailto:support@miqstore.com" className="text-[hsl(var(--primary))] font-medium hover:underline">
+              <h3 className="text-[hsl(var(--foreground))] font-bold mb-2">Butuh Bantuan Lebih Lanjut?</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">
+                Tim support kami siap membantu menyelesaikan kendala transaksi Anda.
+              </p>
+              <Button asChild variant="outline" className="w-full sm:w-auto border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/10">
+                <a href={`mailto:support@miqstore.com?subject=Kendala Transaksi %5B${invoice.id}%5D&body=Halo Tim MiqStore,%0D%0A%0D%0ASaya mengalami kendala dengan pesanan saya.%0D%0A%0D%0AInvoice ID: ${invoice.id}%0D%0AGame: ${invoice.game}%0D%0AItem: ${invoice.product}%0D%0AStatus: ${invoice.status}%0D%0A%0D%0ADetail Kendala: `}>
                   Hubungi Customer Service
                 </a>
-              </p>
+              </Button>
             </motion.div>
           )}
 

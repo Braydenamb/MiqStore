@@ -13,6 +13,12 @@
 
 import crypto from "crypto";
 import { logger } from "@/lib/telemetry";
+import { CircuitBreaker } from "@/lib/reliability";
+
+const midtransCircuitBreaker = new CircuitBreaker({
+  failureThreshold: 3,
+  resetTimeoutMs: 30000,
+});
 
 /* ─── Types ─── */
 export interface MidtransSnapRequest {
@@ -147,15 +153,17 @@ export async function createSnapTransaction(
       snapPayload.enabled_payments = enabledPayments;
     }
 
-    const response = await fetch(`${MIDTRANS_CONFIG.baseUrl}/snap/v1/transactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: getAuthHeader(),
-      },
-      body: JSON.stringify(snapPayload),
-    });
+    const response = await midtransCircuitBreaker.fire(() =>
+      fetch(`${MIDTRANS_CONFIG.baseUrl}/snap/v1/transactions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: getAuthHeader(),
+        },
+        body: JSON.stringify(snapPayload),
+      })
+    );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -185,16 +193,20 @@ export async function createSnapTransaction(
 export function verifyNotificationSignature(
   notification: MidtransNotification
 ): boolean {
-  if (!MIDTRANS_CONFIG.serverKey) {
-    logger.warn("[Midtrans] Server key not configured, skipping signature verification");
-    return true; // Allow in dev
+  const serverKey = MIDTRANS_CONFIG.serverKey;
+
+  // SECURITY: Never bypass signature verification. An empty or missing server key
+  // is a misconfiguration — reject all requests rather than open the door.
+  if (!serverKey || serverKey.trim() === "") {
+    logger.error("[Midtrans] MIDTRANS_SERVER_KEY is not configured — rejecting all webhooks");
+    return false;
   }
 
   const signatureInput = [
     notification.order_id,
     notification.status_code,
     notification.gross_amount,
-    MIDTRANS_CONFIG.serverKey,
+    serverKey,
   ].join("");
 
   const expectedSignature = crypto
@@ -202,7 +214,15 @@ export function verifyNotificationSignature(
     .update(signatureInput)
     .digest("hex");
 
-  return expectedSignature === notification.signature_key;
+  const expectedBuf = Buffer.from(expectedSignature, "hex");
+  const receivedBuf = Buffer.from(notification.signature_key || "", "hex");
+
+  // Prevent RangeError DoS: timingSafeEqual requires equal-length buffers
+  if (expectedBuf.length !== receivedBuf.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuf, receivedBuf);
 }
 
 /**
@@ -235,15 +255,14 @@ export function mapTransactionStatus(
  */
 export async function getTransactionStatus(orderId: string) {
   try {
-    const response = await fetch(
-      `${MIDTRANS_CONFIG.apiUrl}/v2/${orderId}/status`,
-      {
+    const response = await midtransCircuitBreaker.fire(() =>
+      fetch(`${MIDTRANS_CONFIG.apiUrl}/v2/${orderId}/status`, {
         method: "GET",
         headers: {
           Accept: "application/json",
           Authorization: getAuthHeader(),
         },
-      }
+      })
     );
 
     if (!response.ok) {
@@ -272,4 +291,39 @@ export function getClientKey(): string {
  */
 export function isConfigured(): boolean {
   return !!(MIDTRANS_CONFIG.serverKey && MIDTRANS_CONFIG.clientKey);
+}
+
+/**
+ * Issue a refund for a transaction via Midtrans API
+ */
+export async function refundTransaction(orderId: string, amount: number, reason: string = "Topup Provider Failed") {
+  try {
+    const payload = {
+      refund_key: `refund-${orderId}-${Date.now()}`,
+      amount: amount,
+      reason: reason,
+    };
+
+    const response = await midtransCircuitBreaker.fire(() =>
+      fetch(`${MIDTRANS_CONFIG.apiUrl}/v2/${orderId}/refund`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: getAuthHeader(),
+        },
+        body: JSON.stringify(payload),
+      })
+    );
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new MidtransError(`Refund API error: ${JSON.stringify(errData)}`, response.status);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof MidtransError) throw error;
+    throw new MidtransError("Failed to issue Midtrans refund");
+  }
 }

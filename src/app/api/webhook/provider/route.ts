@@ -123,7 +123,8 @@ export async function POST(req: NextRequest) {
         headers: webhookLimiter.headers(rateResult),
       }
     );
-  } catch {
+  } catch (error) {
+    logger.error("Provider Webhook fatal error", { error: error instanceof Error ? error.stack : error });
     return API_ERRORS.internal();
   }
 }

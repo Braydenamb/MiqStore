@@ -22,6 +22,7 @@ export function GallerySelectorModal({ onSelect, trigger, multiple = false }: Ga
 
   useEffect(() => {
     if (open && assets.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(true);
       getGalleryAssets().then(res => {
         setAssets(res);

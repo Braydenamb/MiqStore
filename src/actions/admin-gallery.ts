@@ -1,17 +1,10 @@
 "use server";
 
-import { v2 as cloudinary } from "cloudinary";
+import { cloudinary } from "@/lib/cloudinary-server";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
 import { logger } from "@/lib/telemetry";
-
-// Initialize Cloudinary config
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-});
+import { createAuditLog } from "@/lib/audit-log";
 
 export interface CloudinaryAsset {
   public_id: string;
@@ -64,10 +57,17 @@ export async function getGalleryAssets(folder?: string): Promise<CloudinaryAsset
  */
 export async function deleteGalleryAsset(publicId: string, resourceType: "image" | "video" | "raw" = "image") {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
 
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: resourceType,
+    });
+
+    await createAuditLog({
+      adminId: admin.id,
+      action: "DELETE_ASSET",
+      entity: "CLOUDINARY_ASSET",
+      entityId: publicId,
     });
 
     revalidatePath("/admin/gallery");
