@@ -15,7 +15,6 @@ import {
 import { metrics } from "@/lib/telemetry";
 import { processTopup, type TransactionRecord } from "@/lib/services/transaction";
 import { prisma } from "@/lib/prisma";
-import { eventBus } from "@/lib/services/event-bus";
 import { logger } from "@/lib/telemetry";
 
 /**
@@ -168,11 +167,6 @@ export async function POST(req: NextRequest) {
             },
           });
 
-          // Fire completed event for background workers (XP, etc.)
-          await eventBus.publish("TRANSACTION_COMPLETED", {
-            transaction: { ...txRecord, providerStatus: "success" },
-          });
-
           logger.info("Topup SUCCESS", { orderId: order_id, message: topupResult.message });
         } else {
           // Topup failed — mark as FAILED but payment was received. Issue automated refund.
@@ -227,12 +221,6 @@ export async function POST(req: NextRequest) {
     await prisma.transaction.update({
       where: { invoiceId: order_id },
       data: updateData,
-    });
-
-    // Fire update event for realtime listeners
-    eventBus.emit("TRANSACTION_UPDATED", {
-      invoiceId: order_id,
-      status: internalStatus,
     });
 
     logger.info("Webhook processed", {

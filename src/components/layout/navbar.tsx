@@ -11,10 +11,6 @@ import MiqStoreLogo from "@/components/ui/logo";
 
 const NAV_LINKS = [
   { label: "Games", href: "/games" },
-  // { label: "Top Up", href: "/top-up" },
-  // { label: "Membership", href: "/membership" },
-  // { label: "Vouchers", href: "/vouchers" },
-  // { label: "Deals", href: "/deals" },
 ];
 
 export function Navbar({ logoUrl }: { logoUrl?: string }) {

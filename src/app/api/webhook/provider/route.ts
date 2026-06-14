@@ -7,7 +7,6 @@ import {
 } from "@/lib/rate-limit";
 import { verifyWebhookSignature } from "@/lib/services/apigames";
 import { prisma } from "@/lib/prisma";
-import { eventBus } from "@/lib/services/event-bus";
 import { logger } from "@/lib/telemetry";
 
 /**
@@ -93,16 +92,6 @@ export async function POST(req: NextRequest) {
         updatedAt: new Date(),
       },
     });
-
-    // 4. Fire event for completed transactions
-    if (internalStatus === "SUCCESS") {
-      eventBus.emit("TRANSACTION_COMPLETED", {
-        transaction: {
-          invoiceId: ref_id,
-          providerStatus: "success",
-        },
-      });
-    }
 
     logger.info("Provider webhook processed", {
       refId: ref_id,

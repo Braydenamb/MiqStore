@@ -23,10 +23,6 @@ export default function NotFound() {
         {/* Center: Links (Hidden on mobile) */}
         <div className="hidden md:flex items-center gap-8 font-medium text-sm text-[hsl(var(--muted-foreground))]">
           <Link href="/games" className="hover:text-[hsl(var(--foreground))] transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[hsl(var(--primary))] hover:after:w-full after:transition-all after:duration-300 pb-1">Games</Link>
-          <Link href="/top-up" className="hover:text-[hsl(var(--foreground))] transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[hsl(var(--primary))] hover:after:w-full after:transition-all after:duration-300 pb-1">Top Up</Link>
-          <Link href="/membership" className="hover:text-[hsl(var(--foreground))] transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[hsl(var(--primary))] hover:after:w-full after:transition-all after:duration-300 pb-1">Membership</Link>
-          <Link href="/vouchers" className="hover:text-[hsl(var(--foreground))] transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[hsl(var(--primary))] hover:after:w-full after:transition-all after:duration-300 pb-1">Vouchers</Link>
-          <Link href="/deals" className="hover:text-[hsl(var(--foreground))] transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[hsl(var(--primary))] hover:after:w-full after:transition-all after:duration-300 pb-1">Deals</Link>
         </div>
 
         {/* Right: Icons */}

@@ -15,13 +15,8 @@ import { prisma } from "@/lib/prisma";
 // import { debitWallet } from "./wallet"; // OUT OF SCOPE
 // ai-brain removed
 import { logger, metrics, tracing } from "../telemetry";
-import { eventBus } from "./event-bus";
-import { registerSystemSubscribers } from "./subscribers";
 import { routeTopupOrder } from "./provider-router";
 import { generateInvoiceId } from "@/lib/utils";
-
-// Boot the background event workers exactly once when this module loads
-registerSystemSubscribers();
 import type {
   MidtransTransactionStatus,
 } from "./midtrans";
