@@ -8,6 +8,7 @@ import { z } from "zod";
 import { logger } from "@/lib/telemetry";
 import { transactionLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
+import { sendOrderCreatedEmail } from "@/lib/services/email";
 
 const checkoutSchema = z.object({
   gameSlug: z.string().min(1).max(100),
@@ -128,7 +129,19 @@ export async function POST(req: NextRequest) {
       throw new Error(ipaymuResponse.message || "Gagal membuat sesi pembayaran iPaymu");
     }
 
-    // 3. Return Payment Link to Frontend
+    // 3. Send Email Notification (non-blocking)
+    if (customerEmail) {
+      sendOrderCreatedEmail({
+        to: customerEmail,
+        customerName,
+        invoiceId: transaction.invoiceId,
+        gameName: parsed.data.gameName,
+        productName: parsed.data.productName,
+        price: transaction.total,
+      }).catch(e => logger.error("Async email error", e));
+    }
+
+    // 4. Return Payment Link to Frontend
     return apiSuccess({
       invoiceId: transaction.invoiceId,
       token: ipaymuResponse.sessionId,

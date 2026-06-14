@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { apiSuccess, apiError } from "@/lib/api-response";
 import { logger } from "@/lib/telemetry";
+import { sendOrderSuccessEmail, sendOrderFailedEmail } from "@/lib/services/email";
 import { routeTopupOrder } from "@/lib/services/provider-router";
 import {
   type IpaymuNotification,
@@ -84,6 +85,20 @@ export async function POST(req: NextRequest) {
       return apiSuccess({ status: "RACE_CONDITION_PREVENTED", duplicate: true });
     }
 
+    // Send Failed Email
+    if (internalStatus === "FAILED" || internalStatus === "EXPIRED") {
+      if (transaction.customerEmail) {
+        sendOrderFailedEmail({
+          to: transaction.customerEmail,
+          customerName: transaction.customerName || "User",
+          invoiceId: transaction.invoiceId,
+          gameName: (transaction as any).product?.name || "Game",
+          productName: (transaction as any).productItem?.name || "Item",
+          price: transaction.total,
+        }).catch(e => logger.error("Async email error", e));
+      }
+    }
+
     // ------------------------------------------------------------------
     // Phase 2: Fulfillment (If Paid)
     // ------------------------------------------------------------------
@@ -118,6 +133,16 @@ export async function POST(req: NextRequest) {
             },
           });
           logger.info("Fulfillment successful via webhook", { order_id, sn: topupResult.serialNumber });
+          if (transaction.customerEmail) {
+            sendOrderSuccessEmail({
+              to: transaction.customerEmail,
+              customerName: transaction.customerName || "User",
+              invoiceId: transaction.invoiceId,
+              gameName: (transaction as any).product?.name || "Game",
+              productName: (transaction as any).productItem?.name || "Item",
+              price: transaction.total,
+            }).catch(e => logger.error("Async email error", e));
+          }
         } else {
           // Topup Failed
           logger.error("Fulfillment failed via webhook", { order_id, reason: topupResult.message });
