@@ -59,10 +59,8 @@ const APIGAMES_CONFIG = {
 
 /* ─── Signature ─── */
 function generateSignature(merchantId: string, apiKey: string, refId: string): string {
-  // Apigames uses md5(merchantId + apiKey + refId)
-  // In production, use crypto.createHash('md5')
-  // For now, return a placeholder that follows the pattern
-  const combined = `${merchantId}${apiKey}${refId}`;
+  // Apigames V2 uses md5(merchantId:secretKey:refId)
+  const combined = `${merchantId}:${apiKey}:${refId}`;
   return hashMD5(combined);
 }
 
@@ -123,6 +121,31 @@ async function apigamesRead<T>(
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ merchant: APIGAMES_CONFIG.merchantId, ...body }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!response.ok) {
+        throw new ApigamesError(
+          `Apigames API error: ${response.status} ${response.statusText}`,
+          response.status
+        );
+      }
+      return response.json() as Promise<T>;
+    }, 3, 500);
+  });
+}
+
+/**
+ * apigamesGet: retryable GET for read operations (check username, account info).
+ */
+async function apigamesGet<T>(
+  endpoint: string
+): Promise<T> {
+  const url = `${APIGAMES_CONFIG.baseUrl}${endpoint}`;
+  return apigamesBreaker.fire(async () => {
+    return withRetry(async () => {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { Accept: "application/json" },
         signal: AbortSignal.timeout(10_000),
       });
       if (!response.ok) {
@@ -290,6 +313,65 @@ export async function getOrderStatus(
   } catch (error) {
     if (error instanceof ApigamesError) throw error;
     throw new ApigamesError("Failed to check order status via Apigames");
+  }
+}
+
+/**
+ * Check Game Account Username
+ * Uses GET /merchant/:merchant_id/cek-username/[game_code]?user_id=[user_id]&signature=[signature]
+ */
+export async function checkUsername(
+  gameCode: string,
+  userId: string,
+  zoneId?: string
+): Promise<{ success: boolean; data?: any; message: string }> {
+  try {
+    const combined = `${APIGAMES_CONFIG.merchantId}${APIGAMES_CONFIG.apiKey}`;
+    const sign = hashMD5(combined);
+    
+    // Apigames typically expects concatenated userId + zoneId in the user_id param for games like MLBB
+    const targetUserId = zoneId ? `${userId}${zoneId}` : userId;
+
+    const data = await apigamesGet<{
+      status?: boolean | number;
+      data?: any;
+      message?: string;
+      error_msg?: string;
+    }>(
+      `/merchant/${APIGAMES_CONFIG.merchantId}/cek-username/${gameCode}?user_id=${targetUserId}&signature=${sign}`
+    );
+
+    // Apigames responses can be messy, adapt to common formats
+    const isSuccess = data.status === true || data.status === 1 || data.status === 200;
+    
+    return {
+      success: isSuccess,
+      data: data.data || data,
+      message: data.message || data.error_msg || "Unknown response",
+    };
+  } catch (error) {
+    if (error instanceof ApigamesError) throw error;
+    throw new ApigamesError("Failed to check username via Apigames");
+  }
+}
+
+/**
+ * Get Provider Account Info (Balance)
+ * Uses GET /merchant/:merchant_id?signature=[signature]
+ */
+export async function getAccountInfo(): Promise<any> {
+  try {
+    const combined = `${APIGAMES_CONFIG.merchantId}:${APIGAMES_CONFIG.apiKey}`;
+    const sign = hashMD5(combined);
+
+    const data = await apigamesGet<any>(
+      `/merchant/${APIGAMES_CONFIG.merchantId}?signature=${sign}`
+    );
+
+    return data;
+  } catch (error) {
+    if (error instanceof ApigamesError) throw error;
+    throw new ApigamesError("Failed to fetch account info from Apigames");
   }
 }
 

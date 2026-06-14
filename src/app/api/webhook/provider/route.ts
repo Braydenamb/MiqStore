@@ -39,7 +39,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify signature from Apigames
-    const signature = req.headers.get("x-signature") || body.sign || "";
+    const signature =
+      req.headers.get("x-apigames-authorization") ||
+      req.headers.get("x-signature") ||
+      body.sign ||
+      "";
+      
     const isValid = verifyWebhookSignature(signature, ref_id);
     if (!isValid) {
       logger.warn("Invalid provider webhook signature", { refId: ref_id });
@@ -47,14 +52,23 @@ export async function POST(req: NextRequest) {
     }
 
     // Map Apigames status to internal TransactionStatus
+    const lowerStatus = String(status).toLowerCase();
     const statusMap: Record<string, string> = {
       "0": "PENDING",
       "1": "PROCESSING",
       "2": "SUCCESS",
       "3": "FAILED",
       "4": "REFUNDED",
+      "pending": "PENDING",
+      "proses": "PROCESSING",
+      "process": "PROCESSING",
+      "sukses": "SUCCESS",
+      "sukses sebagian": "SUCCESS",
+      "gagal": "FAILED",
+      "error": "FAILED",
+      "validasi provider": "PROCESSING",
     };
-    const internalStatus = statusMap[status] || "PENDING";
+    const internalStatus = statusMap[lowerStatus] || "PENDING";
 
     // 1. Find transaction by ref_id (invoiceId)
     const transaction = await prisma.transaction.findUnique({
