@@ -215,6 +215,7 @@ export async function processTopup(
   providerTrxId?: string;
   serialNumber?: string;
   message: string;
+  status?: string;
 }> {
   try {
     // 🔥 Delegate to Smart Provider Routing Engine 🔥
@@ -241,6 +242,7 @@ export async function processTopup(
       providerTrxId: order.providerTrxId,
       serialNumber: order.serialNumber,
       message: order.message,
+      status: (order as any).status || (order.success ? "success" : "failed"),
     };
   } catch (error) {
     logger.error(`Critical Failure processing topup for ${transaction.invoiceId}`, error);

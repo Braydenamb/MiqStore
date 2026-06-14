@@ -58,7 +58,67 @@ export async function GET(_req: NextRequest) {
           throw new Error("No provider reference found");
         }
 
-        // Check status with Apigames
+        if (tx.status === "PENDING") {
+          // 1. Sweep missing Midtrans webhooks
+          const { getTransactionStatus, mapTransactionStatus } = await import("@/lib/services/midtrans");
+          let midtransStatus;
+          try {
+            midtransStatus = await getTransactionStatus(tx.invoiceId);
+          } catch (e) {
+            logger.warn(`Midtrans status not found for ${tx.invoiceId}`);
+            return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: false };
+          }
+          
+          const internalMidtransStatus = mapTransactionStatus(midtransStatus.transaction_status, midtransStatus.fraud_status);
+          
+          if (internalMidtransStatus === "PAID") {
+             // Simulate webhook flow
+             await prisma.transaction.update({
+               where: { id: tx.id },
+               data: { status: "PROCESSING", updatedAt: new Date() }
+             });
+             
+             // Trigger topup
+             const { processTopup } = await import("@/lib/services/transaction");
+             const providerData = (tx.providerData ?? {}) as Record<string, string>;
+             const txRecord = {
+               ...tx,
+               gameSlug: providerData.gameSlug || "",
+               gameName: providerData.gameName || "",
+               productCode: providerData.productCode || tx.productItemId,
+               productName: providerData.productName || "",
+               paymentStatus: "PAID",
+               providerStatus: "processing",
+             } as any;
+             
+             const topupResult = await processTopup(txRecord);
+             const finalStatus = topupResult.status === "processing" || topupResult.status === "pending" || topupResult.message.includes("Timeout") 
+               ? "PROCESSING" 
+               : "SUCCESS";
+               
+             await prisma.transaction.update({
+               where: { id: tx.id },
+               data: {
+                 status: finalStatus,
+                 providerRef: topupResult.providerTrxId,
+                 providerData: { ...providerData, serialNumber: topupResult.serialNumber, message: topupResult.message },
+                 updatedAt: new Date()
+               }
+             });
+             
+             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: finalStatus, note: "Reconciled from Midtrans & Processed", success: true };
+          } else if (internalMidtransStatus === "EXPIRED" || internalMidtransStatus === "FAILED" || internalMidtransStatus === "REFUNDED") {
+             await prisma.transaction.update({
+               where: { id: tx.id },
+               data: { status: internalMidtransStatus, updatedAt: new Date() }
+             });
+             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: internalMidtransStatus, note: "Reconciled from Midtrans", success: true };
+          }
+          
+          return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: true };
+        }
+
+        // 2. Sweep missing Apigames webhooks for PROCESSING transactions
         const providerStatus = await getOrderStatus(providerRef);
 
         // Map provider status to internal status
@@ -71,16 +131,32 @@ export async function GET(_req: NextRequest) {
         const newStatus = statusMap[providerStatus.status] || tx.status;
 
         if (newStatus !== tx.status) {
+          let finalStatus = newStatus;
+          let providerDataUpdate = {
+            ...providerData,
+            serialNumber: providerStatus.sn || "",
+            reconcileNote: providerStatus.message,
+          };
+
+          if (newStatus === "FAILED" && tx.status !== "FAILED") {
+            try {
+              const { refundTransaction } = await import("@/lib/services/midtrans");
+              await refundTransaction(tx.invoiceId, tx.total, `Reconciliation Failed: ${providerStatus.message}`);
+              finalStatus = "REFUNDED";
+              providerDataUpdate = { ...providerDataUpdate, needsRefund: false, refundStatus: "refunded_automatically" } as any;
+              logger.info(`Automated reconcile refund successful for ${tx.invoiceId}`);
+            } catch (err) {
+              logger.error(`Automated reconcile refund failed for ${tx.invoiceId}`, { error: err instanceof Error ? err.message : err });
+              providerDataUpdate = { ...providerDataUpdate, needsRefund: true, refundStatus: "pending_manual_refund" } as any;
+            }
+          }
+
           await prisma.transaction.update({
             where: { id: tx.id },
             data: {
-              status: newStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
+              status: finalStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
               providerRef: providerStatus.trxId || tx.providerRef,
-              providerData: {
-                ...providerData,
-                serialNumber: providerStatus.sn || "",
-                reconcileNote: providerStatus.message,
-              },
+              providerData: providerDataUpdate,
               updatedAt: new Date(),
             },
           });

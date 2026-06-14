@@ -78,17 +78,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Update transaction with provider status
+    let finalStatus = internalStatus;
+    let providerDataUpdate = {
+      ...(transaction.providerData as Record<string, unknown> ?? {}),
+      serialNumber: sn || "",
+      providerMessage: message || "",
+    };
+
+    if (internalStatus === "FAILED" && transaction.status !== "FAILED") {
+      try {
+        const { refundTransaction } = await import("@/lib/services/midtrans");
+        await refundTransaction(ref_id, transaction.total, `Async Provider Failed: ${message}`);
+        finalStatus = "REFUNDED";
+        providerDataUpdate = { ...providerDataUpdate, needsRefund: false, refundStatus: "refunded_automatically" } as any;
+        logger.info(`Automated async refund successful for ${ref_id}`);
+      } catch (err) {
+        logger.error(`Automated async refund failed for ${ref_id}`, { error: err instanceof Error ? err.message : err });
+        providerDataUpdate = { ...providerDataUpdate, needsRefund: true, refundStatus: "pending_manual_refund" } as any;
+      }
+    }
+
     await prisma.transaction.update({
       where: { id: transaction.id },
       data: {
-        status: internalStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
+        status: finalStatus as "PENDING" | "PAID" | "PROCESSING" | "SUCCESS" | "FAILED" | "REFUNDED" | "EXPIRED",
         providerRef: trx_id || transaction.providerRef,
-        providerData: {
-          ...(transaction.providerData as Record<string, unknown> ?? {}),
-          serialNumber: sn || "",
-          providerMessage: message || "",
-        },
+        providerData: providerDataUpdate,
         updatedAt: new Date(),
       },
     });

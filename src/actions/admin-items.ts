@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
 import { createAuditLog } from "@/lib/audit-log";
+import { calculateSellingPrice } from "@/lib/catalog-rules";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -68,13 +69,17 @@ export async function createItem(data: ItemFormData) {
       select: { order: true },
     });
 
+    const priceToSave = data.originalPrice 
+      ? calculateSellingPrice(data.originalPrice) 
+      : data.price;
+
     const item = await prisma.productItem.create({
       data: {
         productId: data.gameId,
         name: data.name,
         description: data.description || null,
         amount: data.amount,
-        price: data.price,
+        price: priceToSave,
         originalPrice: data.originalPrice || null,
         resellerPrice: data.resellerPrice || null,
         isActive: data.isActive,
@@ -111,6 +116,11 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
       select: { name: true, price: true, amount: true, isActive: true },
     });
 
+    const newOriginalPrice = data.originalPrice !== undefined ? data.originalPrice : oldItem?.originalPrice;
+    const priceToSave = data.originalPrice !== undefined && data.originalPrice !== null
+      ? calculateSellingPrice(data.originalPrice)
+      : data.price;
+
     const item = await prisma.productItem.update({
       where: { id },
       data: {
@@ -119,7 +129,7 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
           description: data.description || null,
         }),
         ...(data.amount !== undefined && { amount: data.amount }),
-        ...(data.price !== undefined && { price: data.price }),
+        ...(priceToSave !== undefined && { price: priceToSave }),
         ...(data.originalPrice !== undefined && {
           originalPrice: data.originalPrice || null,
         }),

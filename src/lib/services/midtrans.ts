@@ -299,7 +299,7 @@ export function isConfigured(): boolean {
 export async function refundTransaction(orderId: string, amount: number, reason: string = "Topup Provider Failed") {
   try {
     const payload = {
-      refund_key: `refund-${orderId}-${Date.now()}`,
+      refund_key: `refund-${orderId}`,
       amount: amount,
       reason: reason,
     };

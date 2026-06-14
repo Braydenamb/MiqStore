@@ -12,6 +12,7 @@
  */
 
 import crypto from "crypto";
+import { isGameAllowed } from "../catalog-rules";
 
 /* ─── Types ─── */
 export interface ApigamesProduct {
@@ -176,7 +177,10 @@ export async function getProducts(
       throw new ApigamesError("Failed to fetch products from Apigames");
     }
 
-    return data.data;
+    // Filter upstream based on allowed games
+    const filteredData = data.data.filter((product) => isGameAllowed(product.brand));
+
+    return filteredData;
   } catch (error) {
     if (error instanceof ApigamesError) throw error;
     throw new ApigamesError("Failed to connect to Apigames API");

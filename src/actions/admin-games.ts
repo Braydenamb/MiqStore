@@ -231,9 +231,16 @@ export const getProviders = unstable_cache(
 
 // ─── Write ────────────────────────────────────────────────────────────────────
 
+import { isGameAllowed } from "@/lib/catalog-rules";
+
 export async function createGame(data: GameFormData) {
   try {
     const admin = await requireAdmin();
+
+    if (!isGameAllowed(data.name)) {
+      return { success: false, error: "Game is not in the ALLOWED_GAMES list." };
+    }
+
     const categoryId = data.categoryId || (await ensureDefaultCategory());
 
     const game = await prisma.product.create({
@@ -285,6 +292,10 @@ export async function createGame(data: GameFormData) {
 export async function updateGame(id: string, data: Partial<GameFormData>) {
   try {
     const admin = await requireAdmin();
+
+    if (data.name && !isGameAllowed(data.name)) {
+      return { success: false, error: "Game is not in the ALLOWED_GAMES list." };
+    }
 
     // Fetch old values for audit
     const oldGame = await prisma.product.findUnique({ where: { id }, select: { name: true, slug: true, isActive: true, isPopular: true, gameType: true } });

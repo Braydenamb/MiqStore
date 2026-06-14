@@ -119,11 +119,17 @@ export async function POST(req: NextRequest) {
     if (internalStatus === "PAID") {
       updateData.status = "PROCESSING";
 
-      // Persist PROCESSING state first so user sees progress
-      await prisma.transaction.update({
-        where: { invoiceId: order_id },
+      // Use updateMany for Optimistic Concurrency Control (OCC) to prevent TOCTOU
+      // if two webhooks arrive simultaneously.
+      const updateResult = await prisma.transaction.updateMany({
+        where: { invoiceId: order_id, status: transaction.status },
         data: updateData,
       });
+
+      if (updateResult.count === 0) {
+        logger.warn("TOCTOU webhook concurrency prevented", { orderId: order_id });
+        return apiSuccess({ duplicate: true, status: "RACE_CONDITION_PREVENTED" });
+      }
 
       logger.info("Payment confirmed, triggering topup", { orderId: order_id });
 
@@ -154,10 +160,14 @@ export async function POST(req: NextRequest) {
       try {
         const topupResult = await processTopup(txRecord);
         if (topupResult.success) {
+          const finalStatus = topupResult.status === "processing" || topupResult.status === "pending" || topupResult.message.includes("Timeout") 
+            ? "PROCESSING" 
+            : "SUCCESS";
+
           await prisma.transaction.update({
             where: { invoiceId: order_id },
             data: {
-              status: "SUCCESS",
+              status: finalStatus,
               providerRef: topupResult.providerTrxId,
               providerData: {
                 serialNumber: topupResult.serialNumber,

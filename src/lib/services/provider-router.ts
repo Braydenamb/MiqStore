@@ -191,9 +191,23 @@ export async function routeTopupOrder(
         pricePaid: price,
         latencyMs: executionTime
       };
-    } catch (e) {
-      logger.error(`Execution failed for ${provider.name}! Trying fallback...`, e, { provider: provider.name });
+    } catch (e: any) {
+      logger.error(`Execution failed for ${provider.name}!`, e, { provider: provider.name });
       metrics.increment(`router_execution_failed_${provider.name.toLowerCase()}`);
+      
+      if (e.name === "AbortError" || e.name === "TimeoutError" || e.message?.includes("timeout")) {
+        logger.error(`FATAL TIMEOUT: Do not fallback! Assumed processing on ${provider.name}`);
+        span.end("timeout");
+        return {
+          success: true,
+          providerName: provider.name,
+          message: "Order queued for reconciliation (Timeout)",
+          pricePaid: price,
+          latencyMs: Date.now() - startTime
+        };
+      }
+      
+      logger.info(`Trying fallback...`);
       // Fall through to next provider loop if error
     }
   }

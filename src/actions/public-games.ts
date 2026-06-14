@@ -5,10 +5,17 @@ import { logger } from "@/lib/telemetry";
 import type { PublicGame, GameDetail } from "@/lib/types";
 import { unstable_cache } from "next/cache";
 
+import { ALLOWED_GAMES } from "@/lib/catalog-rules";
+
 const getCachedPublicGames = unstable_cache(
   async () => {
     return await prisma.product.findMany({
-      where: { isActive: true },
+      where: { 
+        isActive: true,
+        OR: ALLOWED_GAMES.map(name => ({
+          name: { contains: name, mode: 'insensitive' }
+        }))
+      },
       include: {
         category: true,
         _count: { select: { items: true } }
@@ -37,7 +44,13 @@ export async function getPublicGames(): Promise<PublicGame[]> {
 const getCachedPopularGames = unstable_cache(
   async () => {
     return await prisma.product.findMany({
-      where: { isActive: true, isPopular: true },
+      where: { 
+        isActive: true, 
+        isPopular: true,
+        OR: ALLOWED_GAMES.map(name => ({
+          name: { contains: name, mode: 'insensitive' }
+        }))
+      },
       include: { category: true },
       orderBy: [
         { order: 'asc' },
@@ -62,8 +75,14 @@ export async function getPopularGames(): Promise<PublicGame[]> {
 
 const getCachedGameDetails = unstable_cache(
   async (slug: string) => {
-    return await prisma.product.findUnique({
-      where: { slug: slug, isActive: true },
+    return await prisma.product.findFirst({
+      where: { 
+        slug: slug, 
+        isActive: true,
+        OR: ALLOWED_GAMES.map(name => ({
+          name: { contains: name, mode: 'insensitive' }
+        }))
+      },
       include: {
         category: true,
         items: {
