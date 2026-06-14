@@ -102,7 +102,7 @@ export function OrderSummary({
               size="lg"
               onClick={onCheckout}
               disabled={isSubmitting || !canCheckout}
-              className="w-full h-12 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white font-bold text-base transition-all disabled:opacity-50 mt-4 shadow-lg shadow-[hsl(var(--primary))]/20"
+              className="w-full h-12 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold text-base transition-all disabled:opacity-50 mt-4 shadow-lg shadow-[hsl(var(--primary))]/20"
             >
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Memproses...</>

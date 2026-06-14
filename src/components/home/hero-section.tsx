@@ -11,6 +11,7 @@ import { Typography } from "@/components/typography";
 import { FlipWords } from "@/components/ui/flip-words";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { Meteors } from "@/components/ui/meteors";
+import Link from "next/link";
 
 export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
   const [imgError, setImgError] = useState(false);
@@ -69,28 +70,28 @@ export function HeroSection({ heroBannerUrl }: { heroBannerUrl?: string }) {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
             >
-              <ShimmerButton
-                className="h-14 px-8 text-lg font-medium"
-                shimmerColor="hsl(var(--primary))"
-                shimmerSize="0.1em"
-                shimmerDuration="2.5s"
-                onClick={() => toast.success("Memulai Top Up", { description: "Mengarahkan ke halaman Top Up..." })}
-              >
-                <span className="flex items-center gap-2">
-                  Top Up Sekarang
-                  <ArrowRight className="h-5 w-5" />
-                </span>
-              </ShimmerButton>
+              <a href="#popular-games" className="w-full sm:w-auto">
+                <ShimmerButton
+                  className="h-14 w-full sm:w-auto px-8 text-lg font-medium"
+                  shimmerColor="hsl(var(--primary))"
+                  shimmerSize="0.1em"
+                  shimmerDuration="2.5s"
+                >
+                  <span className="flex items-center gap-2">
+                    Top Up Sekarang
+                    <ArrowRight className="h-5 w-5" />
+                  </span>
+                </ShimmerButton>
+              </a>
               <Button 
+                asChild
                 size="lg" 
                 variant="outline" 
-                className="rounded-full h-14 px-8 text-lg border-[hsl(var(--primary))]/50 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/10 transition-all"
-                onClick={() => {
-                  toast("Menjelajahi Game", { description: "Mengarahkan ke katalog game..." });
-                  window.location.href = "/games";
-                }}
+                className="rounded-full w-full sm:w-auto h-14 px-8 text-lg border-[hsl(var(--primary))]/50 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/10 transition-all"
               >
-                Lihat Daftar Game
+                <Link href="/games">
+                  Lihat Daftar Game
+                </Link>
               </Button>
             </motion.div>
           </div>

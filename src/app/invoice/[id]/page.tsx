@@ -500,7 +500,7 @@ export default function InvoicePage() {
             {/* CTA based on status */}
             {currentStatus === "failed" || currentStatus === "expired" ? (
               <Button
-                className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold"
+                className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))] font-bold"
                 asChild
               >
                 <Link href={invoice.gameSlug ? `/games/${invoice.gameSlug}` : "/games"}>
@@ -526,7 +526,7 @@ export default function InvoicePage() {
                   <XCircle className="w-4 h-4 mr-2" /> Batalkan Pesanan
                 </Button>
                 <Button
-                  className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold"
+                  className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))] font-bold"
                   asChild
                 >
                   <Link href="/games">Beli Game Lain</Link>
@@ -534,7 +534,7 @@ export default function InvoicePage() {
               </div>
             ) : (
               <Button
-                className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white font-bold"
+                className="flex-1 h-12 rounded-xl bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))] font-bold"
                 asChild
               >
                 <Link href="/games">Beli Game Lain</Link>

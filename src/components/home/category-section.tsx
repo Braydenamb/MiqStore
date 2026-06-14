@@ -45,8 +45,8 @@ export function CategorySection() {
               transition={{ delay: idx * 0.1 }}
             >
               <Link
-                href={`/categories/${category.id}`}
-                className="group block rounded-3xl border border-gray-100 bg-white p-6 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
+                href={`/games?platform=${category.id === 'mobile' ? 'Mobile' : category.id === 'pc' ? 'PC' : category.name}`}
+                className="group block rounded-3xl p-6 text-center glass-card relative overflow-hidden"
               >
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[hsl(var(--primary))]/5 mb-4 group-hover:bg-[hsl(var(--primary))] group-hover:text-white transition-colors text-[hsl(var(--primary))]">
                   <category.icon className="h-8 w-8" />

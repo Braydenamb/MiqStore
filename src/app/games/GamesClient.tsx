@@ -12,7 +12,7 @@ export function GamesClient({ initialGames }: { initialGames: PublicGame[] }) {
   const searchParams = useSearchParams();
   const q = searchParams.get("q")?.toLowerCase() || "";
   
-  const [filter, setFilter] = useState("All Platforms");
+  const [filter, setFilter] = useState(searchParams.get("platform") || "All Platforms");
   const [sort, setSort] = useState("Popular");
 
   const filteredGames = initialGames.filter(g => {

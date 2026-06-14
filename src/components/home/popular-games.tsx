@@ -22,7 +22,7 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
   // But since we want to fully connect it to DB, we will just use `initialGames`.
 
   return (
-    <section className="py-16 bg-[hsl(var(--background))]">
+    <section id="popular-games" className="py-16 bg-[hsl(var(--background))] scroll-mt-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-4">

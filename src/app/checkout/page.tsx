@@ -314,7 +314,7 @@ export default function CheckoutPage() {
             </div>
 
             <Button
-              className="w-full h-14 rounded-xl text-lg font-bold bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white shadow-[0_8px_30px_rgba(11,29,52,0.2)] transition-all disabled:opacity-50"
+              className="w-full h-14 rounded-xl text-lg font-bold bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))] shadow-[0_8px_30px_rgba(11,29,52,0.2)] transition-all disabled:opacity-50"
               disabled={!isAgreed || isProcessing || !snapReady}
               onClick={handlePay}
             >
@@ -346,7 +346,7 @@ export default function CheckoutPage() {
             <p className="text-lg font-extrabold text-[hsl(var(--primary))] tabular-nums">{formatCurrency(total)}</p>
           </div>
           <Button
-            className="shrink-0 h-12 px-8 rounded-xl text-base font-bold bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-white shadow-md transition-all disabled:opacity-50"
+            className="shrink-0 h-12 px-8 rounded-xl text-base font-bold bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))] text-[hsl(var(--secondary-foreground))] hover:text-[hsl(var(--primary-foreground))] shadow-md transition-all disabled:opacity-50"
             disabled={!isAgreed || isProcessing || !snapReady}
             onClick={handlePay}
           >
