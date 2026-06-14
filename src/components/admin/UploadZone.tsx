@@ -22,7 +22,8 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
 
   // Update preview when defaultValue changes (e.g. when editing a different game)
   useEffect(() => {
-    setPreview(defaultValue || null);
+    const t = setTimeout(() => setPreview(defaultValue || null), 0);
+    return () => clearTimeout(t);
   }, [defaultValue]);
 
   const removeFile = () => {
@@ -47,7 +48,8 @@ export function UploadZone({ label, onUpload, defaultValue, recommendedAspect, f
           multiple: false,
           maxFiles: 1,
         }}
-        onSuccess={(result, { widget }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onSuccess={(result: any, { widget }: any) => {
           if (result?.info && typeof result.info === "object" && "public_id" in result.info) {
             const publicId = result.info.public_id as string;
             setPreview(publicId);

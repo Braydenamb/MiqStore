@@ -28,16 +28,19 @@ export const Meteors = ({
   )
 
   useEffect(() => {
-    const styles = [...new Array(number)].map(() => ({
-      "--angle": -angle + "deg",
-      top: "-5%",
-      left: `calc(0% + ${Math.floor(Math.random() * window.innerWidth)}px)`,
-      animationDelay: Math.random() * (maxDelay - minDelay) + minDelay + "s",
-      animationDuration:
-        Math.floor(Math.random() * (maxDuration - minDuration) + minDuration) +
-        "s",
-    }))
-    setMeteorStyles(styles)
+    const timer = setTimeout(() => {
+      const styles = [...new Array(number)].map(() => ({
+        "--angle": -angle + "deg",
+        top: "-5%",
+        left: `calc(0% + ${Math.floor(Math.random() * window.innerWidth)}px)`,
+        animationDelay: Math.random() * (maxDelay - minDelay) + minDelay + "s",
+        animationDuration:
+          Math.floor(Math.random() * (maxDuration - minDuration) + minDuration) +
+          "s",
+      }))
+      setMeteorStyles(styles)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [number, minDelay, maxDelay, minDuration, maxDuration, angle])
 
   return (

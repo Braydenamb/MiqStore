@@ -70,10 +70,11 @@ export default function RegisterPage() {
       } else {
         router.push("/dashboard");
       }
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan sistem. Silakan coba lagi.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Terjadi kesalahan sistem. Silakan coba lagi.";
+      setError(message);
       toast.error("Pendaftaran Gagal", {
-        description: err.message || "Terjadi kesalahan sistem.",
+        description: message,
       });
     } finally {
       setIsLoading(false);

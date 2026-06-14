@@ -5,17 +5,29 @@
  */
 
 import type { Product, Category, ProductItem } from "@prisma/client";
+export type { ProductItem };
+
+// ── Game Field definition for Product.fields ─────────────────────────────────
+export interface GameField {
+  key: string;
+  label: string;
+  placeholder: string;
+  type: "text" | "number" | "select";
+  options?: { value: string; label: string }[];
+}
 
 // ── Public Game (from getPublicGames / getPopularGames) ──────────────────────
-export interface PublicGame extends Product {
+export interface PublicGame extends Omit<Product, 'fields'> {
   category: Category | null;
   _count?: { items: number };
+  fields: GameField[] | null;
 }
 
 // ── Game Detail (from getGameDetails) ────────────────────────────────────────
-export interface GameDetail extends Product {
+export interface GameDetail extends Omit<Product, 'fields'> {
   category: Category | null;
   items: ProductItem[];
+  fields: GameField[] | null;
 }
 
 // ── Admin Dashboard Types ────────────────────────────────────────────────────

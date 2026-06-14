@@ -2,8 +2,9 @@
 
 import prisma from "@/lib/prisma";
 import { logger } from "@/lib/telemetry";
+import type { PublicGame, GameDetail } from "@/lib/types";
 
-export async function getPublicGames() {
+export async function getPublicGames(): Promise<PublicGame[]> {
   try {
     const games = await prisma.product.findMany({
       where: {
@@ -21,14 +22,14 @@ export async function getPublicGames() {
         { name: 'asc' }
       ]
     });
-    return games;
+    return games as unknown as PublicGame[];
   } catch (error) {
     logger.error("Failed to fetch public games", error);
     return [];
   }
 }
 
-export async function getPopularGames() {
+export async function getPopularGames(): Promise<PublicGame[]> {
   try {
     const games = await prisma.product.findMany({
       where: {
@@ -44,14 +45,14 @@ export async function getPopularGames() {
       ],
       take: 8 // limit to top 8 popular games
     });
-    return games;
+    return games as unknown as PublicGame[];
   } catch (error) {
     logger.error("Failed to fetch popular games", error);
     return [];
   }
 }
 
-export async function getGameDetails(slug: string) {
+export async function getGameDetails(slug: string): Promise<GameDetail | null> {
   try {
     const game = await prisma.product.findUnique({
       where: {
@@ -72,7 +73,7 @@ export async function getGameDetails(slug: string) {
         }
       }
     });
-    return game;
+    return game as unknown as GameDetail;
   } catch (error) {
     logger.error(`Failed to fetch game details for slug ${slug}`, error);
     return null;

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
-import { ProductItem } from "@/lib/constants";
+import { ProductItem } from "@/lib/types";
 import { StepBadge } from "./step-badge";
 
 interface DenominationGridProps {
@@ -27,7 +27,7 @@ export function DenominationGrid({ products, selectedProduct, onSelectProduct, s
                 : "border-white/10 bg-black/20 hover:border-[hsl(var(--primary))]/50 hover:bg-[hsl(var(--primary))]/10 hover:-translate-y-0.5"
             )}
           >
-            {product.popular && (
+            {product.isPopular && (
               <div className="absolute top-0 right-0 bg-[var(--color-gold)] text-[hsl(var(--foreground))] text-[10px] font-bold px-2.5 py-1 rounded-bl-lg shadow-sm">
                 HOT
               </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useSettings } from "@/components/providers/settings-provider";
+import { useContext } from "react";
+import { SettingsContext } from "@/components/providers/settings-provider";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import MiqStoreLogo from "@/components/ui/logo";
 
@@ -15,15 +16,13 @@ export function LoadingScreen({ message = "Menyiapkan inventory game...", isOver
     ? "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[hsl(var(--background))] texture-overlay overflow-hidden"
     : "min-h-[100dvh] w-full flex flex-col items-center justify-center bg-[hsl(var(--background))] texture-overlay overflow-hidden";
 
+  const context = useContext(SettingsContext);
   let logoUrl = "/icons/logo.png";
-  try {
-    const { settings } = useSettings();
-    const siteLogo = settings["site_logo"];
+  if (context?.settings) {
+    const siteLogo = context.settings["site_logo"];
     if (siteLogo) {
       logoUrl = siteLogo.startsWith("http") ? siteLogo : cloudinaryUrl(siteLogo);
     }
-  } catch {
-    // If not wrapped in SettingsProvider, fallback to default
   }
 
   return (

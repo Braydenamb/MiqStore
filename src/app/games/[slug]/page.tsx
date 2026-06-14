@@ -1,7 +1,7 @@
 import { getGameDetails } from "@/actions/public-games";
 import { GameDetailClient } from "./GameDetailClient";
 import { Metadata } from "next";
-
+import type { GameDetail } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -38,7 +38,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
   
   if (!game) {
     // GameDetailClient handles the not found UI gracefully
-    return <GameDetailClient game={null} products={[]} />;
+    return <GameDetailClient game={null as unknown as GameDetail} products={[]} />;
   }
 
   return <GameDetailClient game={game} products={game.items || []} />;

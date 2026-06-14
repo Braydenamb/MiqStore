@@ -21,7 +21,7 @@ interface GameCardProps {
   color: string;
   bg?: string;
   index: number;
-  image?: string;
+  image?: string | null;
 }
 
 export function GameCard({ slug, id, name, publisher, platform, category, popular, icon: Icon, color, bg, index, image }: GameCardProps) {

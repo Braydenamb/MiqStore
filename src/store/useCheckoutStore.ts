@@ -18,8 +18,8 @@ interface PaymentMethod {
 interface GameDetails {
   id: string;
   name: string;
-  image: string;
-  publisher: string;
+  image: string | null;
+  publisher: string | null;
 }
 
 interface CheckoutState {

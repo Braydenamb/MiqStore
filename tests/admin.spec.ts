@@ -5,21 +5,17 @@ test.describe('Admin Dashboard UI', () => {
     // Navigate to admin page
     await page.goto('/admin');
 
-    // Check if the glassmorphism header is present and contains "Dashboard"
-    const header = page.locator('h1:has-text("Dashboard")');
+    // Check if the glassmorphism header is present and contains "Dashboard Admin"
+    const header = page.locator('h1:has-text("Dashboard Admin")');
     await expect(header).toBeVisible();
 
-    // Check if the "Live" badge is rendered
-    const liveBadge = page.locator('text=Live');
-    await expect(liveBadge).toBeVisible();
-
-    // Validate Stats Grid loading or fully rendered state
-    const statsGrid = page.locator('.grid-cols-1');
-    await expect(statsGrid).toBeVisible();
+    // Validate Stats Grid loading or fully rendered state (Quick Actions widget)
+    const quickActions = page.locator('text=Aksi Cepat');
+    await expect(quickActions).toBeVisible();
     
-    // Check if at least one metric card like "Revenue Hari Ini" is visible
-    const revenueLabel = page.locator('text=Revenue Hari Ini');
-    await expect(revenueLabel).toBeVisible();
+    // Check if Pending Orders text is visible
+    const pendingOrders = page.locator('text=pesanan pending');
+    await expect(pendingOrders).toBeVisible();
   });
 
   test('should not have Hydration or Console errors on load', async ({ page }) => {

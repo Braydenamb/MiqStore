@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Gamepad2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { GameDetail, ProductItem, GameField } from "@/lib/types";
 
 import { PAYMENT_METHODS } from "@/lib/constants";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
@@ -24,7 +25,7 @@ const paymentCategoryLabels: Record<string, string> = {
   "credit-card": "Credit Card",
 };
 
-export function GameDetailClient({ game, products }: { game: any, products: any[] }) {
+export function GameDetailClient({ game, products }: { game: GameDetail | null, products: ProductItem[] }) {
   const router = useRouter();
   const slug = game?.slug;
 
@@ -92,10 +93,10 @@ export function GameDetailClient({ game, products }: { game: any, products: any[
   const total = chosenProduct ? chosenProduct.price + fee : 0;
 
   // The fields might be JSON from Prisma, handle it
-  const gameFields = Array.isArray(game.fields) ? game.fields : [];
+  const gameFields = (Array.isArray(game.fields) ? game.fields : []) as unknown as GameField[];
 
   const canCheckout =
-    gameFields.every((f: any) => fieldValues[f.key]?.trim()) &&
+    gameFields.every((f: GameField) => fieldValues[f.key]?.trim()) &&
     selectedProduct &&
     selectedPayment;
 
@@ -106,8 +107,8 @@ export function GameDetailClient({ game, products }: { game: any, products: any[
     checkoutStore.setGame({
       id: game.slug,
       name: game.name,
-      image: game.image,
-      publisher: game.publisher || game.provider?.name || "Unknown",
+      image: game.image || "",
+      publisher: game.publisher || "Unknown",
     });
     checkoutStore.setSelectedProduct({
       id: chosenProduct!.id,

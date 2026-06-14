@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CheckCircle2 } from "lucide-react";
-import { GameField } from "@/lib/constants";
+import { GameField } from "@/lib/types";
 import { StepBadge } from "./step-badge";
 
 interface UserIdFormProps {

@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
-import { ProductItem } from "@/lib/constants";
+import { ProductItem } from "@/lib/types";
 
 interface MobileCheckoutCTAProps {
   chosenProduct: ProductItem | undefined;

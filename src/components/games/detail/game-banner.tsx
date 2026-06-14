@@ -4,9 +4,9 @@ import { cloudinaryUrl } from "@/lib/cloudinary";
 interface GameBannerProps {
   game: {
     name: string;
-    publisher: string;
-    banner: string;
-    image: string;
+    publisher: string | null;
+    banner: string | null;
+    image: string | null;
   };
 }
 

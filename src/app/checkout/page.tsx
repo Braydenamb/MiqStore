@@ -21,7 +21,7 @@ import { toast } from "sonner";
 const CHECKOUT_STORAGE_KEY = "miq_checkout_data";
 
 interface PersistedCheckout {
-  game: { id: string; name: string; image: string; publisher: string };
+  game: { id: string; name: string; image: string | null; publisher: string | null };
   userId: string;
   zoneId: string;
   selectedProduct: { id: string; name: string; price: number };

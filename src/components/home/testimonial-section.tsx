@@ -49,7 +49,7 @@ export function TestimonialSection() {
                 ))}
               </div>
               <Typography.Body size="lg" className="mb-8 font-medium italic text-gray-700 dark:text-gray-300">
-                "{testi.text}"
+                &quot;{testi.text}&quot;
               </Typography.Body>
               <div className="flex items-center gap-4">
                 <div className="h-10 w-10 rounded-full bg-[hsl(var(--primary))]/10 flex items-center justify-center text-[hsl(var(--primary))] font-bold">

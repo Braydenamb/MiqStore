@@ -5,7 +5,7 @@ import { UploadCloud, X, GripVertical } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadWidget, type CloudinaryUploadWidgetResults } from "next-cloudinary";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { GallerySelectorModal } from "./GallerySelectorModal";
 
@@ -20,7 +20,8 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
   const [items, setItems] = useState<string[]>(defaultValues);
 
   useEffect(() => {
-    setItems(defaultValues);
+    const t = setTimeout(() => setItems(defaultValues), 0);
+    return () => clearTimeout(t);
   }, [defaultValues]);
 
   const handleRemove = (publicId: string, e: React.MouseEvent) => {
@@ -35,6 +36,7 @@ export function MultiUploadZone({ label, onUpdate, defaultValues = [], folder = 
     onUpdate(newItems);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSuccess = (result: any, widget: any) => {
     if (result?.info && typeof result.info === "object" && "public_id" in result.info) {
       const publicId = result.info.public_id as string;

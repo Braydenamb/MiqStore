@@ -6,8 +6,9 @@ import { ChevronDown, Gamepad2 } from "lucide-react";
 import { GameCard } from "@/components/games/game-card";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import type { PublicGame } from "@/lib/types";
 
-export function GamesClient({ initialGames }: { initialGames: any[] }) {
+export function GamesClient({ initialGames }: { initialGames: PublicGame[] }) {
   const searchParams = useSearchParams();
   const q = searchParams.get("q")?.toLowerCase() || "";
   
@@ -138,7 +139,7 @@ export function GamesClient({ initialGames }: { initialGames: any[] }) {
               category={game.category?.name}
               popular={game.isPopular}
               color={game.color || "#073B4C"}
-              image={game.image}
+              image={game.image || undefined}
               index={idx} 
             />
           ))}

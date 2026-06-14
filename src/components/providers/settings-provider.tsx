@@ -6,7 +6,7 @@ type SettingsContextType = {
   settings: Record<string, string>;
 };
 
-const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({
   children,

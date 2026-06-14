@@ -8,7 +8,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { formatCurrency } from "@/lib/utils";
-import { GameField, FAQ_ITEMS, ProductItem, PaymentMethod } from "@/lib/constants";
+import { FAQ_ITEMS, PaymentMethod } from "@/lib/constants";
+import { GameField, ProductItem } from "@/lib/types";
 
 interface OrderSummaryProps {
   game: { name: string; fields: GameField[] };

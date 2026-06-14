@@ -113,7 +113,7 @@ export async function createSnapTransaction(
 
     const enabledPayments = request.paymentMethod ? paymentMethodMap[request.paymentMethod] : undefined;
 
-    const snapPayload: any = {
+    const snapPayload: Record<string, unknown> = {
       transaction_details: {
         order_id: request.orderId,
         gross_amount: request.amount,
