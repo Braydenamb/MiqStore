@@ -113,7 +113,7 @@ export async function updateItem(id: string, data: Partial<ItemFormData>) {
 
     const oldItem = await prisma.productItem.findUnique({
       where: { id },
-      select: { name: true, price: true, amount: true, isActive: true },
+      select: { name: true, price: true, amount: true, isActive: true, originalPrice: true },
     });
 
     const newOriginalPrice = data.originalPrice !== undefined ? data.originalPrice : oldItem?.originalPrice;
