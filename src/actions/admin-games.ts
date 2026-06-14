@@ -255,7 +255,7 @@ export async function createGame(data: GameFormData) {
     revalidatePath("/admin/games");
     revalidatePath("/");
     revalidateTag("admin-categories", "default");
-    revalidateTag("products");
+    revalidateTag("products", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -315,7 +315,7 @@ export async function updateGame(id: string, data: Partial<GameFormData>) {
     revalidatePath("/admin/games");
     revalidatePath(`/games/${game.slug}`);
     revalidateTag("admin-categories", "default");
-    revalidateTag("products");
+    revalidateTag("products", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -370,7 +370,7 @@ export async function deleteGame(id: string) {
     revalidatePath("/admin/games");
     revalidatePath("/");
     revalidateTag("admin-categories", "default");
-    revalidateTag("products");
+    revalidateTag("products", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -395,7 +395,7 @@ export async function toggleGameStatus(id: string, isActive: boolean) {
       data: { isActive },
     });
     revalidatePath("/admin/games");
-    revalidateTag("products");
+    revalidateTag("products", "default");
 
     await createAuditLog({
       adminId: admin.id,

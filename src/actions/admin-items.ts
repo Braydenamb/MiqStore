@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
@@ -85,7 +85,7 @@ export async function createItem(data: ItemFormData) {
 
     revalidatePath(`/admin/games/${data.gameId}/items`);
     revalidatePath("/admin/games");
-    revalidateTag("items");
+    revalidateTag("items", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -160,7 +160,7 @@ export async function deleteItem(id: string) {
     const item = await prisma.productItem.delete({ where: { id } });
     revalidatePath(`/admin/games/${item.productId}/items`);
     revalidatePath("/admin/games");
-    revalidateTag("items");
+    revalidateTag("items", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -193,7 +193,7 @@ export async function bulkUpdateItemStatus(
 
     revalidatePath(`/admin/games/${gameId}/items`);
     revalidatePath("/admin/games");
-    revalidateTag("items");
+    revalidateTag("items", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -219,7 +219,7 @@ export async function bulkDeleteItems(ids: string[], gameId: string) {
 
     revalidatePath(`/admin/games/${gameId}/items`);
     revalidatePath("/admin/games");
-    revalidateTag("items");
+    revalidateTag("items", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -263,7 +263,7 @@ export async function bulkAdjustPrice(
     );
 
     revalidatePath(`/admin/games/${gameId}/items`);
-    revalidateTag("items");
+    revalidateTag("items", "default");
 
     await createAuditLog({
       adminId: admin.id,
@@ -297,7 +297,7 @@ export async function reorderItems(
     );
 
     revalidatePath(`/admin/games/${gameId}/items`);
-    revalidateTag("items");
+    revalidateTag("items", "default");
 
     await createAuditLog({
       adminId: admin.id,
