@@ -48,24 +48,30 @@ export async function getAdminOrders(
       prisma.transaction.count({ where: whereCondition }),
     ]);
 
-    const mappedOrders = orders.map((tx) => ({
-      id: tx.invoiceId,
-      dbId: tx.id,
-      user: tx.user?.name || tx.user?.email || "Unknown User",
-      userId: tx.user?.id || "-",
-      game: tx.product.name,
-      product: tx.productItem.name,
-      payment: tx.payment?.method || "Unknown",
-      total: tx.total,
-      status: tx.status.toLowerCase(),
-      date: new Date(tx.createdAt).toLocaleString("id-ID", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    }));
+    const mappedOrders = orders.map((tx) => {
+      // providerData is a JSON snapshot written at creation time.
+      // If the game was hard-deleted, tx.product will be null.
+      // Fall back to the snapshot to avoid TypeError crashes.
+      const snap = (tx.providerData ?? {}) as Record<string, string>;
+      return {
+        id: tx.invoiceId,
+        dbId: tx.id,
+        user: tx.user?.name || tx.user?.email || "Unknown User",
+        userId: tx.user?.id || "-",
+        game: tx.product?.name || snap.gameName || "[Deleted Game]",
+        product: tx.productItem?.name || snap.productName || "[Deleted Item]",
+        payment: tx.payment?.method || "Unknown",
+        total: tx.total,
+        status: tx.status.toLowerCase(),
+        date: new Date(tx.createdAt).toLocaleString("id-ID", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+    });
 
     return { success: true, data: { orders: mappedOrders, total, totalPages: Math.ceil(total / limit) } };
   } catch (error: unknown) {

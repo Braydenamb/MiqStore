@@ -123,21 +123,24 @@ export default async function AdminDashboardPage() {
     ),
   ]);
 
-  // Map recent transactions
-  const mappedRecentOrders = recentTransactions.map((tx) => ({
-    id: tx.invoiceId,
-    user: tx.user?.name || tx.user?.email || "Unknown User",
-    game: tx.product.name,
-    product: tx.productItem.name,
-    total: tx.total,
-    status: tx.status.toLowerCase(),
-    date: new Date(tx.createdAt).toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-      day: "2-digit",
-      month: "short",
-    }),
-  }));
+  // Map recent transactions — use providerData snapshot as fallback if game was deleted
+  const mappedRecentOrders = recentTransactions.map((tx) => {
+    const snap = (tx.providerData ?? {}) as Record<string, string>;
+    return {
+      id: tx.invoiceId,
+      user: tx.user?.name || tx.user?.email || "Unknown User",
+      game: tx.product?.name || snap.gameName || "[Deleted Game]",
+      product: tx.productItem?.name || snap.productName || "[Deleted Item]",
+      total: tx.total,
+      status: tx.status.toLowerCase(),
+      date: new Date(tx.createdAt).toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        day: "2-digit",
+        month: "short",
+      }),
+    };
+  });
 
   // Map top products — already resolved via join, no extra query needed
   const topProducts = topProductsRaw.map((p) => ({

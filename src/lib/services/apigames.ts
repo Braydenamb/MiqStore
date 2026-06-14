@@ -79,38 +79,58 @@ export const apigamesBreaker = new CircuitBreaker({
 });
 
 /* ─── API Client ─── */
-async function apigamesRequest<T>(
+
+/**
+ * apigamesWrite: single-attempt POST for mutating operations (order creation).
+ * MUST NOT retry — Apigames does not document ref_id deduplication,
+ * and retrying a timed-out write creates duplicate fulfillments.
+ */
+async function apigamesWrite<T>(
   endpoint: string,
   body: Record<string, unknown>
 ): Promise<T> {
   const url = `${APIGAMES_CONFIG.baseUrl}${endpoint}`;
-
-  // Execute inside the Circuit Breaker state machine
   return apigamesBreaker.fire(async () => {
-    // Wrap the raw fetch inside an Exponential Backoff retry strategy
-    // Retries up to 2 times (3 total attempts), waiting 500ms, then 1000ms on failure.
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ merchant: APIGAMES_CONFIG.merchantId, ...body }),
+      signal: AbortSignal.timeout(15_000), // Hard 15s timeout
+    });
+    if (!response.ok) {
+      throw new ApigamesError(
+        `Apigames API error: ${response.status} ${response.statusText}`,
+        response.status
+      );
+    }
+    return response.json() as Promise<T>;
+  });
+}
+
+/**
+ * apigamesRead: retryable POST for safe read operations (status checks, pricelist).
+ * Read operations are idempotent — retrying on timeout is safe.
+ */
+async function apigamesRead<T>(
+  endpoint: string,
+  body: Record<string, unknown>
+): Promise<T> {
+  const url = `${APIGAMES_CONFIG.baseUrl}${endpoint}`;
+  return apigamesBreaker.fire(async () => {
     return withRetry(async () => {
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          merchant: APIGAMES_CONFIG.merchantId,
-          ...body,
-        }),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ merchant: APIGAMES_CONFIG.merchantId, ...body }),
+        signal: AbortSignal.timeout(10_000),
       });
-
       if (!response.ok) {
         throw new ApigamesError(
           `Apigames API error: ${response.status} ${response.statusText}`,
           response.status
         );
       }
-
-      const data = await response.json();
-      return data as T;
+      return response.json() as Promise<T>;
     }, 3, 500);
   });
 }
@@ -142,7 +162,7 @@ export async function getProducts(
       "pricelist"
     );
 
-    const data = await apigamesRequest<{
+    const data = await apigamesRead<{
       result: boolean;
       data: ApigamesProduct[];
     }>("/v2/transaksi", {
@@ -180,7 +200,7 @@ export async function createOrder(
       ? `${order.userId}${order.zoneId}`
       : order.userId;
 
-    const data = await apigamesRequest<{
+    const data = await apigamesWrite<{
       result: boolean;
       data: {
         trx_id: string;
@@ -233,7 +253,7 @@ export async function getOrderStatus(
       refId
     );
 
-    const data = await apigamesRequest<{
+    const data = await apigamesRead<{
       result: boolean;
       data: {
         trx_id: string;

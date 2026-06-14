@@ -12,6 +12,7 @@ import {
   type MidtransNotification,
   type MidtransTransactionStatus,
 } from "@/lib/services/midtrans";
+import { metrics } from "@/lib/telemetry";
 import { processTopup, type TransactionRecord } from "@/lib/services/transaction";
 import { prisma } from "@/lib/prisma";
 import { eventBus } from "@/lib/services/event-bus";
@@ -193,6 +194,16 @@ export async function POST(req: NextRequest) {
             },
           });
           logger.error(`Topup FAILED for ${order_id}, refund status: ${refundStatus}`, { message: topupResult.message, orderId: order_id });
+
+          // Emit metric so dashboards/alerts can detect unresolved manual refunds
+          if (refundStatus !== "refunded_automatically") {
+            metrics.increment("manual_refund_required");
+            logger.error("[ALERT] Manual refund required — automated refund failed", undefined, {
+              orderId: order_id,
+              amount: transaction.total,
+              reason: topupResult.message,
+            });
+          }
         }
       } catch (err) {
         logger.error(`Post-topup DB update or processTopup failed for ${order_id}`, { error: err instanceof Error ? err.stack : err });

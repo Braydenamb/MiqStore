@@ -136,12 +136,38 @@ export async function GET(_req: NextRequest) {
       }
     });
 
-    // 4. Return results
+    // 4. Scan for manual refund queue (paid + topup failed + auto-refund failed)
+    // These are the highest-severity operational items: customer paid, got nothing, not refunded.
+    const manualRefundQueue = await prisma.transaction.findMany({
+      where: {
+        status: "FAILED",
+        providerData: { path: ["needsRefund"], equals: true },
+      },
+      select: {
+        id: true,
+        invoiceId: true,
+        total: true,
+        createdAt: true,
+        userId: true,
+        providerData: true,
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    // 5. Return results
     return apiSuccess({
       totalScanned: stuckTxs.length,
       reconciled: reconciledCount,
       failed: failedCount,
       details,
+      manualRefundQueue: manualRefundQueue.map((tx) => ({
+        invoiceId: tx.invoiceId,
+        amount: tx.total,
+        createdAt: tx.createdAt.toISOString(),
+        userId: tx.userId,
+        reason: (tx.providerData as Record<string, unknown>)?.error ?? "Unknown",
+      })),
+      manualRefundCount: manualRefundQueue.length,
     }, { message: "Reconciliation complete" });
   } catch (error) {
     logger.error("[Reconcile] Error:", error);
