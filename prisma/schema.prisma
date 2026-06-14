@@ -94,9 +94,7 @@ model User {
   apiKeys        ApiKey[]
   auditLogs      AdminAuditLog[]
 
-  @@index([email])
   @@index([role])
-  @@index([referralCode])
   @@map("users")
 }
 
@@ -159,7 +157,6 @@ model Category {
 
   products Product[]
 
-  @@index([slug])
   @@map("categories")
 }
 
@@ -189,7 +186,6 @@ model Product {
   reviews       Review[]
   favoriteGames FavoriteGame[]
 
-  @@index([slug])
   @@index([categoryId, isActive])
   @@index([isActive, isPopular])
   @@map("products")
@@ -289,11 +285,9 @@ model Transaction {
   provider    Provider?   @relation(fields: [providerId], references: [id])
   payment     Payment?
 
-  @@index([invoiceId])
-  @@index([userId])
   @@index([userId, status])
-  @@index([status])
   @@index([status, createdAt])
+  @@index([status, updatedAt])
   @@index([createdAt])
   @@map("transactions")
 }
@@ -316,9 +310,6 @@ model Payment {
 
   transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 
-  @@index([externalId])
-  @@index([status])
-  @@index([transactionId, status])
   @@map("payments")
 }
 
@@ -445,7 +436,6 @@ model ApiKey {
   user    User     @relation(fields: [userId], references: [id])
   apiLogs ApiLog[]
 
-  @@index([key])
   @@map("api_keys")
 }
 
@@ -479,7 +469,6 @@ model Setting {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([key])
   @@index([group])
   @@map("settings")
 }
