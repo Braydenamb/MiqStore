@@ -29,20 +29,12 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
     g.gameType?.toLowerCase() === "pc"
   );
 
-  const renderGrid = (games: PublicGame[], title: string, subtitle: string) => (
-    <div className="mb-16 last:mb-0">
-      <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-4">
-        <div>
-          <Typography.Heading level="h2">
-            {title}
-          </Typography.Heading>
-          <Typography.Body size="lg" className="mt-2">
-            {subtitle}
-          </Typography.Body>
-        </div>
-        <Link href="/games" className="text-[hsl(var(--primary))] font-medium flex items-center gap-1 hover:gap-2 transition-all">
-          Lihat Semua <ArrowRight className="h-4 w-4" />
-        </Link>
+  const renderGrid = (games: PublicGame[], title: string) => (
+    <div className="mb-12 last:mb-0">
+      <div className="mb-6">
+        <Typography.Heading level="h2">
+          {title}
+        </Typography.Heading>
       </div>
 
       {games.length === 0 ? (
@@ -98,9 +90,9 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
   return (
     <section id="popular-games" className="py-16 bg-[hsl(var(--background))] scroll-mt-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {renderGrid(initialGames, "Game Terpopuler", "Kumpulan game paling diminati bulan ini.")}
-        {renderGrid(mobileGames, "Mobile Games", "Temukan penawaran terbaik untuk game favoritmu.")}
-        {pcGames.length > 0 && renderGrid(pcGames, "PC Games", "Top up game PC terpopuler dengan harga termurah.")}
+        {renderGrid(initialGames, "Populer")}
+        {renderGrid(mobileGames, "Mobile Games")}
+        {pcGames.length > 0 && renderGrid(pcGames, "PC Games")}
       </div>
     </section>
   );
