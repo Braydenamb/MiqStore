@@ -68,7 +68,7 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 
                       {/* Blurred Textbox with Game Name */}
-                      <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-white/70 backdrop-blur-md border border-white/50 flex flex-col gap-1.5 items-start shadow-sm">
+                      <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-white/70 backdrop-blur-md flex flex-col gap-1.5 items-start shadow-sm">
                         <h3 className="font-bold text-[hsl(var(--foreground))] text-sm sm:text-base leading-tight line-clamp-2 text-left w-full">
                           {game.name}
                         </h3>

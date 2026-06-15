@@ -15,8 +15,8 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Hide on dashboard and admin pages
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return null;
+  // Hide on admin pages
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <>
