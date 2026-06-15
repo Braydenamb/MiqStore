@@ -56,7 +56,7 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
                           src={game.image.startsWith('http') ? game.image : cloudinaryUrl(game.image)} 
                           alt={game.name} 
                           fill
-                          className="object-cover transition-transform duration-500 group-hover/card:scale-110"
+                          className="object-cover"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
