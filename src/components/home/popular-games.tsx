@@ -48,7 +48,7 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
             return (
               <Link href={`/games/${game.slug}`} key={game.id} className="block h-full">
                 <CardContainer className="h-full w-full">
-                  <CardBody className="relative flex flex-col bg-[hsl(var(--card))]/40 rounded-2xl overflow-hidden shadow-lg border border-white/5 group/card transition-all duration-300 hover:shadow-xl hover:border-[hsl(var(--primary))]/30 h-full w-full">
+                  <CardBody className="relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-[hsl(var(--border))]/30 group/card transition-all duration-300 hover:shadow-md hover:border-[hsl(var(--primary))]/50 h-full w-full">
                     {/* Thumbnail / Image */}
                     <CardItem translateZ="50" className="w-full relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-slate-900">
                       {game.image ? (
@@ -64,15 +64,15 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
                         </div>
                       )}
                       
-                      {/* Gradient Overlay for Text Readability */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent pointer-events-none" />
+                      {/* Soft overlay to ensure readability if image is too bright */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 
                       {/* Blurred Textbox with Game Name */}
-                      <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-gradient-to-t from-white/20 to-white/5 backdrop-blur-xl border border-white/20 flex flex-col gap-1.5 items-start">
-                        <h3 className="font-bold text-white text-sm sm:text-base leading-tight drop-shadow-md line-clamp-2 text-left w-full">
+                      <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-white/70 backdrop-blur-md border border-white/50 flex flex-col gap-1.5 items-start shadow-sm">
+                        <h3 className="font-bold text-[hsl(var(--foreground))] text-sm sm:text-base leading-tight line-clamp-2 text-left w-full">
                           {game.name}
                         </h3>
-                        <div className="bg-[#a8ff9e] text-[#0a3a0a] text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">
+                        <div className="bg-[hsl(var(--primary))] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">
                           5% Off
                         </div>
                       </div>
