@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
       include: {
         product: true,
         productItem: true,
+        user: true,
       },
     });
 
@@ -87,10 +88,10 @@ export async function POST(req: NextRequest) {
 
     // Send Failed Email
     if (internalStatus === "FAILED" || internalStatus === "EXPIRED") {
-      if (transaction.customerEmail) {
+      if (transaction.user?.email) {
         sendOrderFailedEmail({
-          to: transaction.customerEmail,
-          customerName: transaction.customerName || "User",
+          to: transaction.user.email,
+          customerName: transaction.user.name || "User",
           invoiceId: transaction.invoiceId,
           gameName: (transaction as any).product?.name || "Game",
           productName: (transaction as any).productItem?.name || "Item",
@@ -133,10 +134,10 @@ export async function POST(req: NextRequest) {
             },
           });
           logger.info("Fulfillment successful via webhook", { order_id, sn: topupResult.serialNumber });
-          if (transaction.customerEmail) {
+          if (transaction.user?.email) {
             sendOrderSuccessEmail({
-              to: transaction.customerEmail,
-              customerName: transaction.customerName || "User",
+              to: transaction.user.email,
+              customerName: transaction.user.name || "User",
               invoiceId: transaction.invoiceId,
               gameName: (transaction as any).product?.name || "Game",
               productName: (transaction as any).productItem?.name || "Item",
