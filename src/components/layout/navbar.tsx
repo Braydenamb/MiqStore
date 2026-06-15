@@ -9,9 +9,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import MiqStoreLogo from "@/components/ui/logo";
 
-const NAV_LINKS = [
-  { label: "Games", href: "/games" },
-];
+// NAV_LINKS removed as per request to simplify header
 
 export function Navbar({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
@@ -37,24 +35,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
             </span>
           </Link>
 
-          {/* Center: Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-[hsl(var(--primary))]",
-                    isActive ? "text-[hsl(var(--primary))] font-semibold" : "text-[hsl(var(--muted-foreground))]"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
+          {/* Center: Navigation Links (Removed) */}
 
           {/* Right: Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
@@ -164,14 +145,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
                   <Home className="mr-3 h-5 w-5" />
                   Beranda
                 </Link>
-                <Link
-                  href="/games"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-colors text-[hsl(var(--muted-foreground))] hover:bg-gray-100 hover:text-[hsl(var(--primary))]"
-                >
-                  <Gamepad2 className="mr-3 h-5 w-5" />
-                  Semua Game
-                </Link>
+                {/* Removed Semua Game link as per request */}
                 <Link
                   href="/dashboard/transactions"
                   onClick={() => setIsMobileMenuOpen(false)}
