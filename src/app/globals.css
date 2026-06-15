@@ -28,29 +28,29 @@
   --color-white: #ffffff;
   
   /* Theme Variables - Sleek Dark Mode (Brighter & High Contrast) */
-  --background: 226 40% 10%; /* Brighter and richer dark blue */
+  --background: 226 40% 14%; /* Brighter and richer dark blue */
   --foreground: 0 0% 100%; /* Pure white text for high contrast */
   
   --primary: 226 80% 88%; /* Brighter Pastel Indigo */
   --primary-foreground: 226 50% 10%;
   
-  --secondary: 226 35% 18%; /* Brighter secondary surfaces */
+  --secondary: 226 35% 22%; /* Brighter secondary surfaces */
   --secondary-foreground: 0 0% 100%;
   
   --accent: 239 70% 75%;
   --accent-foreground: 0 0% 100%;
   
-  --card: 226 35% 16%; /* Brighter cards */
+  --card: 226 35% 20%; /* Brighter cards */
   --card-foreground: 0 0% 100%;
   
-  --popover: 226 35% 16%;
+  --popover: 226 35% 20%;
   --popover-foreground: 0 0% 100%;
   
-  --muted: 226 25% 25%;
-  --muted-foreground: 226 20% 75%; /* Brighter muted text */
+  --muted: 226 25% 30%;
+  --muted-foreground: 226 20% 80%; /* Brighter muted text */
   
-  --border: 226 25% 25%;
-  --input: 226 25% 25%;
+  --border: 226 25% 30%;
+  --input: 226 25% 30%;
   --ring: 226 80% 88%;
   
   --radius: 1.25rem; /* 20px */
