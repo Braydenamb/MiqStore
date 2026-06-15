@@ -95,7 +95,7 @@ export function NewsCarousel() {
     <section className="relative w-full">
       <div className="mx-auto max-w-[1440px] lg:px-6 lg:pt-6">
         {/* Compact carousel container */}
-        <div className="relative w-full h-[180px] sm:h-[200px] lg:h-[220px] bg-gray-900 lg:rounded-2xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.5)]">
+        <div className="relative w-full h-[220px] sm:h-[300px] lg:h-[400px] bg-gray-900 lg:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.5)]">
 
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
@@ -144,11 +144,11 @@ export function NewsCarousel() {
 
                 {/* Text content - left aligned */}
                 <div className="absolute inset-0 flex items-center pointer-events-none">
-                  <div className="px-5 sm:px-8 lg:px-10 max-w-lg">
-                    <div className="inline-block bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-2">
+                  <div className="px-6 sm:px-10 lg:px-16 max-w-3xl">
+                    <div className="inline-block bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
                       Info Terbaru
                     </div>
-                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white drop-shadow-lg leading-snug line-clamp-2">
+                    <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg leading-tight line-clamp-2">
                       {banners[imageIndex].alt}
                     </h3>
                   </div>
