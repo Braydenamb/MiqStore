@@ -52,42 +52,31 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
               return (
                 <Link href={`/games/${game.slug}`} key={game.id} className="block h-full">
                   <CardContainer className="h-full w-full">
-                    <CardBody
-                      className="flex flex-col bg-[hsl(var(--card))]/40 backdrop-blur-md rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/5 hover:bg-[hsl(var(--card))]/80 hover:border-[hsl(var(--primary))]/30 transition-all duration-300 h-full w-full group/card hover:shadow-[0_8px_30px_rgba(165,180,252,0.1)]"
-                    >
-                      {/* Thumbnail Placeholder / Image */}
-                      <CardItem translateZ="50" className="w-full">
-                        <div className={`w-full aspect-[4/3] rounded-xl flex items-center justify-center relative overflow-hidden mb-4 bg-slate-900`}>
-                          {game.image ? (
-                            <Image 
-                              src={game.image.startsWith('http') ? game.image : cloudinaryUrl(game.image)} 
-                              alt={game.name} 
-                              fill
-                              className="object-cover opacity-90 group-hover/card:opacity-100 transition-all duration-300 group-hover/card:scale-105"
-                            />
-                          ) : (
-                            <Gamepad2 className="w-12 h-12 text-slate-700 opacity-50" />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
-                          <IconComponent className="absolute bottom-2 right-2 h-6 w-6 text-white/80 drop-shadow-md" />
-                        </div>
-                      </CardItem>
-                      
-                      {/* Details */}
-                      <CardItem translateZ="30" className="flex-1 flex flex-col z-10 relative mt-2 w-full">
-                        <Typography.Caption className="text-[var(--color-gold)] mb-1 font-medium tracking-wider uppercase">
-                          {game.category?.name || game.gameType || "Games"}
-                        </Typography.Caption>
-                        <Typography.Heading level="h3" className="mb-1 line-clamp-1 text-[hsl(var(--foreground))]">
-                          {game.name}
-                        </Typography.Heading>
-                        <Typography.Body size="sm" className="mb-4 text-[hsl(var(--muted-foreground))]">
-                          Tersedia {game._count?.items || 0} item
-                        </Typography.Body>
+                    <CardBody className="relative flex flex-col bg-[hsl(var(--card))]/40 rounded-2xl overflow-hidden shadow-lg border border-white/5 group/card transition-all duration-300 hover:shadow-xl hover:border-[hsl(var(--primary))]/30 h-full w-full">
+                      {/* Thumbnail / Image */}
+                      <CardItem translateZ="50" className="w-full relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-slate-900">
+                        {game.image ? (
+                          <Image 
+                            src={game.image.startsWith('http') ? game.image : cloudinaryUrl(game.image)} 
+                            alt={game.name} 
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover/card:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-slate-600 font-bold text-2xl">{game.name.charAt(0)}</span>
+                          </div>
+                        )}
                         
-                        <button className="mt-auto flex items-center justify-center w-8 h-8 rounded-full bg-white/5 text-[hsl(var(--muted-foreground))] group-hover/card:bg-[hsl(var(--primary))] group-hover/card:text-[hsl(var(--primary-foreground))] transition-colors ml-auto shadow-sm">
-                          <ArrowRight className="h-4 w-4" />
-                        </button>
+                        {/* Gradient Overlay for Text Readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent pointer-events-none" />
+
+                        {/* Blurred Textbox with Game Name */}
+                        <div className="absolute bottom-2 inset-x-2 p-2 sm:p-3 rounded-xl bg-black/30 backdrop-blur-md border border-white/10">
+                          <h3 className="text-center font-bold text-white truncate text-sm sm:text-base drop-shadow-md">
+                            {game.name}
+                          </h3>
+                        </div>
                       </CardItem>
                     </CardBody>
                   </CardContainer>
