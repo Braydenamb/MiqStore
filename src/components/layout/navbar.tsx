@@ -20,17 +20,17 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[hsl(var(--border))]/50 glass-panel">
-        <div className="mx-auto flex h-14 md:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[hsl(var(--background))]/60 backdrop-blur-xl">
+        <div className="mx-auto flex h-12 md:h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-2">
             {logoUrl ? (
-              <img src={logoUrl} alt="MiqStore Logo" className="h-8 w-auto object-contain" />
+              <img src={logoUrl} alt="MiqStore Logo" className="h-5 md:h-6 w-auto object-contain" />
             ) : (
-              <MiqStoreLogo className="h-8 w-auto text-[hsl(var(--primary))]" />
+              <MiqStoreLogo className="h-5 md:h-6 w-auto text-[hsl(var(--primary))]" />
             )}
-            <span className="font-heading text-2xl font-bold tracking-tight text-[hsl(var(--primary))]">
+            <span className="font-heading text-lg md:text-xl font-bold tracking-tight text-[hsl(var(--primary))]">
               MiqStore
             </span>
           </Link>
@@ -48,12 +48,12 @@ export function Navbar({ logoUrl }: { logoUrl?: string }) {
               }}
               className="hidden lg:flex relative"
             >
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 name="q"
                 placeholder="e.g. Mobile Legends, Free Fire..."
-                className="h-10 w-64 rounded-full border border-[hsl(var(--border))] bg-white/5 pl-10 pr-4 text-sm text-[hsl(var(--foreground))] outline-none transition-all focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
+                className="h-8 md:h-9 w-56 md:w-64 rounded-full border border-[hsl(var(--border))] bg-white/5 pl-9 pr-4 text-xs md:text-sm text-[hsl(var(--foreground))] outline-none transition-all focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]"
               />
             </form>
 
