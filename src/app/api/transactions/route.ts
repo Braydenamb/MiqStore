@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { calculateFee, calculateDiscount } from "@/lib/services/transaction";
 import { generateInvoiceId } from "@/lib/utils";
-import { createIpaymuTransaction } from "@/lib/services/ipaymu";
+import { createDuitkuTransaction } from "@/lib/services/duitku";
 import { logger } from "@/lib/telemetry";
 
 /**
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         },
         payment: {
           create: {
-            gateway: "ipaymu",
+            gateway: "duitku",
             method: paymentMethod,
             amount: total,
             status: "PENDING",
@@ -85,14 +85,26 @@ export async function POST(req: NextRequest) {
       include: { payment: true },
     });
 
-    // Generate iPaymu Payment Link
-    const ipaymuResult = await createIpaymuTransaction({
-      referenceId: invoiceId,
-      amount: total,
-      customerName: user.name || "User",
-      customerEmail: user.email || "no-email@miqstore.online",
-      itemName: `${item.product.name} - ${item.name}`,
+    // Generate Duitku Payment Link
+    const duitkuResult = await createDuitkuTransaction({
+      merchantOrderId: invoiceId,
+      paymentAmount: total,
+      productDetails: `Pembayaran ${item.product.name} - ${item.name}`,
+      email: user.email || "no-email@miqstore.online",
+      customerVaName: user.name || "User",
       paymentMethod,
+      itemDetails: [
+        {
+          name: `${item.product.name} - ${item.name}`,
+          price: total,
+          quantity: 1,
+        }
+      ],
+      customerDetail: {
+        firstName: user.name || "User",
+        lastName: "",
+        email: user.email || "no-email@miqstore.online",
+      }
     });
 
     return apiSuccess({
@@ -101,8 +113,8 @@ export async function POST(req: NextRequest) {
       total,
       fee,
       discount,
-      token: ipaymuResult.sessionId,
-      redirectUrl: ipaymuResult.url,
+      token: duitkuResult.reference,
+      redirectUrl: duitkuResult.paymentUrl,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     }, {
       message: "Transaksi berhasil dibuat. Silakan selesaikan pembayaran.",

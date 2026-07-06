@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       if (claimLock.count === 0) return apiSuccess({ duplicate: true }, { message: "Race condition prevented" });
 
       try {
-        const { refundTransaction } = await import("@/lib/services/ipaymu");
+        const { refundTransaction } = await import("@/lib/services/duitku");
         await refundTransaction(ref_id, `Async Provider Failed: ${message}`);
         finalStatus = "REFUNDED";
         providerDataUpdate = { ...providerDataUpdate, needsRefund: false, refundStatus: "refunded_automatically" } as any;

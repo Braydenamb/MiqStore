@@ -3,7 +3,7 @@ import { apiSuccess, apiError, API_ERRORS } from "@/lib/api-response";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createTransaction } from "@/lib/services/transaction";
-import { createIpaymuTransaction } from "@/lib/services/ipaymu";
+import { createDuitkuTransaction } from "@/lib/services/duitku";
 import { z } from "zod";
 import { logger } from "@/lib/telemetry";
 import { transactionLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
@@ -115,18 +115,30 @@ export async function POST(req: NextRequest) {
       customerEmail,
     });
 
-    // 2. Generate iPaymu Payment Link
-    const ipaymuResponse = await createIpaymuTransaction({
-      referenceId: transaction.invoiceId,
-      amount: transaction.total,
-      customerName: customerName,
-      customerEmail: customerEmail,
-      itemName: `${parsed.data.gameName} - ${parsed.data.productName}`,
+    // 2. Generate Duitku Payment Link
+    const duitkuResponse = await createDuitkuTransaction({
+      merchantOrderId: transaction.invoiceId,
+      paymentAmount: transaction.total,
+      productDetails: `Pembayaran ${parsed.data.gameName} - ${parsed.data.productName}`,
+      email: customerEmail || "no-email@miqstore.online",
+      customerVaName: customerName,
       paymentMethod: parsed.data.paymentMethod,
+      itemDetails: [
+        {
+          name: `${parsed.data.gameName} - ${parsed.data.productName}`,
+          price: transaction.total,
+          quantity: 1,
+        }
+      ],
+      customerDetail: {
+        firstName: customerName,
+        lastName: "",
+        email: customerEmail || "no-email@miqstore.online",
+      }
     });
 
-    if (!ipaymuResponse.success) {
-      throw new Error(ipaymuResponse.message || "Gagal membuat sesi pembayaran iPaymu");
+    if (!duitkuResponse.success) {
+      throw new Error(duitkuResponse.message || "Gagal membuat sesi pembayaran Duitku");
     }
 
     // 3. Send Email Notification (non-blocking)
@@ -144,8 +156,8 @@ export async function POST(req: NextRequest) {
     // 4. Return Payment Link to Frontend
     return apiSuccess({
       invoiceId: transaction.invoiceId,
-      token: ipaymuResponse.sessionId,
-      redirectUrl: ipaymuResponse.url
+      token: duitkuResponse.reference,
+      redirectUrl: duitkuResponse.paymentUrl
     }, {
       message: "Transaksi berhasil dibuat",
       status: 201,

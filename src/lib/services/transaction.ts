@@ -18,8 +18,8 @@ import { logger, metrics, tracing } from "../telemetry";
 import { routeTopupOrder } from "./provider-router";
 import { generateInvoiceId } from "@/lib/utils";
 import type {
-  IpaymuTransactionStatus,
-} from "./ipaymu";
+  DuitkuTransactionStatus,
+} from "./duitku";
 
 /* ─── Types ─── */
 export interface CreateTransactionInput {
@@ -53,7 +53,7 @@ export interface TransactionRecord {
   discount: number;
   total: number;
   paymentMethod: string;
-  paymentStatus: IpaymuTransactionStatus;
+  paymentStatus: DuitkuTransactionStatus;
   providerStatus: "idle" | "pending" | "processing" | "success" | "failed";
   providerTrxId?: string;
   serialNumber?: string;
@@ -183,7 +183,7 @@ export async function createTransaction(
       },
       payment: {
         create: {
-          gateway: "ipaymu",
+          gateway: "duitku",
           method: input.paymentMethod,
           amount: total,
           status: "PENDING",

@@ -59,19 +59,18 @@ export async function GET(_req: NextRequest) {
         }
 
         if (tx.status === "PENDING") {
-          // 1. Sweep missing iPaymu webhooks
-          const { getIpaymuTransactionStatus, mapTransactionStatus } = await import("@/lib/services/ipaymu");
-          let ipaymuStatus;
-          try {
-            ipaymuStatus = await getIpaymuTransactionStatus(tx.invoiceId);
-          } catch (err) {
-            logger.warn(`iPaymu status not found for ${tx.invoiceId}`);
+          // 1. Sweep missing Duitku webhooks
+          const { getDuitkuTransactionStatus, mapTransactionStatus } = await import("@/lib/services/duitku");
+          const gatewayStatus = await getDuitkuTransactionStatus(tx.invoiceId);
+
+          if (!gatewayStatus) {
+            logger.warn(`Duitku status not found for ${tx.invoiceId}`);
             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: false };
           }
           
-          const internalIpaymuStatus = mapTransactionStatus(ipaymuStatus?.Data?.Status || "0");
+          const internalDuitkuStatus = mapTransactionStatus(gatewayStatus.statusCode);
           
-          if (internalIpaymuStatus === "PAID") {
+          if (internalDuitkuStatus === "PAID") {
              // Simulate webhook flow
              await prisma.transaction.update({
                where: { id: tx.id },
@@ -106,14 +105,14 @@ export async function GET(_req: NextRequest) {
                }
              });
              
-             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: finalStatus, note: "Reconciled from iPaymu & Processed", success: true };
-          } else if (internalIpaymuStatus === "EXPIRED" || internalIpaymuStatus === "FAILED" || internalIpaymuStatus === "REFUNDED") {
+             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: finalStatus, note: "Reconciled from Duitku & Processed", success: true };
+          } else if (internalDuitkuStatus === "EXPIRED" || internalDuitkuStatus === "FAILED") {
              // Mark as expired/failed
              await prisma.transaction.updateMany({
                where: { id: tx.id, status: tx.status },
-               data: { status: internalIpaymuStatus, updatedAt: new Date() }
+               data: { status: internalDuitkuStatus, updatedAt: new Date() }
              });
-             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: internalIpaymuStatus, note: "Reconciled from iPaymu", success: true };
+             return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, newStatus: internalDuitkuStatus, note: "Reconciled from Duitku", success: true };
           }
           
           return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: true };
@@ -148,7 +147,7 @@ export async function GET(_req: NextRequest) {
             if (claimLock.count === 0) return { id: tx.id, invoiceId: tx.invoiceId, oldStatus: tx.status, success: false, note: "Race condition prevented" };
 
             try {
-              const { refundTransaction } = await import("@/lib/services/ipaymu");
+              const { refundTransaction } = await import("@/lib/services/duitku");
               await refundTransaction(tx.invoiceId, `Reconciliation Failed: ${providerStatus.message}`);
               finalStatus = "REFUNDED";
               providerDataUpdate = { ...providerDataUpdate, needsRefund: false, refundStatus: "refunded_automatically" } as any;

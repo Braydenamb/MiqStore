@@ -5,45 +5,52 @@ import { logger } from "@/lib/telemetry";
 import { sendOrderSuccessEmail, sendOrderFailedEmail } from "@/lib/services/email";
 import { routeTopupOrder } from "@/lib/services/provider-router";
 import {
-  type IpaymuNotification,
-  type IpaymuTransactionStatus,
+  type DuitkuNotification,
+  type DuitkuTransactionStatus,
   mapTransactionStatus,
-} from "@/lib/services/ipaymu";
+  generateCallbackSignature
+} from "@/lib/services/duitku";
 
 /**
- * Handle payment gateway callbacks from iPaymu.
+ * Handle payment gateway callbacks from Duitku.
  *
  * Flow:
- *  1. Receive webhook POST
- *  2. Map iPaymu status_code → internal status
- *  3. Idempotency Check (Has this transaction already been processed?)
- *  4. Database Transaction (OCC)
- *  5. If PAID, trigger Provider fulfillment
- *  6. Return 200 OK
+ *  1. Receive webhook POST (x-www-form-urlencoded)
+ *  2. Validate Signature
+ *  3. Map Duitku resultCode → internal status
+ *  4. Idempotency Check (Has this transaction already been processed?)
+ *  5. Database Transaction (OCC)
+ *  6. If PAID, trigger Provider fulfillment
+ *  7. Return 200 OK
  */
 export async function POST(req: NextRequest) {
   try {
-    // iPaymu sends form-data or JSON. We will parse it.
-    // Sometimes it's x-www-form-urlencoded
     const contentType = req.headers.get("content-type") || "";
-    let body: IpaymuNotification;
+    let body: Partial<DuitkuNotification>;
 
     if (contentType.includes("application/x-www-form-urlencoded")) {
       const formData = await req.formData();
-      body = Object.fromEntries(formData) as unknown as IpaymuNotification;
+      body = Object.fromEntries(formData) as Partial<DuitkuNotification>;
     } else {
-      body = (await req.json()) as IpaymuNotification;
+      body = (await req.json()) as Partial<DuitkuNotification>;
     }
 
-    const { reference_id, status_code, trx_id } = body;
+    const { merchantCode, amount, merchantOrderId, signature, resultCode, reference } = body;
 
-    if (!reference_id) {
-      return apiError("Missing reference_id", { status: 400 });
+    if (!merchantCode || !amount || !merchantOrderId || !signature) {
+      return apiError("Missing required parameters", { status: 400 });
     }
 
-    const order_id = reference_id;
+    // Validate Duitku Signature
+    const expectedSignature = generateCallbackSignature(amount, merchantOrderId);
+    if (signature !== expectedSignature) {
+      logger.error("Invalid Duitku Signature", { merchantOrderId, signature, expectedSignature });
+      return apiError("Bad Signature", { status: 401 });
+    }
 
-    logger.info("iPaymu Webhook Received", { order_id, status_code, trx_id });
+    const order_id = merchantOrderId;
+
+    logger.info("Duitku Webhook Received", { order_id, resultCode, reference });
 
     // Find the transaction in our DB
     const transaction = await prisma.transaction.findUnique({
@@ -60,7 +67,7 @@ export async function POST(req: NextRequest) {
       return apiError("Transaction not found", { status: 404 });
     }
 
-    const internalStatus: IpaymuTransactionStatus = mapTransactionStatus(status_code);
+    const internalStatus: DuitkuTransactionStatus = mapTransactionStatus(resultCode || "");
 
     // ------------------------------------------------------------------
     // Phase 1: Idempotency & OCC Claim
