@@ -18,7 +18,7 @@ import { cloudinaryUrl } from "./cloudinary";
 export const APP_NAME = "MiqStore";
 export const APP_DESCRIPTION =
   "TopUp game, voucher digital, pulsa & paket data dengan harga termurah dan proses tercepat. Transaksi aman & otomatis 24 jam.";
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.miqstore.online";
 
 /* ---------- Navigation ---------- */
 export const NAV_LINKS = [

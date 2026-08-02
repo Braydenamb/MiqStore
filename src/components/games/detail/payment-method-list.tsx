@@ -27,7 +27,7 @@ export function PaymentMethodList({
 }: PaymentMethodListProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[hsl(var(--card))]/40 backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-7 shadow-2xl">
-      <StepBadge num={stepNum} title="Metode Pembayaran" />
+      <StepBadge num={stepNum} title="Metode Pembayaran" isCompleted={!!selectedPayment} />
       <Accordion type="single" collapsible defaultValue="e-wallet" className="space-y-3">
         {Object.entries(paymentGroups).map(([category, methods]) => (
           <AccordionItem value={category} key={category} className="border border-white/5 bg-black/20 rounded-xl px-2 overflow-hidden data-[state=open]:border-[hsl(var(--primary))]/30 transition-colors">
@@ -35,13 +35,15 @@ export function PaymentMethodList({
               {paymentCategoryLabels[category] || category}
             </AccordionTrigger>
             <AccordionContent className="px-1 pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4" role="radiogroup" aria-label={`Pembayaran ${paymentCategoryLabels[category] || category}`}>
                 {methods.map((pm) => (
                   <button
                     key={pm.id}
+                    role="radio"
+                    aria-checked={selectedPayment === pm.id}
                     onClick={() => onSelectPayment(pm.id)}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl border p-4 sm:p-3 transition-all duration-200 cursor-pointer text-left backdrop-blur-sm",
+                      "flex items-center gap-3 rounded-xl border p-4 sm:p-3 transition-all duration-200 cursor-pointer text-left backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]",
                       selectedPayment === pm.id
                         ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))]/20 shadow-lg transform scale-[1.01]"
                         : "border-white/10 bg-black/20 hover:border-[hsl(var(--primary))]/50 hover:bg-[hsl(var(--primary))]/10"

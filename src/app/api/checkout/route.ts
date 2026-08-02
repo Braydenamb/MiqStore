@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createTransaction } from "@/lib/services/transaction";
 import { createDuitkuTransaction } from "@/lib/services/duitku";
+import { getOrCreateGuestUser } from "@/lib/services/guest-user";
 import { z } from "zod";
 import { logger } from "@/lib/telemetry";
 import { transactionLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit";
@@ -26,21 +27,27 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    // Require authentication — no guest checkout
-    if (!session?.user?.id) {
-      return API_ERRORS.unauthorized();
+    let userId: string;
+    let customerName: string;
+    let customerEmail: string;
+
+    if (session?.user?.id) {
+      userId = session.user.id;
+      customerName = session.user.name || "Customer";
+      customerEmail = session.user.email || "";
+    } else {
+      const guestUser = await getOrCreateGuestUser();
+      userId = guestUser.id;
+      customerName = "Guest Customer";
+      customerEmail = "guest@miqstore.online";
     }
-    
-    // Rate Limiting
-    const rateLimitKey = session.user.id || getClientIP(req);
+
+    // Rate Limiting by User ID or IP
+    const rateLimitKey = session?.user?.id || getClientIP(req);
     const rlResult = await transactionLimiter.check(rateLimitKey);
     if (!rlResult.allowed) {
       return rateLimitResponse(rlResult, transactionLimiter);
     }
-
-    const userId = session.user.id;
-    const customerName = session.user.name || "User";
-    const customerEmail = session.user.email || "";
 
     const body = await req.json();
     const parsed = checkoutSchema.safeParse(body);

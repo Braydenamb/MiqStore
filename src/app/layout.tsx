@@ -3,6 +3,9 @@ import Script from "next/script";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { WhatsAppWidget } from "@/components/ui/whatsapp-widget";
+import { LiveActivityTicker } from "@/components/ui/live-activity-ticker";
 import { PwaRegistry } from "@/components/pwa-registry";
 import { Toaster } from "sonner";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
@@ -112,8 +115,11 @@ export default async function RootLayout({
               Skip to content
             </a>
             <Navbar logoUrl={logoUrl} />
-            <main id="main-content" className="flex-1" tabIndex={-1}>{children}</main>
+            <main id="main-content" className="flex-1 pb-mobile-nav" tabIndex={-1}>{children}</main>
             <Footer logoUrl={logoUrl} />
+            <MobileBottomNav />
+            <WhatsAppWidget />
+            <LiveActivityTicker />
           </div>
           <Toaster
             position="top-right"

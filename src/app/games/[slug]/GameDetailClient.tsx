@@ -142,6 +142,7 @@ export function GameDetailClient({ game, products }: { game: GameDetail | null, 
           {/* Left Column (Forms) */}
           <div className="lg:col-span-8 space-y-6">
             <UserIdForm 
+              gameSlug={game.slug}
               fields={gameFields}
               fieldValues={fieldValues}
               isHydrated={isHydrated}
