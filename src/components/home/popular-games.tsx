@@ -48,15 +48,15 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
             return (
               <Link href={`/games/${game.slug}`} key={game.id} className="block h-full">
                 <CardContainer className="h-full w-full">
-                  <CardBody className="relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-[hsl(var(--border))]/30 group/card transition-all duration-300 hover:shadow-md hover:border-[hsl(var(--primary))]/50 h-full w-full">
+                  <CardBody className="relative flex flex-col bg-slate-900/80 rounded-2xl overflow-hidden shadow-md border border-white/10 group/card transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/15 hover:border-sky-400/50 h-full w-full">
                     {/* Thumbnail / Image */}
-                    <CardItem translateZ="50" className="w-full relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-slate-900">
+                    <CardItem translateZ="50" className="w-full relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-slate-950">
                       {game.image ? (
                         <Image 
                           src={game.image.startsWith('http') ? game.image : cloudinaryUrl(game.image)} 
                           alt={game.name} 
                           fill
-                          className="object-cover"
+                          className="object-cover transition-transform duration-500 group-hover/card:scale-105"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
@@ -64,15 +64,15 @@ export function PopularGames({ initialGames = [] }: { initialGames?: PublicGame[
                         </div>
                       )}
                       
-                      {/* Soft overlay to ensure readability if image is too bright */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+                      {/* Gradient Overlay for Readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent pointer-events-none" />
 
-                      {/* Blurred Textbox with Game Name */}
-                      <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-white/70 backdrop-blur-md flex flex-col gap-1.5 items-start shadow-sm">
-                        <h3 className="font-bold text-[hsl(var(--foreground))] text-sm sm:text-base leading-tight line-clamp-2 text-left w-full">
+                      {/* Textbox with Game Name */}
+                      <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-slate-900/85 backdrop-blur-xl border border-white/10 flex flex-col gap-1.5 items-start shadow-md">
+                        <h3 className="font-bold text-slate-100 text-sm sm:text-base leading-tight line-clamp-2 text-left w-full">
                           {game.name}
                         </h3>
-                        <div className="bg-[hsl(var(--primary))] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">
+                        <div className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md shadow-sm">
                           5% Off
                         </div>
                       </div>
