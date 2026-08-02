@@ -59,11 +59,11 @@ export function GameCard({ slug, id, name, publisher, platform, category, popula
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent pointer-events-none" />
 
               {/* Blurred Textbox with Game Name */}
-              <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-gradient-to-t from-white/20 to-white/5 backdrop-blur-xl border border-white/20 flex flex-col gap-1.5 items-start">
-                <h3 className="font-bold text-white text-sm sm:text-base leading-tight drop-shadow-md line-clamp-2 text-left w-full">
+              <div className="absolute bottom-2 inset-x-2 p-3 rounded-xl bg-slate-900/85 backdrop-blur-xl border border-white/10 flex flex-col gap-1.5 items-start shadow-md">
+                <h3 className="font-bold text-slate-100 text-sm sm:text-base leading-tight drop-shadow-md line-clamp-2 text-left w-full">
                   {name}
                 </h3>
-                <div className="bg-[#a8ff9e] text-[#0a3a0a] text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">
+                <div className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md shadow-sm">
                   5% Off
                 </div>
               </div>

@@ -38,10 +38,10 @@ export function MobileCheckoutCTA({
             size="lg"
             onClick={onCheckout}
             disabled={isSubmitting || !canCheckout}
-            className="w-full h-14 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] font-bold text-base transition-all disabled:opacity-50 shadow-md shadow-[hsl(var(--primary))]/20"
+            className="w-full h-14 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 text-slate-950 font-extrabold text-base transition-all transform active:scale-[0.98] disabled:opacity-50 shadow-xl shadow-emerald-500/25 border border-emerald-300/30 cursor-pointer"
           >
             {isSubmitting ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin text-slate-950" />
             ) : (
               "Beli Sekarang"
             )}

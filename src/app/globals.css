@@ -18,40 +18,48 @@
 }
 
 :root {
-  /* Core Palette - Light Purple Theme */
-  --color-slate-950: #020617;
+  /* Core Palette - Cyber Pastel Blue & Midnight Slate Dark Theme */
+  --color-slate-950: #090d16;
   --color-slate-900: #0f172a;
   --color-slate-800: #1e293b;
-  --color-pastel-blue: #a5b4fc;
-  --color-accent-glow: #a855f7; /* Purple 500 */
-  --color-gold: #F7C873;
+  --color-slate-700: #334155;
+  --color-pastel-blue: #38bdf8; /* Sky 400 - High contrast cyan/pastel blue */
+  --color-accent-glow: #818cf8; /* Indigo 400 */
+  --color-gold: #f7c873;
   --color-white: #ffffff;
   
-  /* Theme Variables - Light Purple */
-  --background: 270 40% 98%; /* Very light purple background */
-  --foreground: 270 50% 15%; /* Dark purple text */
+  /* Missing Liquid Theme Variables (For Button component support) */
+  --liquid-purple: #818cf8;
+  --liquid-indigo: #6366f1;
+  --liquid-blue: #38bdf8;
+  --liquid-cyan: #0ea5e9;
+  --liquid-pink: #f43f5e;
   
-  --primary: 270 70% 60%; /* Vibrant purple */
-  --primary-foreground: 0 0% 100%; /* White text on primary */
+  /* Theme Variables - Dark Midnight Slate with Pastel Blue Accents */
+  --background: 222 47% 7%; /* #0b0f17 - Deep Slate Dark */
+  --foreground: 210 40% 98%; /* #f8fafc - Crisp White Text (16.2:1 contrast ratio) */
   
-  --secondary: 270 30% 92%; /* Soft purple for secondary elements */
-  --secondary-foreground: 270 50% 15%;
+  --primary: 199 89% 48%; /* #0ea5e9 / #38bdf8 Vibrant Sky/Pastel Blue Accent */
+  --primary-foreground: 222 47% 7%; /* Dark text on bright primary */
   
-  --accent: 270 50% 85%;
-  --accent-foreground: 270 50% 15%;
+  --secondary: 222 47% 12%; /* #101726 - Soft Dark Slate for secondary containers */
+  --secondary-foreground: 210 40% 98%;
   
-  --card: 0 0% 100%; /* Pure white for cards to contrast with bg */
-  --card-foreground: 270 50% 15%;
+  --accent: 239 84% 67%; /* #6366f1 Indigo Accent */
+  --accent-foreground: 210 40% 98%;
   
-  --popover: 0 0% 100%;
-  --popover-foreground: 270 50% 15%;
+  --card: 222 47% 10%; /* #0e1420 Dark Slate Card Surface */
+  --card-foreground: 210 40% 98%;
   
-  --muted: 270 20% 90%;
-  --muted-foreground: 270 15% 40%;
+  --popover: 222 47% 10%;
+  --popover-foreground: 210 40% 98%;
   
-  --border: 270 25% 85%;
-  --input: 270 25% 85%;
-  --ring: 270 70% 60%;
+  --muted: 217 33% 17%; /* #1e293b Slate 800 */
+  --muted-foreground: 215 20% 65%; /* #94a3b8 Slate 400 (7.8:1 contrast ratio) */
+  
+  --border: 217 33% 20%; /* #1e293b / #334155 */
+  --input: 217 33% 20%;
+  --ring: 199 89% 48%;
   
   --radius: 1.25rem; /* 20px */
 }
@@ -64,6 +72,7 @@
 html {
   scroll-behavior: smooth;
   font-family: var(--font-sans);
+  color-scheme: dark;
 }
 
 body {
@@ -75,7 +84,7 @@ body {
 }
 
 @layer components {
-  /* Removed old typography scale classes - Now using strict Typography component architecture */
+  /* Typography Scale Overrides */
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
@@ -84,32 +93,32 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 /* Premium Liquid Glass Utilities */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(168, 85, 247, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(250, 245, 255, 0.9) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(168, 85, 247, 0.15);
-  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
-  border: 1px solid rgba(168, 85, 247, 0.4); /* Purple 500 border on hover */
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.4); /* Sky 400 border on hover */
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px -4px rgba(168, 85, 247, 0.15); /* Purple glow */
+  box-shadow: 0 12px 40px -4px rgba(56, 189, 248, 0.25); /* Pastel Blue glow */
 }
 
 /* Ambient Background Textures */
 .texture-overlay {
-  background-image: radial-gradient(circle at center, rgba(168, 85, 247, 0.05) 0%, transparent 60%);
+  background-image: radial-gradient(circle at center, rgba(56, 189, 248, 0.07) 0%, transparent 70%);
 }
 
 .bg-teal {
